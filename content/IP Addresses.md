@@ -1,0 +1,3 @@
+- The use of IP addresses is the primary means of enabling devices to locate one another and establish end to end communication on the internet.
+- The default gateway address is the Ip address of the router that the host will use to access remote networks, including the internet.
+- Dynamic host configuration protocol (DHCP) enables automatic IPv4 address configuration.
