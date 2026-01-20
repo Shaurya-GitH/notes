@@ -1,7 +1,4 @@
-# 🌐 Network Fundamentals
-
 > [!info] Definition: A **network** is a group of interconnected devices that can communicate and share resources with each other.
-
 ## Core Components
 
 - **Host / End Device:** Every computer on a network.
