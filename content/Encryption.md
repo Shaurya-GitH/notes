@@ -24,5 +24,5 @@ Types of symmetric algorithms -
 | Operate by encrypting a fixed amount, or block(64 or 128bit) of data | Treats the message as a stream of bits or bytes and performs math functions on them individually |
 
 > [!Examples] Examples 
-> DES (Data Encryption standard) (deprecated)
-> AES (Advance Encryption standard) - Key length= 128/192/256 bits 
+> - DES (Data Encryption standard) (deprecated)
+> - AES (Advance Encryption standard) - Key length= 128/192/256 bits 
