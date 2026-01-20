@@ -1,8 +1,8 @@
 > [!info] **Encryption** is a mathematical process that alters data using an encryption algorithm and a key. Unlike [[Hashing]], encrypted text can be decrypted to get the original.
 
  Cipher is a method for encrypting messages
-	1. Symmetric
-	2. Asymmetric
+1. Symmetric
+2. Asymmetric
 ## Symmetric Encryption
 
 - Same key used for encryption and decryption
