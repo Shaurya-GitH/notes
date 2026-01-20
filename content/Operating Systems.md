@@ -1,4 +1,4 @@
-A collection of software that manages a computer's hardware and applications by allocating resources, including memory, CPU, input/output devices and file storage.
+> [!info] Definition: A collection of software that manages a computer's hardware and applications by allocating resources, including memory, CPU, input/output devices and file storage.
 
 - **Shell** : User interface that allows users to request specific tasks from the computer
 - **Kernel** : Communicates between hardware and software of a computer
