@@ -3,10 +3,10 @@
 
 - **Host / End Device:** Every computer on a network.
 - **Server:** Computers that provide information to end devices.
-    - _Examples:_ Email servers, web servers, file servers.
+> [!example] Email servers, web servers, file servers.
 - **Client:** Computers that send requests to servers to retrieve information.
 - **Intermediary Device:** Hardware that interconnects end devices.
-    - _Examples:_ Switches, routers, firewalls, wireless access points.
+> [!example] Switches, routers, firewalls, wireless access points.
 ## Transmission Media
 
 Communication is carried through a specific medium using different signal types:
