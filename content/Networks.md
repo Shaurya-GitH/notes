@@ -1,23 +1,42 @@
-- A **network** is a group of interconnected devices that can communicate and share resources with each other
-- Every computer on a network is called a host or end device
-- Servers are computers that provide information to end devices:
-	- email servers
-	- web servers
-	- file servers
-- Clients are computers that send requests to the servers to retrieve information
-- An intermediary device interconnects end devices
-	- Examples - switches, routers, firewalls, wireless access points
-- Communication is carried through a medium -
-	- metal wires within cables - ==electrical impulses==
-	- glass or plastic fibers within cables - ==pulses of light==
-	- wireless transmission - ==electromagnetic waves==
-- Internet is a worldwide collection of interconnected LANs and WANs
----
-### Characteristics of network architecture -
-1. Fault tolerance
-2.  Scalability
-3. Quality of service (managed by router through priorities)
-4.  Security
+# 🌐 Network Fundamentals
 
-- Packet switching splits traffic into packets that are routed over a network. Each packet can take a different path to the destination.
-- Reliable networks provide redundancy by implementing a packet switched network.
+> [!info] Definition: A **network** is a group of interconnected devices that can communicate and share resources with each other.
+
+## Core Components
+
+- **Host / End Device:** Every computer on a network.
+- **Server:** Computers that provide information to end devices.
+    - _Examples:_ Email servers, web servers, file servers.
+- **Client:** Computers that send requests to servers to retrieve information.
+- **Intermediary Device:** Hardware that interconnects end devices.
+    - _Examples:_ Switches, routers, firewalls, wireless access points.
+## Transmission Media
+
+Communication is carried through a specific medium using different signal types:
+
+| Medium                           | Signal Type               |
+| -------------------------------- | ------------------------- |
+| **Metal Wires** (Cables)         | ==Electrical Impulses==   |
+| **Fiber Optics** (Glass/Plastic) | ==Pulses of Light==       |
+| **Wireless**                     | ==Electromagnetic Waves== |
+
+---
+## Network Architecture
+
+The Internet is essentially a worldwide collection of interconnected LANs and WANs. A robust network architecture relies on four pillars:
+
+1. **Fault Tolerance:** The ability to recover quickly when a failure occurs.
+    
+2. **Scalability:** The ability to grow without degrading performance.
+    
+3. **Quality of Service (QoS):** Managing priorities (e.g., voice vs. data), often handled by routers.
+    
+4. **Security:** Protecting the confidentiality, integrity, and availability of data.
+    
+### Packet Switching
+
+> **Concept:** Traffic is split into small "packets" that are routed independently over the network.
+
+- **Routing:** Each packet can take a different path to the destination.
+    
+- **Redundancy:** Reliable networks use packet switching to ensure that if one path fails, packets can automatically reroute.
