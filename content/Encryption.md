@@ -26,3 +26,18 @@ Types of symmetric algorithms -
 > [!Examples] Examples 
 > - DES (Data Encryption standard) (deprecated)
 > - AES (Advance Encryption standard) - Key length= 128/192/256 bits 
+
+## Asymmetric Encryption
+
+- Uses a key pair (public and private key)
+- The two keys are mathematically related but cannot be derived from each other.
+
+> [!success] 
+> - Better key distribution and scalability
+
+>[!caution]
+> - Slower than symmetric systems
+
+> [!example] Examples
+> - Rivest-Shamir-Adleman ([[RSA]])
+> - Elliptic curve cryptosystem (ECC)

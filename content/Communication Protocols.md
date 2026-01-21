@@ -25,12 +25,12 @@ The protocols are viewed in terms of layers:
 
 While the OSI model is a conceptual framework for understanding network layers, TCP/IP is a specific implementation of the framework.
 
-| OSI Layers                                | Protocol Suite                      | TCP/IP Layer   |
-| :---------------------------------------- | :---------------------------------- | :------------- |
-| Application<br>Presentation<br>Session    | HTTP, DNS, DHCP, FTP                | Application    |
-| [[Transport]]                             | TCP, UDP                            | [[Transport]]  |
-| [[Network]]                               | IPv4, IPv6, ICMPv4, ICMPv6          | Internet       |
-| [[Data Link Layer]]<br>[[Physical Layer]] | Ethernet, WLAN, SONET, SDH<br>Wi-Fi | Network Access |
+| OSI Layers                                | Protocol Suite                      | TCP/IP Layer        |
+| :---------------------------------------- | :---------------------------------- | :------------------ |
+| Application<br>Presentation<br>Session    | HTTP, DNS, DHCP, FTP                | Application         |
+| [[Transport layer]]                       | TCP, UDP                            | [[Transport layer]] |
+| [[Network layer]]                         | IPv4, IPv6, ICMPv4, ICMPv6          | Internet            |
+| [[Data Link Layer]]<br>[[Physical Layer]] | Ethernet, WLAN, SONET, SDH<br>Wi-Fi | Network Access      |
 
 
 
