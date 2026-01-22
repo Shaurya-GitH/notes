@@ -19,7 +19,7 @@
 ## Diagram
 ```mermaid
 graph TD
-    RO[Resource Owner] <--> Client
+    RO[Resource Owner] --- Client
     
     %% Step 1: Authentication
     Client -- "(a) authenticates" --> AS[Authorization Server]
