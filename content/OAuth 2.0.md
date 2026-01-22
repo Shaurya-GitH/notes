@@ -18,18 +18,15 @@
 
 ## Diagram
 ```mermaid
-graph TD
+flowchart TD
     RO[Resource Owner] --- Client
 
-    %% Step 1: Authentication
     Client --|(a) authenticates|--> AS[Authorization Server]
     AS --|(b) access token|--> Client
 
-    %% Step 2: Access
     Client --|(c) access token|--> RS[Resource Server]
     RS --|(e) data|--> Client
 
-    %% Key Distribution
     AS --|(d) public key|--> RS
 
 ```
