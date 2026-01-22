@@ -2,7 +2,7 @@
 * Ensures that compromising a server's long-term private key does **not** allow attackers to decrypt past recorded network traffic.
 
 ## Core Mechanism
-* Decouples the keys used for encryption from the keys linked to the [[certificates]] by using **Diffie-Hellman**.
+* Decouples the keys used for encryption from the keys linked to the [[Certificates]] by using **Diffie-Hellman**.
 * Diffie-Hellman's ability to generate the **ephemeral private secret** in RAM itself is what allows forward secrecy. (Nothing to do with not sharing the secret over the network.)
 
 ## Why Static RSA fails

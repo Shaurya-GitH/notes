@@ -14,7 +14,7 @@
 ## Signing Algorithms
 
 ### 1. HS256 ([[HMAC]] with SHA-256)
-* **Definition:** HS256 is an implementation of [[HMAC]] where the [[hashing]] function used is SHA-256.
+* **Definition:** HS256 is an implementation of [[HMAC]] where the [[Hashing]] function used is SHA-256.
 * **Security:** [[HMAC]] provides authentication and integrity.
 
 ### 2. RS256 ([[RSA]] Signature with SHA-256)

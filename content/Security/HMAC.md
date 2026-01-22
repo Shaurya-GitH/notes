@@ -12,4 +12,4 @@ HMAC is most commonly used in JWT
 
 > [!note] The header and payload data are just encoded (base64) and hence, sensitive data should not be stored in a JWT.
 
-HMAC is a form of symmetric signature ([[HS256]]).
+HMAC is a form of symmetric [[Signing]].

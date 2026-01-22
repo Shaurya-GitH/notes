@@ -11,8 +11,6 @@
 3.  **Authorization Server:** Handles authentication and authorization.
 4.  **Client:** Application that requests access to the resource server on behalf of the resource owner.
 
-# Delegated Authorization Flow
-
 ## Diagram
 # Delegated Authorization Flow
 
