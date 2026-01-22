@@ -22,15 +22,15 @@ graph TD
     RO[Resource Owner] <--> Client
     
     %% Step 1: Authentication
-    Client -- "a) authenticates" --> AS[Authorization Server]
-    AS -- "b) access token" --> Client
+    Client -- "(a) authenticates" --> AS[Authorization Server]
+    AS -- "(b) access token" --> Client
     
     %% Step 2: Access
-    Client -- "c) access token" --> RS[Resource Server]
-    RS -- "e) data" --> Client
+    Client -- "(c) access token" --> RS[Resource Server]
+    RS -- "(e) data" --> Client
     
     %% Key Distribution
-    AS -- "d) public key" --> RS
+    AS -- "(d) public key" --> RS
 ```
 
 > [!note]  OAuth decouples the security from the system.
