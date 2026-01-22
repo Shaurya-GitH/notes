@@ -13,7 +13,7 @@
 During the handshake, the client and server:
 1.  Specify which TLS version ($1.0, 1.2, 1.3$, etc.) they will use.
 2.  Decide which **Cipher Suite** they will use (specifies algorithms for keys and session).
-3.  Authenticate the identity of the server using TLS [[certificates]].
+3.  Authenticate the identity of the server using TLS [[Certificates]].
 4.  Generate **session keys** for encryption after the handshake is completed (bulk encryption is done using symmetric keys).
 
 > **Authentication Note:** During the handshake, the server digitally signs its messages (transcript and one-time challenge to prevent ==replay attacks==). The client uses the server's public key to authenticate the server.

@@ -52,6 +52,7 @@ $$C = M^e \pmod n$$
 
 **Formula:**
 $$M = C^d \pmod n$$
+
 ---
 ## Representation of keys
 

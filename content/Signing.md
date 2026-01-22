@@ -22,4 +22,4 @@
 * **Security:** Provides authentication, integrity, and non-repudiation.
 * **Steps:**
     1.  **Create a Hash:** The payload and header are hashed.
-    2.  **Encrypt the Hash:** The hash is then encrypted using the **private key**. This encrypted hash is the signature.
+    2.  **Encrypt the Hash:** The hash is then encrypted using the **private key**. This encrypted hash is the signature. (see [[Encryption]])
