@@ -38,10 +38,10 @@ flowchart TD
 * OAuth does not govern the method of authentication used by the Auth Server.
 
 ## OAuth Flows
-OAuth is a flexible framework providing different ways of retrieving access tokens:
-* Authorization Code Flow
-* PKCE Flow
-* Client Credentials Flow
-* Resource Owner Password Flow
+OAuth is a flexible framework providing ==different ways of retrieving access tokens:==
+* [[Authorization Code Flow]]
+* [[PKCE Flow]]
+* [[Client Credentials Flow]]
+* [[Resource Owner Password Flow]]
 
 > [!caution] JWE can be used in place of JWS if the access token claims are sensitive

@@ -1,0 +1,1 @@
+> [!info] Used strictly for machine to machine communication. Exchanges client ID and secret for token without any user intervention
