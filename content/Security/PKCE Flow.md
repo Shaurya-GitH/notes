@@ -16,25 +16,19 @@ sequenceDiagram
     participant User
     participant AuthServer as Auth Server
 
-    %% Step 1: Client generates secrets locally
     Note over Client: 1. Generate code verifier<br/>+ challenge (SHA256)<br/>(in memory)
 
-    %% Step 2: Initial Authorization Request
     Client->>AuthServer: /auth + challenge
 
-    %% Step 3: User Login
     AuthServer->>User: show login page
     User->>AuthServer: login
 
-    %% Step 4: Code Exchange
     AuthServer-->>Client: redirect with authorization code
 
-    %% Step 5: Token Request
     Client->>AuthServer: /token + code + code verifier
 
-    %% Step 6: Verification
     Note over AuthServer: Verify<br/>SHA256(code verifier)<br/>== challenge
 
-    %% Step 7: Access Token
     AuthServer-->>Client: access token
+
 ```
