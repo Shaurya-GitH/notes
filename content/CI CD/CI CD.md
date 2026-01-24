@@ -1,0 +1,6 @@
+1. [[CI CD/Introduction|Introduction]]
+2. [[Pipeline Configuration]]
+3. [[Rules]]
+4. [[Services]]
+5. [[Artifacts]]
+6. [[Example pipeline]]
