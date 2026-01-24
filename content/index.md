@@ -1,6 +1,7 @@
 ---
-title: "Shaurya Mehta"
-layout: "index"
+title: Shaurya Mehta
+layout: index
+description: Software Engineer focusing on high-scale backend systems, Kubernetes, and security.
 ---
 # Shaurya Mehta
 ### **Backend Engineer • DevOps Specialist • Security Advocate**
