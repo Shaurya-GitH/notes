@@ -19,13 +19,13 @@
 flowchart TD
     RO[Resource Owner] --- Client
 
-    Client --|(a) authenticates|--> AS[Authorization Server]
-    AS --|(b) access token|--> Client
+    Client --(a) authenticates--> AS[Authorization Server]
+    AS --(b) access token--> Client
 
-    Client --|(c) access token|--> RS[Resource Server]
-    RS --|(e) data|--> Client
+    Client --(c) access token--> RS[Resource Server]
+    RS --(e) data--> Client
 
-    AS --|(d) public key|--> RS
+    AS --(d) public key--> RS
 
 ```
 
