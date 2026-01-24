@@ -4,7 +4,7 @@ layout: index
 description: Software Engineer focusing on high-scale backend systems, Kubernetes, and security.
 ---
 # Shaurya Mehta
-### **Backend Engineer • DevOps Specialist • Security Advocate**
+### **Backend Engineer • DevOps • Security**
 
 > [!quote] My Engineering Philosophy
 > I believe an engineer is a problem solver who should be capable of addressing any type of challenge they encounter. My approach is centered on deconstructing the **"why"** and **"what"** of every system to understand it inside out. By identifying architectural **patterns**, I can solve complex problems more efficiently and adapt to new technologies quickly.
