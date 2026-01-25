@@ -4,7 +4,8 @@
 - A pipeline can run automatically when pushing to a branch, creating MR or on a schedule. It can also be run manually.
 
 ## Pipeline Flow
-A typical pipeline flow involves:
+- The repository is cloned and serves as the root working directory for the job's execution
+- A typical pipeline flow involves:
 `Run Tests` $\rightarrow$ `Build Docker Image` $\rightarrow$ `Push to Registry` $\rightarrow$ `Deploy to Server`
 *(Optionally perform security scans)*.
 
