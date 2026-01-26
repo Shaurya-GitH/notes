@@ -29,11 +29,11 @@ flowchart TD
 
 ```
 
-> [!note]  OAuth decouples the security from the system.
+> [!note]  OAuth decouples the Authentication from the system.
 
 ## Authorization vs. Authentication
 * The authorization server is responsible for authentication and issuing access tokens.
-*  The resource server receives the validated token, reads the userId and scopes, and then performs authorization. 
+* The resource server receives the validated token, reads the userId and scopes (in case of RBAC), and then performs authorization. 
 * **Verification:** When the resource server verifies the JWT, it is authenticating the **Authorization Server**, not the Resource Owner.
 * OAuth does not govern the method of authentication used by the Auth Server.
 

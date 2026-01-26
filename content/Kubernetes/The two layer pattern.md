@@ -37,7 +37,7 @@ A single PVC can be mounted to multiple pods depending on the  the access mode
 - ReadWriteOncePod only allows one pod to access the PVC
 Etc.
 
-|**Layer**|**Component (Networking)**|**Component (Storage)**|**Responsibility**|
-|---|---|---|---|
-|**The "How" (Infra)**|Ingress Controller|Storage Class|Managed by Ops. Defines the implementation (Nginx/HAProxy vs. AWS-EBS/NFS).|
-|**The "What" (App)**|Ingress Resource|PVC|Managed by Devs. Defines the intent (Path `/api` vs. `20Gi` of space).|
+| **Layer**             | **Component (Networking)** | **Component (Storage)** | **Responsibility**                                                          |
+| --------------------- | -------------------------- | ----------------------- | --------------------------------------------------------------------------- |
+| **The "How" (Infra)** | Ingress Controller         | Storage Class           | Managed by Ops. Defines the implementation (Nginx/HAProxy vs. AWS-EBS/NFS). |
+| **The "What" (App)**  | Ingress Resource           | PVC                     | Managed by Devs. Defines the intent (Path `/api` vs. `20Gi` of space).      |
