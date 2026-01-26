@@ -1,4 +1,5 @@
 1. [[OOPS]]
+2. [[SOLID]]
 
 ## Primary goal
 
