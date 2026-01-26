@@ -43,7 +43,7 @@ This hides implementation details and allows us to change or swap out implementa
 >  The `super()` method is implicitly called at the initialization of a child class if the parent has a No Args constructor.
 > If there is no No Args constructor, we need to explicitly call the `super()` method in the child class's constructor. Failing to do so will cause compilation error.
 
-### Polymorphism (many forms)
+### 4. Polymorphism (many forms)
 - Ability to differentiate between entities with the same name efficiently
 
 2 Types of polymorphism in Java -
