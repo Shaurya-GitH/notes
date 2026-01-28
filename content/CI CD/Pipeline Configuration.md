@@ -4,7 +4,18 @@
 - A pipeline can run automatically when pushing to a branch, creating MR or on a schedule. It can also be run manually.
 
 ## Pipeline Flow
-- The repository is cloned and serves as the root working directory for the job's execution
+
+- The repository is cloned into /builds/gitlab-username/my-repo and is set as the working directory and the image file structure remains as it is. 
+- The CMD command of the image is overriden by `before_script` and `script`
+- In case the image's ENTRYPOINT command causes an issue, it has to be overriden in the pipeline
+
+	```yaml
+	image:
+	  name: custom-image:latest
+	  entrypoint: [""] # Explicitly overrides the ENTRYPOINT
+	```
+	
+- If the image used by the job is on a private registry, gitlab has to be given the docker credentials through the DOCKER_AUTH_CONFIG variable or on the gitlab runner server in the config.toml file.  
 - A typical pipeline flow involves:
 `Run Tests` $\rightarrow$ `Build Docker Image` $\rightarrow$ `Push to Registry` $\rightarrow$ `Deploy to Server`
 *(Optionally perform security scans)*.
