@@ -2,6 +2,7 @@
 
 > [!info] Organizes code into objects and classes and makes it more structured and easy to manage
 
+OOPS aims to manage dependencies by selectively inverting certain key dependencies in your architecture to prevent rigidity, fragility and non-reusability. 
 ## Class
 - A class is a user defined blueprint from which objects are created
 - Represents the set of properties and methods common to all objects

@@ -10,14 +10,15 @@ Similar to how Math helps us think in higher dimensions, SOLID principles help u
 
 SOLID principles should inform our decisions, they are not meant to be followed blindly. It is very easy to over engineer and over complicate your code. The main aim should be always kept in mind and questioned at every decision.
 
+> [!note] It is best practice to create a prototype as fast as possible and get feedback from the customer, so that you can predict the axis of change in future and design your abstractions accordingly
 ## The 5 principles
 ### 1. Single Responsibility Principle
 
 > [!info] **Single Responsibility Principle (SRP)** states that a module should have one reason to change, meaning it should be responsible to one actor, or to multiple actors whose requirements always change together.
 
-It is essential for identifying where module boundaries should exist so that changes driven by one actor do not impact unrelated parts of the system.
+It is essential for identifying where module boundaries should exist so that changes driven by one actor do not impact unrelated parts of the system (Don't mix concerns).
 
-SRP decides where change belongs.
+SRP decides where change belongs. It isolates change by promoting ==high cohesion==, meaning, the methods and properties within the class are closely related, making the module easier to maintain.
 
 For example, the system is broken down into different layers -
 1. **Controller layer** - responsible to the API contracts
@@ -33,7 +34,9 @@ Another way SRP can be applied -
 
 >[!info] **Open Closed Principle (OCP)** states that a module should be Open for extension but Closed for modification, meaning, new behavior should be introduced by adding new code instead of modifying existing stable code.
 
-OCP decides how change is added by enabling safe growth. Modification of stable code increases the risk of regressions and unintended side effects. OCP is commonly implemented through the help of interfaces and inheritance.
+OCP decides how change is added by enabling safe growth. Modification of stable code increases the risk of regressions and unintended side effects. OCP is commonly implemented through the help of interfaces and inheritance (Polymorphism).
+
+OCP isolates change by extension - by allowing you to add new functionality without changing the existing, tested code.
 
 For example, implementing separate connector services to connect with different CBS is exercising OCP, since the existing implementations are not affected to add new functionality.
 
@@ -47,6 +50,8 @@ LSP decides whether change is safe. It constrains and validates **Open Closed Pr
 LSP also validates the inheritance structure by ensuring that child implementations truly belong to the hierarchy in a behavioral sense. Violations are commonly resolved by applying **ISP**, which prevents forcing implementations to support incompatible behavior.
 
 In practice, LSP becomes especially important when using **dependency injection**, where implementations are substituted at runtime. For example, substituting different CBS connector implementations via dependency injection should not break the application or violate expected contracts.
+
+![[Pasted image 20260201174250.png]]
 
 Changes to avoid while implementing/inheriting an interface/class -
 1. Introducing stricter preconditions or weaker postconditions
@@ -68,9 +73,13 @@ ISP can also be applied at a high level in system architecture, module design an
 
 DIP introduces an abstraction layer between the high and low level modules. The abstractions introduced should not depend on details. The abstraction handles the contract part and the high and low level modules have to follow the contracts.
 
- Without an explicit abstraction, the low-level module owns the contract, so it is free to evolve its API and semantics in ways that can silently break high-level modules.
+ Without an explicit abstraction, the low-level module owns the contract, so it is free to evolve its API and semantics in ways that can silently break high-level modules (The low level module is not aware of the high-level module and is free to change).
 
-**Dependency Inversion Principle (DIP)** is most commonly implemented using interfaces or abstract classes, where the high-level module depends on an abstraction rather than a concrete implementation.
+**Dependency Inversion Principle (DIP)** is most commonly implemented using interfaces or abstract classes, where the high-level and low-level modules depend on an abstraction rather than a concrete implementation.
+
+DIP isolates change by decoupling the high level modules with the low level modules. 
+
+In case there is a change in the abstraction, both the low level and high module will have to adapt. But, the low level module cannot change itself since it is now aware of the abstraction layer and has to adhere to the contract. The dependency is now inverted from `high -> low` to `high -> abstraction <- low`.
 
 This inversion enables implementations to be swapped without affecting high-level logic. Such extensibility is governed by the **Open Closed Principle (OCP)**, which allows new implementations to be added without modifying existing code, and validated by the **Liskov Substitution Principle (LSP)**, which ensures that substituted implementations remain behaviorally compatible.
 
