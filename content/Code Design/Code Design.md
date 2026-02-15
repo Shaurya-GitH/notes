@@ -1,7 +1,5 @@
 1. [[OOPS]]
 2. [[SOLID]]
-3. [[Coupling and Cohesion]]
-
 ## Primary goal
 
 1. Maintainability

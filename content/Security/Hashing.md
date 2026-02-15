@@ -8,6 +8,9 @@
 > - SHA (Secure Hash Algorithm)
 
 > Hashing can be used to store passwords in the database. Although, in case the database gets compromised, hackers can make use of rainbow tables to match commonly used passwords. We make use of salted password hashing to solve this problem
+
+> [!note]
+> Since hash outputs are fixed-length sequences of bits, they are commonly displayed in encoded formats rather than raw binary. The two most frequent representations are **Hexadecimal** and **Base64**, which provide a more human-readable string.
 ## Salt
 > [!info] A **salt** is a random value that you can add to the data before hashing. This makes each hash unique and significantly enhances your security. The salt is then concatenated to the hashed value for verifying the password later.
 
