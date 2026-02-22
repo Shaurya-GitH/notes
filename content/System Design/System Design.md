@@ -1,2 +1,3 @@
 - [[Caching]]
 - [[Database locks]]
+- [[Indexing]]
