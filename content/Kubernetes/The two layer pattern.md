@@ -19,6 +19,8 @@ The Ingress controller and the Load balancer service are in a separate namespace
 
 The Ingress controller and the Ingress separates the cluster operators from the app developers just like the storage class and PVC do.
 
+Since there can be multiple ingress controllers in a cluster, a binding mechanism is required to choose which resource should be handled by which controller. For this reason, an IngressClass resource was introduced in Kubernetes which acts as a binding layer between the ingress controller and the resource. The IngressClass declares which controller implementation should handle Ingresses referencing it.
+
 ## PVC and storage classes
 
 A Persistent Volume is a piece of storage in the cluster provisioned dynamically using storage classes or manually

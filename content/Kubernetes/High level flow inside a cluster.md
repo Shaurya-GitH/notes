@@ -1,1 +1,1 @@
-![[KubernetesFlow.png| 1600]]
+![[KubernetesFlow.png| 100%]]
