@@ -47,6 +47,10 @@ Database replication can be made consistent by following the synchronous replica
 
 Synchronous replication by itself doesn't solve data inconsistency, it needs to be paired with MVCC across all nodes and two phase commit. This system maintains the atomicity across all nodes. In case any of the nodes fail to commit, all the nodes rollback the data. MVCC prevents dirty reads during this transaction.
 
+> [!note] 
+> Two phase commit is a form of ultimate pessimistic locking (see [[Database locks]])
+
 Another strategy which is used for consistency in a replicated database is that the queries requiring consistency only read from the master node. The rest of the queries can go to all the other nodes. (This strategy does not prevent data loss in case the master goes down before replication)
 
 Database sharding provides consistency and also scales reads and writes both. Sharding is mostly used together with database replication to prevent data loss. The same synchronous replication + 2PC strategy and master-reads strategy can be used in that case.
+
