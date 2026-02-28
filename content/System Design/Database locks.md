@@ -12,6 +12,7 @@ Problems solved by MVCC:
 2. Eliminates Dirty reads by creation of snapshots.
 3. Reduces need of locking for several operations.
 
+- MVCC does not solve Lost update problem
 ## Optimistic locking
 
 Optimistic locking is used when data conflicts are rare, using a version column to prevent concurrent updates unless the data is unchanged.
