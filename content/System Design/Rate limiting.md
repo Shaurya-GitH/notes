@@ -7,6 +7,7 @@ There are a lot of factors that come into play while implementing rate limiting 
 4. When to start dropping requests?
 5. What's the identity of the rate limited state?
 6. What software to use for rate limiting?
+
 Let's try and answer all the above questions.
 
 ## What is the objective of rate limiting?
@@ -63,11 +64,11 @@ To prevent the above situation, we can use a sliding window algorithm. It makes 
 
 ##### 1. Sliding window log
 
-Implementation involves storing all the requests that passed through with it's timestamp and identity. This way, we can simply count the number of records between the current time and the decided window and decide to rate limit or not. Sliding window log provides accuracy and simplicity.
+Implementation involves storing all the requests that passed through with it's timestamp and identity. This way, we can simply count the number of records between the current time and the decided window and decide to rate limit or not. Sliding window log provides accuracy, event records and simplicity.
 
 Being very easy to implement, the algorithm takes up a lot of space in the DB because of logging all the requests. For one million requests per identity, there will be one million entries in the DB for the identity.
 
-In case the allowed requests per identity is very less (<10), we can use an array of timestamps instead of storing a new record for each request. 
+In case the allowed requests per identity is very less (<10), we can use an array of timestamps instead of storing a new record for each request. (overwriting timestamps destroys information)
 
 ##### 2. Sliding window counter
 
@@ -87,3 +88,18 @@ In this case, we have two fields on top of the identity and timestamp - `count` 
 2. The bucket size is less than the window size
 
 If the window size is too big, we cannot afford to have the same bucket size since we lose too much accuracy. Smaller buckets can be created in this case. We maintain the fields - `rollingCount` and `counts[]`. the `counts` array contains the individual counts of all the buckets in the window. `rollingCount` is calculated by subtracting the count of the oldest bucket from the `rollingCount` of the previous bucket. The `counts` array also helps us with interpolation. This increased complexity increases accuracy but requires us to handle a lot more edge cases (missing buckets). Too many buckets also pose a problem since we have to store counts of all the buckets in each record.
+
+## Where to implement rate limiting?
+
+Rate limiting logic can be implemented in several places depending on the type of rate limiting and the application itself -
+- Ingress controller
+- Application filter (OncePerRequestFilter etc.)
+- Inside business logic (service layer)
+
+It is important to have the rate limiting filter as early as possible in order to minimize resource usage. If possible, all the rate limiting should be handled as a separate concern as an ingress rule. The application shouldn't be aware of the rate limiting. Application filter is only used when the application is not in control of the ingress layer.
+
+For some rate limiting identity and nuances (depending on the objective), it is important to have the business context - for example - only rate limiting successful responses or needing certain fields for the identity which are only obtained in the business layer. For these purposes, rate limiting has to be implemented inside the service layer.
+
+## When to start dropping requests?
+
+Unlike autoscaling and load shedding, rate limiters are always in place. It is important to understand, that one system can have multiple rate limiters protecting the system from multiple dimensions - One for global RPS, One for each IP, One for each endpoint, One for policy enforcement etc. However, choosing the right variables for the rate limiters can be a real challenge. The numbers have to be right such that they do not underuse or overuse the system's resources. These numbers might also change depending on the autoscaling of the resources. For certain policy enforcement, it might also be possible to allow pagination requests to go through or to only rate limit in certain cases. 

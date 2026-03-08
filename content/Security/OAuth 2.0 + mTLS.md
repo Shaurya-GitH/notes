@@ -10,3 +10,6 @@
 
 ## Result
 * Provides **Proof of Possession**: Only the client with the private key can use the token.
+
+> [!note] 
+> In some systems, the auth server is not directly accessed, and requests might be forwarded to it through the main service. In this case, traditional OAuth+mTLS is not possible due to the early termination of TLS. However, the client's certificate can be forwarded to the authorization server to have the same effect. For this usecase, the auth server has to trust the main service.
