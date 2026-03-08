@@ -1,7 +1,9 @@
 > [!info] Database locks are mechanisms in DBMS that prevent concurrent access to data to ensure data integrity and consistency.
 
 ## Problem statement
-Database locks solve the problem of **The Lost Update**. If two users read the same data, then proceed to update it, the change made by the first user will be overwritten by the change made by the second user. Even if the second user doesn't override the change, it might use the stale data to process further logic impacting the whole system.
+Database locks solve two key concurrency problems:
+**Lost Update** — if two transactions read the same row and both update it, the second write overwrites the first, losing that change entirely.
+**Phantom Read** — if a transaction reads a set of rows, another transaction inserts new rows matching the same query, and the first transaction re-reads, it sees a different result set. The new rows are "phantoms" — they affect the outcome without the first transaction expecting them.
 
 ## Multi Version Concurrency Control (MVCC)
 Modern DBMS make use of MVCC to update existing data safely in a transaction and also simultaneously allowing reads. 

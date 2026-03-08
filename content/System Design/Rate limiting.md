@@ -17,6 +17,9 @@ Rate limiting can be implemented to protect system resources (prevent the system
 
 Now that we have figured out our objective, we can choose to use many of the battle tested algorithms or derive/optimize one for our own purpose.
 
+> [!note]
+> The algorithms need to be implemented atomically in order to prevent leaking requests.
+
 To protect system resources (protect infrastructure by shaping the traffic) -
 1. Token bucket algorithm
 2. Leaky bucket algorithm
@@ -62,7 +65,7 @@ To prevent the above situation, we can use a sliding window algorithm. It makes 
 
 Implementation involves storing all the requests that passed through with it's timestamp and identity. This way, we can simply count the number of records between the current time and the decided window and decide to rate limit or not. Sliding window log provides accuracy and simplicity.
 
-Being very easy to implement, the algorithm takes up a lot of space in the DB because of logging all the requests. For one million requests, there will be one million entries in the DB.
+Being very easy to implement, the algorithm takes up a lot of space in the DB because of logging all the requests. For one million requests per identity, there will be one million entries in the DB for the identity.
 
 In case the allowed requests per identity is very less (<10), we can use an array of timestamps instead of storing a new record for each request. 
 
