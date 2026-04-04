@@ -1,9 +1,9 @@
 ## @SpringBootApplication
 
 Mix of 3 different annotations 
-1. @Configuration - Used for providing @Bean definitions
-2. @ComponentScan - Scans all the @Component annotation beans 
-3. @EnableAutoConfiguration - Configures the application context automatically according to the dependencies.
+1. **@Configuration** - Used for providing @Bean definitions
+2. **@ComponentScan** - Scans all the @Component annotation beans 
+3. **@EnableAutoConfiguration** - Configures the application context automatically according to the dependencies.
 Serves as entry point for spring boot application
 
 ## @Configuration
