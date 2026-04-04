@@ -23,3 +23,6 @@
 * **Steps:**
     1.  **Create a Hash:** The payload and header are hashed.
     2.  **Encrypt the Hash:** The hash is then encrypted using the **private key**. This encrypted hash is the signature. (see [[Encryption]])
+ - **Steps for verification**:
+	1. Create hash of the signed content
+	2. Decrypt the signature and match the created hash and the decrypted content
