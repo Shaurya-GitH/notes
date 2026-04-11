@@ -1,6 +1,6 @@
 Hardware Security Module (HSM) is a physical computing device which makes use of firmware for it's cryptographic computation. It is a highly specialised module built for the sole purpose of cryptographic operations and providing a secure storage of sensitive private keys.
 
-A private key never leaves the HSM and the key is generated directly inside the HSM. In order to perform any cryptographic operation, the request is made by the client and the operation takes place inside the HSM without exposing the key. The output is then sent back to the client.
+A private key never leaves the HSM and the key is generated directly inside the HSM (although there are secure ways of key transfer to and from the HSM). In order to perform any cryptographic operation, the request is made by the client and the operation takes place inside the HSM without exposing the key. The output is then sent back to the client.
 
 HSM provides tamper resistant, tamper evident and a secure single place to carry out the cryptographic operations for any application within zero trust environments. It helps clients meet the security standards and solves the key storage problem.
 
