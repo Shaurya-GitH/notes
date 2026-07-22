@@ -11,25 +11,27 @@ description: Software Engineer focusing on high-scale backend systems, Kubernete
 ---
 ##  Who I Am
 
-I’m a final-year Computer Science student actively working on understanding Kubernetes end-to-end, along with CI/CD pipelines and real-world DevOps problem-solving. I’ve gained hands-on experience with these systems through internships, where I’ve worked with production-grade infrastructure rather than toy setups.
+I'm a software engineer who enjoys solving difficult engineering problems rather than specializing in a single technology or domain. I like understanding systems end-to-end, identifying bottlenecks, and building solutions that improve reliability, developer productivity, and business outcomes.
 
-I’m a developer by practice, primarily working with Java, Go, and JavaScript. My experience spans from low-level web fundamentals to modern stacks—servlets to Spring Boot, JSP to React, and everything in between. I enjoy building across layers: web applications, compilers, CLI tools, and system-level utilities. Problem-solving and understanding how things work under the hood are what drive me.
+Over the past few years, I've worked across fintech and e-commerce, building production systems ranging from Open Banking platforms and enterprise marketplace integrations to deployment infrastructure, internal developer tools, and AI-powered engineering workflows. I've worked with Java, Go, TypeScript, React, Kubernetes, and cloud-native infrastructure, but I believe engineering is about choosing the right tool for the problem—not becoming attached to a particular stack.
 
-I also have a strong interest in cybersecurity and cryptography, shaped by my experience at a fintech company. This has trained me to think deeply about edge cases, threat models, and secure system design, and to implement solutions with security as a first-class concern rather than an afterthought.
+I enjoy working across the entire engineering stack. Whether it's designing distributed event-driven systems, building backend services, automating infrastructure, strengthening security, optimizing deployment pipelines, or integrating complex third-party platforms, I'm most motivated when solving problems that have a measurable impact.
 
-I’m currently in my 4th year of my Computer Science degree and have accumulated over 9 months of internship experience, continuously learning by building, breaking, and improving real systems.
+Security has become a natural part of how I think about software through my experience building fintech systems involving HSMs, OAuth, mTLS, encryption, and regulatory compliance. More recently, I've also been exploring how LLMs, MCP, and agentic workflows can automate engineering tasks and improve developer productivity.
+
+Above all, I enjoy learning unfamiliar technologies by building real systems, taking ownership of challenging problems, and understanding how software works from infrastructure to product.
 
 ---
 
 ##  My Toolkit
 
-| Category                  | Technologies                                                                                            |
-| :------------------------ | :------------------------------------------------------------------------------------------------------ |
-| **Programming Languages** | Java, Go, JavaScript, Python, C++, C, SQL                                                               |
-| **Backend**               | Spring Boot, Spring Security, Gin, JWT, WebSockets, RESTful APIs, gRPC, GraphQL, OAuth+mTLS             |
-| **Frontend**              | React.js, React Native (Expo), Redux, TanStack Query, HTML5, CSS3, Tailwind CSS, Bootstrap              |
-| **DevOps**<br>            | Kubernetes (StatefulSets, Services, Networking), Docker, Database Replication, Linux Systems, Vim, Helm |
-| **Soft Skills**           | Leadership, Abstract Thinking, Team Collaboration, Documentation, Management                            |
+| Category                  | Technologies                                                                                                                                    |
+| :------------------------ | :---------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Programming Languages** | Java, Go, JavaScript, Python, C++, C, SQL, Typescript                                                                                           |
+| **Backend**               | Spring Boot, Spring Security, Gin, JWT, WebSockets, RESTful APIs, gRPC, GraphQL, OAuth+mTLS, keycloak, HSM, MongoDB, Redis                      |
+| **Frontend**              | React.js, React Native (Expo), Redux, TanStack Query, HTML5, CSS3, Tailwind CSS, Bootstrap                                                      |
+| **DevOps**<br>            | Kubernetes (StatefulSets, Services, Networking), Docker, Database Replication, Linux Systems, Vim, Helm, Nginx, Grafana, InfluxDB, Gitlab CI/CD |
+| **Soft Skills**           | Leadership, Abstract Thinking, Team Collaboration, Documentation, Management                                                                    |
 
 ---
 
