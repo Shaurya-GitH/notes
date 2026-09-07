@@ -13,3 +13,5 @@ Custom indexing should be done in read-intensive databases. Write-intensive data
 ```
 
 Indexing is essential when all your queries are based on a column used in filters but not indexed (primary key, unique constraints and foreign keys(depending on the database) are automatically indexed). If indexing is not applied in this case, the database will have to iterate through all the rows to query the data instead of just following the index pointer in logarithmic time.
+
+Time complexity for creating and reading indexes = O(logn)

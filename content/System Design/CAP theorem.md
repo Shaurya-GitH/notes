@@ -26,11 +26,13 @@ flowchart TD
 
 In case User B tries to read data which has not been replicated from the USA server yet, either it can be shown an error (consistency) or it can be shown the possibly stale data.
 
-Distributed systems can be of different types -
-1. Multiple master nodes and their replicas
-2. Single master node and it's replicas
+Replicated distributed databases can follow different architectures:
 
-Multiple master nodes increases complexity exponentially and it is harder to handle the problems it creates involving data consistency and availability.
+1. **Single-leader** — one leader handles writes and replicates changes to its replicas.
+2. **Multi-leader** — multiple leaders can handle writes and replicate changes between themselves.
+3. **Leaderless** — there is no single leader; writes can be sent to multiple replicas.
+
+**Multi-leader and leaderless architectures make consistency harder to maintain** because multiple nodes may accept writes independently, potentially resulting in conflicting data. Single-leader architectures simplify write ordering and consistency by routing writes through one authoritative node, but the leader can become a bottleneck and its failure can temporarily affect write availability.
 
 ## Single master node databases
 

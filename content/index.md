@@ -25,13 +25,13 @@ Above all, I enjoy learning unfamiliar technologies by building real systems, ta
 
 ##  My Toolkit
 
-| Category                  | Technologies                                                                                                                                    |
-| :------------------------ | :---------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Programming Languages** | Java, Go, JavaScript, Python, C++, C, SQL, Typescript                                                                                           |
-| **Backend**               | Spring Boot, Spring Security, Gin, JWT, WebSockets, RESTful APIs, gRPC, GraphQL, OAuth+mTLS, keycloak, HSM, MongoDB, Redis                      |
-| **Frontend**              | React.js, React Native (Expo), Redux, TanStack Query, HTML5, CSS3, Tailwind CSS, Bootstrap                                                      |
-| **DevOps**<br>            | Kubernetes (StatefulSets, Services, Networking), Docker, Database Replication, Linux Systems, Vim, Helm, Nginx, Grafana, InfluxDB, Gitlab CI/CD |
-| **Soft Skills**           | Leadership, Abstract Thinking, Team Collaboration, Documentation, Management                                                                    |
+| Category                  | Technologies                                                                                                                                                               |
+| :------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Programming Languages** | Java, Go, JavaScript, Python, C++, C, SQL, Typescript                                                                                                                      |
+| **Backend**               | Spring Boot, Spring Security, Gin, JWT, WebSockets, RESTful APIs, gRPC, GraphQL, OAuth+mTLS, keycloak, HSM, MongoDB, Redis, NestJS, MedusaJS                               |
+| **Frontend**              | React.js, React Native (Expo), Redux, TanStack Query, HTML5, CSS3, Tailwind CSS, Bootstrap                                                                                 |
+| **DevOps**<br>            | Kubernetes (StatefulSets, Services, Networking), Docker, Database Replication, Linux Systems, Vim, Helm, Nginx, Grafana, InfluxDB, Gitlab CI/CD, Github actions, Terraform |
+| **Soft Skills**           | Leadership, Abstract Thinking, Team Collaboration, Documentation, Management                                                                                               |
 
 ---
 

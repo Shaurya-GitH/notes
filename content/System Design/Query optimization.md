@@ -1,0 +1,1 @@
+(DTO projection, Solving N+1 queries)
