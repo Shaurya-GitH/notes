@@ -1,1 +1,1 @@
-(mem0)
+(mem0, mempalace, obsidian)
