@@ -48,4 +48,4 @@ Above all, I learn by building real systems, take ownership of difficult problem
 
 ---
 
-[**GitHub**](https://github.com/Shaurya-GitH) | [**LinkedIn**](https://www.linkedin.com/in/shaurya-mehta-0b916a349/) | [**LeetCode**](https://leetcode.com/ShauryaLC)
+[**GitHub**](https://github.com/Shaurya-GitH) | [**LinkedIn**](https://www.linkedin.com/in/shaurya-mehta-0b916a349/) | [**X**](https://x.com/ShauryaCODE) | [**LeetCode**](https://leetcode.com/ShauryaLC)
