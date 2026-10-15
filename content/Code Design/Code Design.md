@@ -1,5 +1,3 @@
-1. [[OOPS]]
-2. [[SOLID]]
 ## Primary goal
 
 1. Maintainability
