@@ -29,7 +29,8 @@ export const HomeBeats = (() => {
           <div class="panel intro">
             <div class="tag">{fm?.title}</div>
             <h1>{home.headline}</h1>
-            <p>{home.tagline}</p>
+            {/* a separator never starts a line */}
+            <p>{home.tagline?.replaceAll(" · ", "\u00a0· ")}</p>
             <div class="actions">
               <a href="#beat-iris">Scroll to enter</a>
             </div>
