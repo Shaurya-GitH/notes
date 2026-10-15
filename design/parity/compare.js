@@ -45,9 +45,10 @@ async (page) => {
     },
   ]
   const browser = page.context().browser()
+  // reduced motion: no Lenis in the design and still ambient light, so shots are deterministic
   // a fresh context per shot: no state leaks between pages, and the theme is set before first paint
   const shoot = async (url, s, side) => {
-    const ctx = await browser.newContext({ viewport: { width: s.size[0], height: s.size[1] } })
+    const ctx = await browser.newContext({ viewport: { width: s.size[0], height: s.size[1] }, reducedMotion: "reduce" })
     await ctx.addInitScript((t) => localStorage.setItem("theme", t), s.theme)
     const p = await ctx.newPage()
     try {

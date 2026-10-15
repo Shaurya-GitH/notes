@@ -1,0 +1,160 @@
+// Footer, tablet and phone rules, reduced motion, Lenis and the search-sheet overrides.
+// Ported 1:1 from design/note-page/src/custom.css; keep this order of partials.
+
+/* ---------- footer ---------- */
+.page > #quartz-body footer {
+  margin-top: 4rem;
+  padding: 1.5rem 0 3rem;
+  border-top: 1px solid var(--lightgray);
+  color: var(--gray);
+  font-size: 0.9rem;
+  opacity: 1;
+}
+footer ul {
+  display: flex;
+  gap: 1.2rem;
+  list-style: none;
+  padding: 0;
+  margin: 0.4rem 0 0;
+}
+
+/* ---------- tablet and phone ---------- */
+@media (max-width: 1200px) {
+  .page > #quartz-body .sidebar.right {
+    padding: 0;
+    gap: 1rem;
+  }
+}
+@media (max-width: 800px) {
+  .page > #quartz-body .page-header {
+    margin-top: 1rem;
+  }
+  .page article {
+    font-size: 1.06rem;
+  }
+  .page > #quartz-body .sidebar.left {
+    padding: 1rem 0;
+    background: color-mix(in srgb, var(--light) 92%, transparent);
+    backdrop-filter: blur(4px);
+    border-bottom: 1px solid var(--lightgray);
+    gap: 0.75rem;
+  }
+  .page-title {
+    font-size: 1.35rem;
+  }
+  .explorer .explorer-content {
+    background: var(--light);
+    padding: 1.25rem 1.25rem 2rem;
+  }
+  /* secondary panels on phones: one summary line, details behind a disclosure */
+  .page > #quartz-body .sidebar.right {
+    flex-direction: column;
+  }
+  .page > #quartz-body .sidebar.right > * {
+    flex: none;
+    max-height: none;
+  }
+  .rail-summary {
+    display: flex !important;
+  }
+  .sidebar.right:not(.rail-open) > .graph,
+  .sidebar.right:not(.rail-open) > .backlinks {
+    display: none;
+  }
+  .graph > .graph-outer {
+    height: 13rem;
+  }
+  .search-layout {
+    grid-template-columns: 1fr;
+  }
+  .preview-container {
+    display: none;
+  }
+  .results-container {
+    border-right: 0;
+  }
+  body::after {
+    width: 92vw;
+  }
+}
+.rail-summary {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border-radius: 10px;
+  border: 1px solid var(--lightgray);
+  background: var(--surface);
+  color: var(--dark);
+  font: 500 0.95rem var(--bodyFont);
+  cursor: pointer;
+  text-align: left;
+}
+.rail-summary small {
+  font: 0.75rem var(--codeFont);
+  color: var(--gray);
+}
+.rail-summary svg {
+  transition: transform var(--duration-slow) var(--ease-expo);
+}
+.sidebar.right.rail-open .rail-summary svg {
+  transform: rotate(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::before,
+  body::after,
+  #quartz-root::before {
+    animation: none;
+  }
+  button.folder-icon svg,
+  .explorer-content .folder-outer,
+  .rail-summary svg {
+    transition: none;
+  }
+}
+
+/* PROTOTYPE ONLY: Lenis' required rules (Quartz build would import lenis.css) */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis-stopped {
+  overflow: hidden;
+}
+
+/* search: one sheet, not Quartz's stacked boxes */
+.search > .search-container > .search-space > * {
+  margin: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+.search > .search-container > .search-space > input {
+  border: 0;
+  border-bottom: 1px solid var(--lightgray);
+}
+.search > .search-container > .search-space > .search-layout {
+  border: 0;
+  overflow: hidden;
+  max-height: 60vh;
+}
+.search > .search-container > .search-space > .search-layout > div {
+  height: auto;
+  max-height: 60vh;
+  border-radius: 0;
+}
+.search > .search-container > .search-space > .search-layout > .results-container .result-card {
+  border-bottom: 0;
+  margin: 0 0 2px;
+  line-height: 1.3;
+}
+.search > .search-container > .search-space .search-layout mark {
+  background: var(--textHighlight);
+  color: inherit;
+  padding: 0 0.1em;
+}

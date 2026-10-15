@@ -7,9 +7,10 @@ export const sharedPageComponents: SharedLayout = {
   header: [],
   afterBody: [],
   footer: Component.Footer({
+    text: "Notes by Shaurya Mehta. Built with Quartz.",
     links: {
-      GitHub: "https://github.com/jackyzha0/quartz",
-      "Discord Community": "https://discord.gg/cRFFHYye7t",
+      GitHub: "https://github.com/Shaurya-GitH",
+      Home: "https://shaurya-gith.github.io/notes/",
     },
   }),
 }

@@ -1,0 +1,290 @@
+// Left sidebar and explorer: title, search button, theme and reader buttons, folder tree.
+// Ported 1:1 from design/note-page/src/custom.css; keep this order of partials.
+
+/* ---------- left sidebar ---------- */
+.page > #quartz-body .sidebar.left {
+  padding: 2.6rem 1.25rem 1.5rem 1.75rem;
+  gap: 1.25rem;
+}
+.page-title {
+  font: 600 1.7rem/1 var(--titleFont);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+.page-title a {
+  color: var(--dark);
+}
+.search > .search-button {
+  height: 2.4rem;
+  border-radius: 8px;
+  background: var(--surface);
+  border: 1px solid var(--lightgray);
+  color: var(--gray);
+  font-family: var(--bodyFont);
+  gap: 0.5rem;
+  padding: 0 0.75rem;
+  transition:
+    border-color var(--duration),
+    background-color var(--duration);
+}
+.search > .search-button:hover {
+  border-color: var(--gray);
+}
+.search > .search-button p {
+  font-size: 0.95rem;
+  margin: 0;
+}
+.search > .search-button svg {
+  width: 15px;
+  height: 15px;
+  stroke: currentColor;
+  flex: none;
+}
+.search > .search-button kbd {
+  margin-left: auto;
+  font: 0.72rem var(--codeFont);
+  color: var(--gray);
+}
+button.darkmode,
+button.readermode {
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  border: 1px solid transparent;
+  background: none;
+  color: var(--darkgray);
+  transition: background-color var(--duration);
+}
+button.darkmode:hover,
+button.readermode:hover {
+  background: var(--surface);
+}
+button.darkmode svg,
+button.readermode svg {
+  width: 18px;
+  height: 18px;
+  fill: var(--darkgray);
+}
+:root[reader-mode="on"] button.readermode {
+  background: var(--surface-2);
+}
+
+/* ---------- explorer ---------- */
+.explorer {
+  min-height: 0;
+  flex: 1 1 auto;
+}
+/* ---------- explorer scrolling: exactly one scroll area ----------
+   Stock Quartz nests two scroll areas and puts overscroll-behavior: contain on every list,
+   including each open folder's inner list. Those inner lists are overflow: hidden (for the
+   open/close animation), so they swallow the wheel and the explorer only scrolls when the
+   pointer is over a top-level folder. Here the outer list is the only scroller, it gets a
+   definite height from flexbox (no percentage max-height that Safari cannot resolve), and
+   inner lists pass the wheel through. */
+.explorer .explorer-content {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.explorer .explorer-content > ul.explorer-ul {
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: none;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  padding-right: 0.15rem;
+}
+.explorer .explorer-content .folder-outer > ul {
+  overscroll-behavior: auto;
+}
+
+/* fade the edges only when there is more to scroll in that direction */
+.explorer .explorer-content > ul.explorer-ul {
+  --fade-top: 0px;
+  --fade-bottom: 0px;
+  -webkit-mask: linear-gradient(
+    to bottom,
+    transparent 0,
+    #000 var(--fade-top),
+    #000 calc(100% - var(--fade-bottom)),
+    transparent 100%
+  );
+  mask: linear-gradient(
+    to bottom,
+    transparent 0,
+    #000 var(--fade-top),
+    #000 calc(100% - var(--fade-bottom)),
+    transparent 100%
+  );
+}
+.explorer .explorer-content > ul.explorer-ul.scrolled {
+  --fade-top: 28px;
+}
+.explorer .explorer-content > ul.explorer-ul.gradient-active {
+  --fade-bottom: 44px;
+}
+
+/* the scrollbar: a thin painted stroke that wakes up when you reach for it */
+.explorer .explorer-content > ul.explorer-ul {
+  --thumb: color-mix(in srgb, var(--gray) 42%, transparent);
+  --thumb-hover: var(--gray);
+  --thumb-active: var(--star);
+  scrollbar-width: thin;
+  scrollbar-color: var(--thumb) transparent;
+}
+.explorer:hover .explorer-content > ul.explorer-ul,
+.explorer:focus-within .explorer-content > ul.explorer-ul {
+  --thumb: var(--thumb-hover);
+}
+.explorer .explorer-content > ul.explorer-ul.dragging {
+  --thumb: var(--thumb-active);
+}
+/* Safari has no scrollbar-color: draw the same thumb with the WebKit pseudo-elements */
+@supports not (scrollbar-color: auto) {
+  .explorer .explorer-content > ul.explorer-ul::-webkit-scrollbar {
+    width: 10px;
+  }
+  .explorer .explorer-content > ul.explorer-ul::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .explorer .explorer-content > ul.explorer-ul::-webkit-scrollbar-thumb {
+    background: var(--thumb);
+    border: 3px solid transparent;
+    background-clip: padding-box;
+    border-radius: 999px;
+    min-height: 40px;
+  }
+  .explorer .explorer-content > ul.explorer-ul::-webkit-scrollbar-thumb:active {
+    background: var(--thumb-active);
+    background-clip: padding-box;
+  }
+}
+button.desktop-explorer {
+  gap: 0.3rem;
+  color: var(--gray);
+  padding: 0.25rem 0;
+}
+button.desktop-explorer h2 {
+  font: 500 0.7rem var(--codeFont);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gray);
+}
+.explorer-content {
+  margin-top: 0.35rem;
+  padding-right: 0.25rem;
+}
+.explorer-content ul {
+  display: grid;
+  gap: 1px;
+  /* the outer list fills the explorer's height so it can scroll; keep rows packed at the top
+     instead of letting the grid stretch them apart when the list is short */
+  align-content: start;
+}
+.explorer-content ul li > a {
+  display: block;
+  opacity: 1;
+  color: var(--darkgray);
+  font: 400 0.95rem/1.35 var(--bodyFont);
+  padding: 0.3rem 0.5rem;
+  border-radius: 6px;
+  transition:
+    background-color var(--duration-fast),
+    color var(--duration-fast);
+}
+.explorer-content ul li > a:hover {
+  background: var(--surface);
+  color: var(--dark);
+}
+.explorer-content ul li > a.active {
+  color: var(--secondary);
+  background: var(--surface-2);
+  font-weight: 600;
+  position: relative;
+}
+.explorer-content ul li > a.active {
+  padding-left: 1.35rem;
+}
+.explorer-content ul li > a.active::before {
+  /* a small painted star marks where you are */
+  content: "";
+  position: absolute;
+  left: 0.5rem;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  margin-top: -3.5px;
+  border-radius: 50%;
+  background: var(--star);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--star) 22%, transparent);
+}
+.folder-container {
+  gap: 0.15rem;
+  border-radius: 6px;
+}
+.folder-container > div {
+  flex: 1;
+  min-width: 0;
+}
+.folder-container div > a.folder-title {
+  display: block;
+  font: 600 0.95rem/1.35 var(--bodyFont);
+  color: var(--dark);
+  padding: 0.3rem 0.4rem 0.3rem 0.2rem;
+  border-radius: 6px;
+  transition: background-color var(--duration-fast);
+}
+.folder-container div > a.folder-title:hover {
+  background: var(--surface);
+  color: var(--dark);
+}
+/* the folder that holds the page you are on reads in ink colour even when closed */
+li:has(a.active) > .folder-container a.folder-title {
+  color: var(--secondary);
+}
+/* chevron is a real button (the one explorer fork): keyboard can open folders */
+button.folder-icon {
+  flex: none;
+  width: 1.6rem;
+  height: 1.6rem;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  color: var(--gray);
+  cursor: pointer;
+  transition: background-color var(--duration-fast);
+}
+button.folder-icon:hover {
+  background: var(--surface);
+  color: var(--dark);
+}
+button.folder-icon svg {
+  width: 11px;
+  height: 11px;
+  transform: rotate(-90deg);
+  transition: transform var(--duration-slow) var(--ease-expo);
+}
+.folder-container:has(+ .folder-outer.open) button.folder-icon svg {
+  transform: rotate(0deg);
+}
+.explorer-content .folder-outer {
+  transition-duration: var(--duration-slow);
+  transition-timing-function: var(--ease-expo);
+}
+.explorer-content .folder-outer > ul {
+  margin-left: 0.8rem;
+  padding-left: 0.85rem;
+  border-left: 1px solid var(--lightgray);
+}
+li:has(a.active) > .folder-outer > ul {
+  border-left-color: color-mix(in srgb, var(--star) 55%, var(--lightgray));
+}

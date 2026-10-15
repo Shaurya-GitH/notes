@@ -182,6 +182,8 @@ const cssVars = [
   "--dark",
   "--darkgray",
   "--codeFont",
+  "--bodyFont",
+  "--surface-2",
 ] as const
 
 let mermaidImport = undefined
@@ -219,21 +221,20 @@ document.addEventListener("nav", async () => {
       {} as Record<(typeof cssVars)[number], string>,
     )
 
-    const darkMode = document.documentElement.getAttribute("saved-theme") === "dark"
+    // Starry Notes theme: the same "base" theme in both modes, painted from the page's own tokens
     mermaid.initialize({
       startOnLoad: false,
       securityLevel: "loose",
-      theme: darkMode ? "dark" : "base",
+      theme: "base",
+      fontFamily: computedStyleMap["--bodyFont"],
       themeVariables: {
-        fontFamily: computedStyleMap["--codeFont"],
-        primaryColor: computedStyleMap["--light"],
-        primaryTextColor: computedStyleMap["--darkgray"],
+        primaryColor: computedStyleMap["--surface-2"],
+        primaryTextColor: computedStyleMap["--dark"],
         primaryBorderColor: computedStyleMap["--tertiary"],
-        lineColor: computedStyleMap["--darkgray"],
-        secondaryColor: computedStyleMap["--secondary"],
-        tertiaryColor: computedStyleMap["--tertiary"],
-        clusterBkg: computedStyleMap["--light"],
-        edgeLabelBackground: computedStyleMap["--highlight"],
+        lineColor: computedStyleMap["--gray"],
+        edgeLabelBackground: computedStyleMap["--light"],
+        tertiaryColor: computedStyleMap["--light"],
+        fontSize: "15px",
       },
     })
 

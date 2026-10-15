@@ -10,6 +10,9 @@ async (page) => {
     { name: "tls-light-desktop", proto: READER, build: BUILD + "Security/TLS", size: [1440, 900], theme: "light" },
     { name: "tls-dark-desktop", proto: READER, build: BUILD + "Security/TLS", size: [1440, 900], theme: "dark" },
     { name: "tls-light-phone", proto: READER, build: BUILD + "Security/TLS", size: [390, 844], theme: "light" },
+    { name: "docker-light-desktop", proto: READER, slug: "Docker/Introduction", build: BUILD + "Docker/Introduction", size: [1440, 900], theme: "light" },
+    { name: "docker-dark-phone", proto: READER, slug: "Docker/Introduction", build: BUILD + "Docker/Introduction", size: [390, 844], theme: "dark" },
+    { name: "spring-dark-desktop", proto: READER, slug: "Spring/Introduction", build: BUILD + "Spring/Introduction", size: [1440, 900], theme: "dark" },
   ]
   // [label, selector]: the first match on each side is compared
   const PROBES = [
@@ -19,7 +22,10 @@ async (page) => {
     ["search button", ".search > .search-button"],
     ["explorer header", ".explorer .desktop-explorer h2"],
     ["explorer list", ".explorer-content > ul.explorer-ul"],
-    ["explorer link", ".explorer-content a[data-for], .explorer-content li > a"],
+    ["explorer note", ".explorer-content li > a:not(.folder-title)"],
+    ["explorer folder", ".explorer-content a.folder-title"],
+    ["theme button", ".darkmode"],
+    ["reader button", ".readermode"],
     ["active note", ".explorer-content a.active"],
     ["centre column", ".center"],
     ["breadcrumbs", ".breadcrumb-container"],
@@ -32,6 +38,13 @@ async (page) => {
     ["list item", "article li"],
     ["internal link", "article a.internal"],
     ["callout", "article .callout"],
+    ["callout title", "article .callout-title-inner"],
+    ["inline code", "article p code, article li code"],
+    ["blockquote", "article blockquote:not(.callout)"],
+    ["table", "article .table-container"],
+    ["th", "article th"],
+    ["maths", "article .katex"],
+    ["strong", "article li > strong"],
     ["code block", "article pre"],
     ["hr", "article hr"],
     ["right rail", ".sidebar.right"],
@@ -44,13 +57,18 @@ async (page) => {
     "background-color", "padding", "margin", "border-radius", "border-top", "border-left", "text-transform", "opacity"]
   const browser = page.context().browser()
   const visit = async (url, pr) => {
-    const ctx = await browser.newContext({ viewport: { width: pr.size[0], height: pr.size[1] } })
+    const ctx = await browser.newContext({ viewport: { width: pr.size[0], height: pr.size[1] }, reducedMotion: "reduce" })
     await ctx.addInitScript((t) => localStorage.setItem("theme", t), pr.theme)
     const p = await ctx.newPage()
     await p.goto(url, { waitUntil: "commit", timeout: 60000 })
     await p.waitForFunction(() => document.readyState !== "loading", null, { timeout: 60000 })
     await p.evaluate(() => document.fonts && document.fonts.ready)
     await p.waitForTimeout(1500)
+    // the design swaps its showcase notes in place, so open the wanted one through its own link
+    if (url === pr.proto && pr.slug) {
+      await p.evaluate((slug) => document.querySelector(`a[data-target="${slug}"]`).click(), pr.slug)
+      await p.waitForTimeout(800)
+    }
     await p.evaluate(() => scrollTo({ top: 0, behavior: "instant" }))
     await p.waitForTimeout(300)
     const data = await p.evaluate(([probes, props]) => {
@@ -84,7 +102,7 @@ async (page) => {
       if (off || Object.keys(st).length) diffs.push({ label, design: x.box, buildDelta: off ? box : undefined, styles: st })
     }
     // pixel diff, computed in a blank page from the two screenshots
-    const cmp = await browser.newContext({ viewport: { width: pr.size[0], height: pr.size[1] } })
+    const cmp = await browser.newContext({ viewport: { width: pr.size[0], height: pr.size[1] }, reducedMotion: "reduce" })
     const cp = await cmp.newPage()
     const ratio = await cp.evaluate(async ([A, B]) => {
       const load = (s) => new Promise((r) => { const i = new Image(); i.onload = () => r(i); i.src = "data:image/png;base64," + s })

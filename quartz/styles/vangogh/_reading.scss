@@ -1,0 +1,389 @@
+// The reading column: type, links, lists, callouts, code, tables, maths and mermaid.
+// Ported 1:1 from design/note-page/src/custom.css; keep this order of partials.
+
+/* ---------- reading column ---------- */
+.page > #quartz-body .center {
+  max-width: 43rem;
+  margin-inline: auto;
+}
+.page > #quartz-body .page-header {
+  margin-top: 4.5rem;
+}
+.page article {
+  font-size: 1.125rem;
+  line-height: 1.72;
+}
+.page article p,
+.page article li {
+  max-width: 66ch;
+}
+.page article p {
+  margin: 0.9em 0;
+}
+.page article > p:first-child > strong:only-child {
+  /* Notes that open with a bold expansion (TLS -> Transport Layer Security) read as a dek */
+  display: block;
+  font: italic 400 1.35rem/1.35 var(--headerFont);
+  color: var(--gray);
+}
+.page article p > strong,
+.page article li > strong {
+  color: var(--dark);
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--headerFont);
+  color: var(--dark);
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  text-wrap: balance;
+}
+h1.article-title {
+  font-size: clamp(2.2rem, 4vw, 3rem);
+  line-height: 1.08;
+  font-weight: 400;
+  margin: 0.4rem 0 0.6rem;
+  letter-spacing: -0.015em;
+}
+article h2 {
+  font-size: 1.65rem;
+  line-height: 1.2;
+  margin: 2.4em 0 0.4em;
+}
+article h3 {
+  font-size: 1.3rem;
+  line-height: 1.25;
+  margin: 1.9em 0 0.3em;
+}
+article h4 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 1.6em 0 0.2em;
+}
+article h2 > a[role="anchor"],
+article h3 > a[role="anchor"],
+article h4 > a[role="anchor"] {
+  color: var(--gray);
+  background: none;
+}
+article ul,
+article ol {
+  padding-left: 1.4em;
+}
+article li {
+  margin: 0.25em 0;
+}
+article li::marker {
+  color: var(--tertiary);
+}
+article ol > li::marker {
+  font: 600 0.95em var(--headerFont);
+}
+.content-meta {
+  font: 0.82rem var(--codeFont);
+  color: var(--gray);
+  letter-spacing: 0.02em;
+  margin: 0;
+}
+.breadcrumb-container {
+  font-size: 0.9rem;
+  margin: 0;
+  gap: 0.3rem;
+}
+.breadcrumb-element a {
+  color: var(--gray);
+  font-weight: 400;
+}
+.breadcrumb-element p {
+  color: var(--lightgray);
+  margin: 0 0.35rem;
+}
+.tags {
+  gap: 0.4rem;
+}
+a.internal.tag-link {
+  font: 0.72rem var(--codeFont);
+  height: 1.3rem;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 0.5rem;
+  border-radius: 999px;
+  background: var(--highlight);
+  text-decoration: none;
+}
+
+/* links: underlined like a book, not boxed. Internal links keep a faint ground on hover only. */
+a {
+  font-weight: 500;
+  transition: color var(--duration) ease;
+}
+article a.internal,
+article a.external {
+  background: none;
+  padding: 0;
+  border-radius: 0;
+  text-decoration: underline;
+  text-decoration-color: var(--link-line);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
+  transition:
+    color var(--duration),
+    text-decoration-color var(--duration),
+    background-color var(--duration);
+}
+article a.internal:hover,
+article a.external:hover {
+  color: var(--secondary);
+  text-decoration-color: currentColor;
+  background-color: var(--highlight);
+}
+/* links to notes that are not written yet (class set by a small script; see notes) */
+article a.internal.unwritten {
+  color: var(--gray);
+  text-decoration-style: dashed;
+  text-decoration-color: var(--gray);
+  cursor: help;
+}
+:focus-visible {
+  outline: 2px solid var(--secondary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.text-highlight {
+  background: linear-gradient(transparent 12%, var(--textHighlight) 12% 88%, transparent 88%);
+  color: inherit;
+  padding: 0 0.12em;
+  border-radius: 2px;
+}
+::selection {
+  background: var(--textHighlight);
+  color: var(--dark);
+}
+
+/* a horizontal rule is one dry brush stroke */
+article hr {
+  border: 0;
+  height: 10px;
+  margin: 2.6rem 0;
+  background: var(--lightgray);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 10' preserveAspectRatio='none'%3E%3Cpath d='M2 6c60-3 140-4 230-3s200 3 280 1c40-1 70-2 86 0l-1 3c-90 1-210 2-330 1S30 7 3 8z'/%3E%3C/svg%3E")
+    center / 100% 100% no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 10' preserveAspectRatio='none'%3E%3Cpath d='M2 6c60-3 140-4 230-3s200 3 280 1c40-1 70-2 86 0l-1 3c-90 1-210 2-330 1S30 7 3 8z'/%3E%3C/svg%3E")
+    center / 100% 100% no-repeat;
+}
+
+blockquote:not(.callout) {
+  margin: 1.4rem 0;
+  padding: 0.2rem 0 0.2rem 1.2rem;
+  border-left: 3px solid var(--lightgray);
+  color: var(--darkgray);
+  font-style: italic;
+}
+
+/* ---------- callouts: Van Gogh hues per type, always with icon and label ---------- */
+.callout {
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  border-left-width: 4px;
+  background: var(--bg);
+  padding: 0.15rem 1.1rem;
+  margin: 1.5rem 0;
+}
+.callout[data-callout] {
+  --color: var(--c-info);
+}
+.callout[data-callout="info"],
+.callout[data-callout="todo"],
+.callout[data-callout="abstract"],
+.callout[data-callout="note"] {
+  --color: var(--c-info);
+}
+.callout[data-callout="tip"],
+.callout[data-callout="success"] {
+  --color: var(--c-tip);
+}
+.callout[data-callout="question"] {
+  --color: var(--c-question);
+}
+.callout[data-callout="warning"],
+.callout[data-callout="caution"] {
+  --color: var(--c-warning);
+}
+.callout[data-callout="failure"],
+.callout[data-callout="danger"],
+.callout[data-callout="bug"] {
+  --color: var(--c-danger);
+}
+.callout[data-callout="example"] {
+  --color: var(--c-example);
+}
+.callout[data-callout="quote"] {
+  --color: var(--c-quote);
+}
+.callout[data-callout] {
+  --border: color-mix(in srgb, var(--color) 32%, transparent);
+  --bg: color-mix(in srgb, var(--color) 7%, transparent);
+}
+.callout .callout-title {
+  color: var(--color);
+  font-family: var(--bodyFont);
+  gap: 0.55rem;
+  padding: 0.6rem 0;
+  align-items: flex-start;
+}
+.callout .callout-title-inner,
+.callout .callout-title-inner p {
+  font-weight: 600;
+  color: var(--color);
+  margin: 0;
+  line-height: 1.5;
+}
+.callout .callout-title-inner p {
+  max-width: none;
+}
+/* a single-line definition callout keeps its text calm: label in colour, sentence in body ink */
+.callout:not(:has(.callout-content)) .callout-title-inner p {
+  font-weight: 400;
+  color: var(--darkgray);
+}
+.callout .callout-icon {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin-top: 0.22rem;
+  background-color: var(--color);
+}
+.callout .callout-content {
+  color: var(--darkgray);
+  padding-bottom: 0.4rem;
+}
+
+/* ---------- code ---------- */
+code {
+  font-family: var(--codeFont);
+  font-size: 0.86em;
+  background: var(--surface);
+  color: var(--dark);
+  padding: 0.1em 0.35em;
+  border-radius: 5px;
+}
+pre {
+  border-radius: 10px;
+  border: 1px solid var(--lightgray);
+  background: var(--surface) !important;
+}
+pre > code,
+pre > code > [data-line] {
+  background: none;
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+figure[data-rehype-pretty-code-figure] > [data-rehype-pretty-code-title] {
+  font: 0.78rem var(--codeFont);
+  color: var(--gray);
+  background: var(--surface-2);
+  border: 1px solid var(--lightgray);
+  border-bottom: 0;
+  border-radius: 10px 10px 0 0;
+}
+.clipboard-button {
+  background: var(--light);
+  border-color: var(--lightgray);
+  color: var(--darkgray);
+  border-radius: 6px;
+}
+.clipboard-button:focus-visible {
+  opacity: 1;
+  outline: 2px solid var(--secondary);
+}
+
+/* ---------- tables ---------- */
+.table-container {
+  border: 1px solid var(--lightgray);
+  border-radius: 10px;
+  margin: 1.5rem 0;
+}
+.table-container > table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.55;
+}
+th {
+  font: 600 0.95rem var(--headerFont);
+  color: var(--dark);
+  background: var(--surface);
+  border-bottom: 1px solid var(--lightgray);
+  padding: 0.6rem 0.9rem;
+}
+td {
+  line-height: 1.55;
+  padding: 0.6rem 0.9rem;
+  vertical-align: top;
+  border-top: 1px solid color-mix(in srgb, var(--lightgray) 60%, transparent);
+}
+tr:first-child > td {
+  border-top: 0;
+}
+article img {
+  border-radius: 8px;
+}
+
+/* ---------- maths ---------- */
+// article-scoped: KaTeX's own stylesheet loads after ours and sets .katex to 1.21em
+article .katex {
+  font-size: 1.05em;
+  color: var(--dark);
+}
+article .katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  margin: 1.1rem 0;
+  padding: 0.2rem 0;
+}
+
+/* ---------- mermaid ---------- */
+pre:has(> code.mermaid) {
+  position: relative;
+  background: var(--surface) !important;
+  border: 1px solid var(--lightgray);
+  padding: 1.25rem 1rem;
+  text-align: center;
+}
+pre > code.mermaid {
+  display: inline-block;
+  background: none;
+}
+pre > .expand-button {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border-radius: 6px;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--darkgray);
+  opacity: 0;
+  transition: opacity var(--duration);
+  cursor: pointer;
+}
+pre:hover > .expand-button,
+pre > .expand-button:focus-visible {
+  opacity: 1;
+}
+pre > .expand-button svg {
+  fill: currentColor;
+}
+#mermaid-container {
+  display: none;
+}

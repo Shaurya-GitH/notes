@@ -12,6 +12,8 @@ document.addEventListener("nav", () => {
     isReaderMode = !isReaderMode
     const newMode = isReaderMode ? "on" : "off"
     document.documentElement.setAttribute("reader-mode", newMode)
+    for (const b of document.getElementsByClassName("readermode"))
+      b.setAttribute("aria-pressed", String(isReaderMode))
     emitReaderModeChangeEvent(newMode)
   }
 
@@ -22,4 +24,6 @@ document.addEventListener("nav", () => {
 
   // Set initial state
   document.documentElement.setAttribute("reader-mode", isReaderMode ? "on" : "off")
+  for (const b of document.getElementsByClassName("readermode"))
+    b.setAttribute("aria-pressed", String(isReaderMode))
 })

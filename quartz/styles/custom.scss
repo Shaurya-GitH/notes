@@ -2,3 +2,9 @@
 
 // Starry Notes (Van Gogh revamp). Each partial ports one part of the design artifacts in design/.
 @use "./vangogh/tokens";
+@use "./vangogh/ambient";
+@use "./vangogh/reading";
+@use "./vangogh/sidebar";
+@use "./vangogh/rail";
+@use "./vangogh/overlays";
+@use "./vangogh/responsive";

@@ -1,0 +1,91 @@
+// Sunlit ambient light: window slats, an almond branch shadow and drifting petals (CSS only).
+// Ported 1:1 from design/note-page/src/custom.css; keep this order of partials.
+
+/* ---------- ambient light: window slats and an almond branch shadow (CSS only) ---------- */
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  pointer-events: none;
+  z-index: 0;
+}
+body::before {
+  inset: -20vh -20vw;
+  background: repeating-linear-gradient(-32deg, transparent 0 46px, var(--ambient-light) 46px 92px);
+  filter: blur(14px);
+  -webkit-mask: radial-gradient(70% 60% at 82% 18%, #000 0%, transparent 72%);
+  mask: radial-gradient(70% 60% at 82% 18%, #000 0%, transparent 72%);
+  animation: slats 26s ease-in-out infinite alternate;
+}
+body::after {
+  top: -4vh;
+  right: -6vw;
+  width: min(48vw, 760px);
+  aspect-ratio: 9 / 7;
+  background: var(--ambient-shade);
+  -webkit-mask: url("static/vg/branch.svg") no-repeat top right / contain;
+  mask: url("static/vg/branch.svg") no-repeat top right / contain;
+  filter: blur(5px);
+  transform-origin: 100% 0;
+  animation: sway 14s ease-in-out infinite alternate;
+}
+@keyframes slats {
+  to {
+    transform: translate3d(-2.5%, 1.5%, 0) skewX(-2deg);
+  }
+}
+@keyframes sway {
+  from {
+    transform: rotate(-1.2deg);
+  }
+  to {
+    transform: rotate(1.6deg) translateY(4px);
+  }
+}
+/* falling petal shadows, after sunlit.place's leaves: a few soft ovals drifting down */
+#quartz-root::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0.9;
+  background-image:
+    radial-gradient(9px 5px at 50% 50%, var(--ambient-shade), transparent 70%),
+    radial-gradient(7px 4px at 50% 50%, var(--ambient-shade), transparent 70%),
+    radial-gradient(10px 6px at 50% 50%, var(--ambient-shade), transparent 70%),
+    radial-gradient(6px 4px at 50% 50%, var(--ambient-shade), transparent 70%);
+  background-size:
+    330px 520px,
+    410px 610px,
+    520px 700px,
+    290px 460px;
+  background-position:
+    72% 0,
+    88% 120px,
+    64% 300px,
+    94% 40px;
+  filter: blur(1.5px);
+  -webkit-mask: linear-gradient(to left, #000 0%, #000 30%, transparent 62%);
+  mask: linear-gradient(to left, #000 0%, #000 30%, transparent 62%);
+  animation: petals 38s linear infinite;
+}
+@keyframes petals {
+  to {
+    background-position:
+      calc(72% - 60px) 1040px,
+      calc(88% - 90px) 1340px,
+      calc(64% - 40px) 1700px,
+      calc(94% - 70px) 960px;
+  }
+}
+#quartz-root {
+  position: relative;
+  z-index: 1;
+}
+:root[reader-mode="on"] body::before,
+:root[reader-mode="on"] body::after,
+:root[reader-mode="on"] #quartz-root::before {
+  opacity: 0;
+  transition: opacity var(--duration-slow);
+}
