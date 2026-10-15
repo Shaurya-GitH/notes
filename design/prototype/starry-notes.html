@@ -1,0 +1,1665 @@
+<title>Starry Notes Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  rel="stylesheet"
+  href="https://fonts.googleapis.com/css2?family=Caveat&family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&family=JetBrains+Mono:wght@400;500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap"
+/>
+<style>
+  /* Layout: a fixed painted stage behind everything, the explorer pinned left, and the story scrolling over both. Deliberately single-theme: Starry Night. */
+  :root {
+    color-scheme: dark;
+    --night: #041833;
+    --night-2: #062645;
+    --prussian: #09395b;
+    --teal-deep: #165773;
+    --sage: #8a9f85;
+    --body: #d6cfb6;
+    --cream: #ece3c8;
+    --chrome: #e8c06a;
+    --teal: #6fb3bd;
+    --moon: #fff3c4;
+    --display: "Fraunces", "Iowan Old Style", Georgia, serif;
+    --serif: "Source Serif 4", "Iowan Old Style", Georgia, serif;
+    --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+    --hand: "Caveat", "Bradley Hand", cursive;
+    --side: 300px;
+    --gutter: clamp(16px, 4vw, 56px);
+    --radius: 14px;
+    --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+  .lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+  .lenis-stopped {
+    overflow: hidden;
+  }
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    background: var(--night);
+    color: var(--body);
+    font: 400 18px/1.65 var(--serif);
+    margin: 0;
+  }
+  a {
+    color: var(--chrome);
+    text-underline-offset: 3px;
+  }
+  :focus-visible {
+    outline: 2px solid var(--chrome);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  .skip {
+    position: fixed;
+    left: 12px;
+    top: calc(env(safe-area-inset-top, 0px) + 12px);
+    z-index: 50;
+    background: var(--night);
+    color: var(--chrome);
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--teal-deep);
+    font: 500 14px var(--mono);
+    transform: translateY(-160%);
+  }
+  .skip:focus {
+    transform: none;
+  }
+
+  /* ---------- stage ---------- */
+  .stage {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    background: var(--night);
+  }
+  .layer {
+    position: absolute;
+    inset: 0;
+    will-change: transform, opacity;
+  }
+  .layer img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  #eye img {
+    object-position: 60% 50%;
+  }
+  #iris {
+    position: absolute;
+    border-radius: 50%;
+    -webkit-mask: radial-gradient(circle, #000 48%, transparent 70%);
+    mask: radial-gradient(circle, #000 48%, transparent 70%);
+    background-repeat: no-repeat;
+    animation: iris-turn 90s linear infinite;
+    pointer-events: none;
+  }
+  @keyframes iris-turn {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  #sky,
+  #field,
+  #sky2 {
+    opacity: 0;
+  }
+  #sky img,
+  #sky2 img {
+    animation: breathe 38s ease-in-out infinite alternate;
+  }
+  @keyframes breathe {
+    from {
+      transform: scale(1);
+    }
+    to {
+      transform: scale(1.05) translate(-0.6%, 0.4%);
+    }
+  }
+  canvas.paint {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+  #flow {
+    mix-blend-mode: screen;
+    opacity: 0;
+  }
+  #strands {
+    mix-blend-mode: screen;
+    opacity: 0;
+  }
+  #rings {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  #crows {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+  .crow {
+    opacity: 0;
+  }
+  .crow path {
+    animation: flap 0.5s ease-in-out infinite alternate;
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+  @keyframes flap {
+    to {
+      transform: scaleY(0.45);
+    }
+  }
+  #scrim {
+    background: var(--night);
+    opacity: 0;
+  }
+  .grain {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.09;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* ---------- explorer ---------- */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: var(--side);
+    z-index: 20;
+    padding: calc(env(safe-area-inset-top, 0px) + 32px) 24px 24px;
+    background: color-mix(in srgb, var(--night) 84%, transparent);
+    border-right: 1px solid color-mix(in srgb, var(--teal-deep) 60%, transparent);
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    overflow-y: auto;
+  }
+  .brand {
+    font: 600 28px/1 var(--display);
+    color: var(--cream);
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+  .tag {
+    font: 500 11px/1.4 var(--mono);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--sage);
+  }
+  .search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 12px;
+    border-radius: 8px;
+    background: var(--night-2);
+    border: 1px solid var(--teal-deep);
+    color: var(--sage);
+    font-size: 15px;
+  }
+  .search svg {
+    flex: none;
+  }
+  .search kbd {
+    margin-left: auto;
+    font: 12px var(--mono);
+    color: var(--sage);
+  }
+  .explorer {
+    display: grid;
+    gap: 2px;
+  }
+  .explorer a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 6px 8px;
+    border-radius: 6px;
+    color: var(--body);
+    text-decoration: none;
+    font-size: 16px;
+    line-height: 1.3;
+  }
+  .explorer a span:last-child {
+    font: 12px var(--mono);
+    color: var(--sage);
+    font-variant-numeric: tabular-nums;
+  }
+  .explorer a:hover {
+    background: var(--night-2);
+    color: var(--cream);
+  }
+  .proto-note {
+    margin-top: auto;
+    font: 13px/1.5 var(--serif);
+    color: var(--sage);
+  }
+  .topbar {
+    display: none;
+  }
+
+  /* ---------- story ---------- */
+  main {
+    position: relative;
+    z-index: 10;
+    margin-left: var(--side);
+    overflow-x: clip;
+  }
+  .beat {
+    position: relative;
+    padding-inline: var(--gutter);
+  }
+  #beat-eye {
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    padding-block: 0 56px;
+  }
+  .panel {
+    background: color-mix(in srgb, var(--night) 86%, transparent);
+    border: 1px solid color-mix(in srgb, var(--teal-deep) 70%, transparent);
+    border-radius: var(--radius);
+    padding: 28px 32px;
+    backdrop-filter: blur(2px);
+  }
+  .intro {
+    max-width: 24rem;
+    display: grid;
+    gap: 12px;
+  }
+  .intro h1 {
+    font: 400 clamp(30px, 3.4vw, 46px)/1.12 var(--display);
+    color: var(--cream);
+    margin: 0;
+    text-wrap: balance;
+    letter-spacing: -0.01em;
+  }
+  .intro p {
+    margin: 0;
+    color: var(--body);
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: center;
+    font-size: 16px;
+  }
+  .actions a:last-child {
+    color: var(--sage);
+  }
+  #beat-iris {
+    height: 170vh;
+  }
+  .sticky {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: grid;
+    place-items: center;
+  }
+  .quote {
+    font: italic 300 clamp(28px, 3.3vw, 48px)/1.22 var(--display);
+    color: var(--cream);
+    max-width: 22ch;
+    text-align: center;
+    margin: 0;
+    text-wrap: balance;
+    text-shadow:
+      0 2px 24px rgba(2, 10, 23, 0.95),
+      0 0 2px rgba(2, 10, 23, 0.8);
+  }
+  #beat-world {
+    height: 140vh;
+  }
+  #beat-world .sticky {
+    place-items: end end;
+    padding-block: 0 64px;
+  }
+  .label {
+    max-width: 30rem;
+    display: grid;
+    gap: 6px;
+  }
+  .label h2 {
+    font: 400 clamp(22px, 2.2vw, 30px)/1.25 var(--display);
+    color: var(--cream);
+    margin: 0;
+    text-wrap: balance;
+  }
+  #about {
+    padding-block: 12vh 18vh;
+  }
+  .reading {
+    max-width: 46rem;
+    display: grid;
+    gap: 18px;
+  }
+  .reading h2 {
+    font: 400 clamp(32px, 3vw, 42px)/1.1 var(--display);
+    color: var(--cream);
+    margin: 0;
+  }
+  .reading p {
+    margin: 0;
+    max-width: 65ch;
+  }
+  .reading ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 14px;
+  }
+  .reading li {
+    max-width: 65ch;
+  }
+  .reading b {
+    color: var(--chrome);
+    font-weight: 600;
+  }
+  .margin {
+    font: 400 26px/1.1 var(--hand);
+    color: var(--teal);
+  }
+
+  /* ---------- spiral ---------- */
+  #spiral {
+    height: 300vh;
+    padding-inline: 0;
+  }
+  #spiral .sticky {
+    place-items: stretch;
+  }
+  .wipe {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      120% 90% at 60% 55%,
+      color-mix(in srgb, var(--prussian) 70%, transparent),
+      color-mix(in srgb, var(--night) 94%, transparent)
+    );
+    clip-path: circle(0% at 60% 55%);
+  }
+  .spiral-head {
+    position: absolute;
+    left: var(--gutter);
+    top: 10vh;
+    z-index: 2;
+    max-width: 26rem;
+    display: grid;
+    gap: 8px;
+  }
+  .spiral-head h2 {
+    font: 400 clamp(30px, 3vw, 42px)/1.1 var(--display);
+    color: var(--cream);
+    margin: 0;
+  }
+  .spiral-head p {
+    margin: 0;
+    color: var(--body);
+  }
+  .helix {
+    position: absolute;
+    inset: 0;
+  }
+  .helix ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    left: 62%;
+    top: 50%;
+    transform: rotate(-7deg);
+  }
+  .card {
+    position: absolute;
+    width: 290px;
+    height: 196px;
+    margin: -98px 0 0 -145px;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--teal-deep) 90%, transparent);
+    background-size: cover;
+    display: flex;
+    align-items: flex-end;
+    text-decoration: none;
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+  }
+  .card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--night);
+    opacity: var(--dim, 0);
+    pointer-events: none;
+  }
+  /* the card's twin sits under its label, and the depth wash (::after) still covers both */
+  .card canvas.twin {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+  .card .pin {
+    position: absolute;
+    width: 0;
+    height: 0;
+  }
+  .card .pin.tl {
+    left: 0;
+    top: 0;
+  }
+  .card .pin.tr {
+    right: 0;
+    top: 0;
+  }
+  .card .pin.bl {
+    left: 0;
+    bottom: 0;
+  }
+  .card span {
+    position: relative;
+    display: grid;
+    gap: 2px;
+    width: 100%;
+    padding: 12px 14px;
+    background: color-mix(in srgb, var(--night) 84%, transparent);
+  }
+  .card strong {
+    font: 600 18px/1.2 var(--display);
+    color: var(--cream);
+  }
+  .card em {
+    font: normal 12px var(--mono);
+    color: var(--sage);
+  }
+  .card:hover strong,
+  .card:focus-visible strong {
+    color: var(--chrome);
+  }
+  .mode {
+    position: absolute;
+    left: var(--gutter);
+    bottom: 8vh;
+    z-index: 2;
+    font: 13px var(--mono);
+    color: var(--sage);
+  }
+  footer {
+    position: relative;
+    z-index: 10;
+    margin-left: var(--side);
+    padding: 48px var(--gutter) 64px;
+    font-size: 15px;
+    color: var(--sage);
+    border-top: 1px solid color-mix(in srgb, var(--teal-deep) 50%, transparent);
+    background: var(--night);
+  }
+  footer p {
+    max-width: 65ch;
+    margin: 0 0 8px;
+  }
+
+  /* ---------- cursor: a painted brush (after Buttermax's reactive cursor) ----------
+     The brush paints through the plate on stage to its twin in an inverted universe. It lives inside the
+     stage, under the scrim, so reading sections stay dark and text is never covered. */
+  html.brush,
+  html.brush * {
+    cursor: none !important;
+  }
+  .cursor {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 30;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 150ms;
+  }
+  .cursor.on {
+    opacity: 1;
+  }
+  .cursor > * {
+    position: absolute;
+    left: 0;
+    top: 0;
+    border-radius: 50%;
+  }
+  /* the star: a hot core in Starry Night's chrome yellow, outlined in night so it holds on the gold field */
+  .cursor .core {
+    width: 10px;
+    height: 10px;
+    margin: -5px 0 0 -5px;
+    background: radial-gradient(circle, var(--moon) 0 35%, var(--chrome) 60%);
+    box-shadow:
+      0 0 0 1.5px var(--night),
+      0 0 14px 3px color-mix(in srgb, var(--chrome) 55%, transparent);
+    transition: transform 220ms var(--ease-expo);
+  }
+  /* its halo: the dashed swirl Van Gogh rings his stars with; it lags the core and opens over anything clickable */
+  .cursor .halo {
+    width: 30px;
+    height: 30px;
+    margin: -15px 0 0 -15px;
+  }
+  .cursor .halo i {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 2px dashed var(--chrome);
+    outline: 1.5px solid color-mix(in srgb, var(--night) 70%, transparent);
+    outline-offset: -3.5px;
+    opacity: 0.75;
+    animation: halo-turn 9s linear infinite;
+    transition:
+      transform 320ms var(--ease-expo),
+      opacity 200ms,
+      border-color 200ms;
+  }
+  @keyframes halo-turn {
+    to {
+      rotate: 360deg;
+    }
+  }
+  .cursor.link .halo i {
+    transform: scale(1.9);
+    opacity: 1;
+    border-color: var(--moon);
+    animation-duration: 3s;
+  }
+  .cursor.link .core {
+    transform: scale(0.6);
+  }
+
+  /* ---------- narrow ---------- */
+  @media (max-width: 860px) {
+    :root {
+      --side: 0px;
+    }
+    .topbar {
+      display: flex;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 25;
+      align-items: center;
+      gap: 12px;
+      padding: calc(env(safe-area-inset-top, 0px) + 10px) 16px 10px;
+      background: color-mix(in srgb, var(--night) 88%, transparent);
+      border-bottom: 1px solid color-mix(in srgb, var(--teal-deep) 50%, transparent);
+    }
+    .topbar button {
+      background: none;
+      border: 0;
+      color: var(--cream);
+      padding: 6px;
+      cursor: pointer;
+      display: grid;
+    }
+    .topbar .brand {
+      font-size: 22px;
+    }
+    .sidebar {
+      width: min(320px, 86vw);
+      transform: translateX(-100%);
+      transition: transform 240ms var(--ease-expo);
+      padding-top: calc(env(safe-area-inset-top, 0px) + 72px);
+    }
+    .sidebar.open {
+      transform: none;
+    }
+    .sidebar > .brand {
+      display: none;
+    }
+    #beat-eye {
+      align-items: flex-start;
+      padding-block: 76px 32px;
+    }
+    .panel {
+      padding: 22px;
+    }
+    .helix ul {
+      left: 50%;
+      top: 58%;
+    }
+    .card {
+      width: 190px;
+      height: 132px;
+      margin: -66px 0 0 -95px;
+    }
+    .spiral-head {
+      top: 12vh;
+    }
+  }
+
+  /* ---------- reduced motion ---------- */
+  @media (prefers-reduced-motion: reduce) {
+    #iris,
+    #sky img,
+    #sky2 img,
+    .crow path {
+      animation: none;
+    }
+    #beat-iris,
+    #beat-world {
+      height: auto;
+    }
+    #beat-iris .sticky,
+    #beat-world .sticky {
+      position: static;
+      height: auto;
+      padding-block: 18vh;
+    }
+    #spiral {
+      height: auto;
+    }
+    #spiral .sticky {
+      position: static;
+      height: auto;
+      display: block;
+      padding-block: 12vh;
+    }
+    .spiral-head,
+    .mode {
+      position: static;
+      padding-inline: var(--gutter);
+      margin-bottom: 24px;
+    }
+    .helix {
+      position: static;
+      padding-inline: var(--gutter);
+    }
+    .helix ul {
+      position: static;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+      transform: none;
+    }
+    .card {
+      position: relative;
+      margin: 0;
+      width: auto;
+      transform: none !important;
+      opacity: 1 !important;
+    }
+    .wipe {
+      clip-path: none;
+    }
+    .sidebar {
+      transition: none;
+    }
+  }
+</style>
+
+<a class="skip" href="#about">Skip intro</a>
+
+<div class="stage" aria-hidden="true">
+  <div class="layer" id="eye">
+    <img src="img/eye.jpg" alt="" />
+    <div id="iris"></div>
+  </div>
+  <svg id="rings" viewBox="-500 -500 1000 1000" preserveAspectRatio="none"></svg>
+  <div class="layer" id="sky"><img src="img/sky.jpg" alt="" /></div>
+  <div class="layer" id="field"><img src="img/field.jpg" alt="" /></div>
+  <div class="layer" id="sky2"><img src="img/sky.jpg" alt="" /></div>
+  <canvas class="paint" id="flow"></canvas>
+  <canvas class="paint" id="strands"></canvas>
+  <svg id="crows" viewBox="0 0 1000 560" preserveAspectRatio="xMidYMid slice"></svg>
+  <canvas class="paint" id="reveal"></canvas>
+  <div class="layer" id="scrim"></div>
+  <div class="grain"></div>
+</div>
+
+<div class="topbar">
+  <button
+    type="button"
+    id="menu"
+    aria-controls="explorer"
+    aria-expanded="false"
+    aria-label="Open explorer"
+  >
+    <svg
+      width="22"
+      height="22"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+    >
+      <path d="M4 6h16M4 12h16M4 18h16" />
+    </svg>
+  </button>
+  <p class="brand">Notes</p>
+</div>
+
+<nav class="sidebar" id="explorer" aria-label="Explorer">
+  <p class="brand">Notes</p>
+  <div class="search" aria-hidden="true">
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+    >
+      <circle cx="11" cy="11" r="7" />
+      <path d="m20 20-3.5-3.5" />
+    </svg>
+    Search<kbd>⌘K</kbd>
+  </div>
+  <div class="tag">Explorer</div>
+  <div class="explorer" id="folders"></div>
+  <p class="proto-note">
+    Prototype of the home page. Folder links open the live notes. The artwork is AI-generated in Van
+    Gogh's style.
+  </p>
+</nav>
+
+<main>
+  <section class="beat" id="beat-eye" aria-label="Introduction">
+    <div class="panel intro">
+      <div class="tag">Shaurya Mehta</div>
+      <h1>Full-stack engineer building agents that use tools, remember and act.</h1>
+      <p>Agentic AI · Full stack · DevOps · Security</p>
+      <div class="actions">
+        <a href="#beat-iris">Scroll to enter</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="beat" id="beat-iris" aria-label="Philosophy">
+    <div class="sticky">
+      <p class="quote">
+        “I build agents: systems that use tools, hold context, remember and act on someone's
+        behalf.”
+      </p>
+    </div>
+  </section>
+
+  <section class="beat" id="beat-world" aria-label="Who I am">
+    <div class="sticky">
+      <div class="panel label">
+        <div class="tag" style="color: var(--chrome)">Who I am</div>
+        <h2>I enjoy hard problems more than any single technology.</h2>
+      </div>
+    </div>
+  </section>
+
+  <section class="beat" id="about" aria-labelledby="about-h">
+    <div class="panel reading">
+      <h2 id="about-h">Who I Am</h2>
+      <p>
+        I'm a full-stack engineer who enjoys hard problems more than any single technology. I like
+        understanding a system end to end, finding the bottleneck, and building something that makes
+        a measurable difference. These days that covers four things: I do AI, I do full stack, I do
+        DevOps, and I do security.
+      </p>
+      <ul>
+        <li>
+          <b>Porter AI.</b> A voice-and-text shopping agent wired into a live storefront. It calls
+          server tools for product, variant, warranty and shipping data, and client-side actions
+          that reveal page sections and navigate shoppers.
+        </li>
+        <li>
+          <b>Alfred-OS.</b> A voice-controlled macOS agent that routes commands to browser and
+          desktop agents, runs them as background tasks, and asks for spoken confirmation before
+          anything destructive.
+        </li>
+        <li>
+          <b>Office AI memory.</b> A memory system for coding agents that I built on SQLite and
+          serve over MCP. Every write runs its own checks, and conflicting edits are refused, so
+          each fact has one owner.
+        </li>
+        <li>
+          <b>Faster agents.</b> I cut voice-agent reply latency by about 45% on real traffic by
+          moving the backend next to the services it calls, then added tool caching and fixed
+          truncated tool calls.
+        </li>
+      </ul>
+      <p class="margin" id="brush-note" hidden>your cursor paints through to the other side</p>
+    </div>
+  </section>
+
+  <section class="beat" id="spiral" aria-labelledby="spiral-h">
+    <div class="sticky">
+      <div class="wipe"></div>
+      <div class="spiral-head">
+        <div class="tag" style="color: var(--chrome)">The notes</div>
+        <h2 id="spiral-h">Nine folders, one spiral.</h2>
+        <p>Scroll turns the spiral. The explorer on the left is the list view of the same thing.</p>
+      </div>
+      <div class="helix"><ul id="cards"></ul></div>
+      <div class="mode">spiral · list in explorer</div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <p>
+    Prototype for the Quartz revamp of Shaurya Mehta's notes. Plates generated with Figma AI after
+    Van Gogh's <i>The Starry Night</i> and <i>Wheatfield with Crows</i> (both public domain).
+  </p>
+  <p>
+    Built with Lenis 1.3.26 and Anime.js 4.5.0; the sky, strands, crows and brush are drawn live.
+  </p>
+</footer>
+
+<div class="cursor" id="cursor" aria-hidden="true">
+  <div class="halo"><i></i></div>
+  <div class="core"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.3.26/dist/lenis.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/animejs@4.5.0/dist/bundles/anime.umd.min.js"></script>
+<script>
+  ;(() => {
+    const RM = matchMedia("(prefers-reduced-motion: reduce)").matches
+    const FINE = matchMedia("(pointer: fine)").matches
+    const $ = (s) => document.querySelector(s)
+    const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v))
+    const ramp = (v, a, b) => clamp((v - a) / (b - a))
+    const ease = (t) => 1 - Math.pow(1 - t, 3)
+
+    // ---------- content ----------
+    const FOLDERS = [
+      ["Artificial intelligence", 30],
+      ["CI CD", 7],
+      ["Code Design", 3],
+      ["Docker", 5],
+      ["Kubernetes", 4],
+      ["Networks", 6],
+      ["Security", 22],
+      ["Spring", 4],
+      ["System Design", 31],
+    ]
+    const url = (f) => "https://shaurya-gith.github.io/notes/" + f.replace(/ /g, "-") + "/"
+    $("#folders").innerHTML = FOLDERS.map(
+      ([f, n]) =>
+        `<a href="${url(f)}" target="_blank" rel="noopener"><span>${f}</span><span>${n}</span></a>`,
+    ).join("")
+    const ART = [
+      ["eye", "60% 60%"],
+      ["sky", "30% 40%"],
+      ["field", "40% 60%"],
+      ["sky", "85% 20%"],
+      ["field", "75% 30%"],
+      ["eye", "20% 30%"],
+      ["sky", "55% 70%"],
+      ["almond", "85% 25%"],
+      ["field", "15% 70%"],
+    ]
+    $("#cards").innerHTML = FOLDERS.map(
+      ([f, n], i) =>
+        `<li><a class="card" href="${url(f)}" target="_blank" rel="noopener" style="background-image:url(img/${ART[i][0]}.jpg);background-position:${ART[i][1]}"><span><strong>${f}</strong><em>${n} notes</em></span></a></li>`,
+    ).join("")
+    const cards = [...document.querySelectorAll(".card")]
+    const irisEl = $("#iris")
+    irisEl.style.backgroundImage = "url(img/eye.jpg)"
+    // keep the turning iris copy registered with the painting under it (object-fit: cover math)
+    function placeIris() {
+      const s = Math.max(innerWidth / 1376, innerHeight / 768),
+        rw = 1376 * s,
+        rh = 768 * s,
+        ox = (innerWidth - rw) * 0.6,
+        oy = (innerHeight - rh) * 0.5
+      const cx = ox + 0.565 * rw,
+        cy = oy + 0.62 * rh,
+        d = 0.19 * rw
+      eye.style.transformOrigin = cx + "px " + cy + "px"
+      const rs = 2.2 * Math.max(innerWidth, innerHeight)
+      Object.assign(ringsSvg.style, {
+        left: cx - rs / 2 + "px",
+        top: cy - rs / 2 + "px",
+        width: rs + "px",
+        height: rs + "px",
+      })
+      Object.assign(irisEl.style, {
+        left: cx - d / 2 + "px",
+        top: cy - d / 2 + "px",
+        width: d + "px",
+        height: d + "px",
+        backgroundSize: rw + "px " + rh + "px",
+        backgroundPosition: ox - (cx - d / 2) + "px " + (oy - (cy - d / 2)) + "px",
+      })
+    }
+
+    // mobile explorer drawer
+    const menu = $("#menu"),
+      side = $("#explorer")
+    menu.addEventListener("click", () => {
+      const o = side.classList.toggle("open")
+      menu.setAttribute("aria-expanded", o)
+      menu.setAttribute("aria-label", o ? "Close explorer" : "Open explorer")
+    })
+
+    // ---------- rings (sleep-well style tunnel, painted) ----------
+    const ringsSvg = $("#rings"),
+      RING_N = 16,
+      ringEls = []
+    const ringCols = ["#e8c06a", "#09395b", "#6fb3bd", "#041833", "#dfc489", "#165773"]
+    for (let i = 0; i < RING_N; i++) {
+      let d = ""
+      for (let k = 0; k <= 48; k++) {
+        const a = (k / 48) * Math.PI * 2,
+          r = 100 + Math.sin(a * 6 + i) * 4 + Math.sin(a * 13 + i * 2) * 2.5
+        d += (k ? "L" : "M") + (Math.cos(a) * r).toFixed(1) + " " + (Math.sin(a) * r).toFixed(1)
+      }
+      const p = document.createElementNS("http://www.w3.org/2000/svg", "path")
+      p.setAttribute("d", d + "Z")
+      p.setAttribute("fill", "none")
+      p.setAttribute("stroke", ringCols[i % ringCols.length])
+      p.setAttribute("stroke-width", String(10 + (i % 3) * 4))
+      p.setAttribute("stroke-linecap", "round")
+      p.setAttribute(
+        "stroke-dasharray",
+        [38 + ((i * 13) % 50), 9 + ((i * 7) % 14), 70 + ((i * 17) % 60), 12 + ((i * 5) % 10)].join(
+          " ",
+        ),
+      )
+      p.setAttribute("stroke-dashoffset", String(i * 23))
+      p.setAttribute("vector-effect", "non-scaling-stroke")
+      ringsSvg.appendChild(p)
+      ringEls.push(p)
+    }
+
+    // ---------- crows ----------
+    const crowsSvg = $("#crows"),
+      CROWS = 16
+    for (let i = 0; i < CROWS; i++) {
+      const g = document.createElementNS("http://www.w3.org/2000/svg", "g")
+      g.setAttribute("class", "crow")
+      const s = 0.7 + ((i * 37) % 10) / 14
+      g.innerHTML = `<path d="M-14 0 Q-7 -${8 * s} 0 0 Q7 -${8 * s} 14 0" fill="none" stroke="#08090d" stroke-width="${3.2 * s}" stroke-linecap="round" style="animation-delay:-${(i * 0.13) % 0.5}s"/>`
+      crowsSvg.appendChild(g)
+    }
+    const crowEls = [...crowsSvg.querySelectorAll(".crow")]
+    let crowAnim = null
+    if (window.anime && !RM) {
+      crowAnim = anime.animate(crowEls, {
+        x: [(el, i) => 640 + ((i * 53) % 220), (el, i) => 760 + ((i * 97) % 260)],
+        y: [(el, i) => 430 + ((i * 29) % 60), (el, i) => 60 + ((i * 41) % 140)],
+        opacity: [0, 1],
+        duration: 1000,
+        delay: anime.stagger(30),
+        ease: "outQuad",
+        autoplay: false,
+      })
+    }
+
+    // ---------- canvases ----------
+    const flow = $("#flow"),
+      fctx = flow.getContext("2d")
+    const strands = $("#strands"),
+      sctx = strands.getContext("2d")
+    let W = 0,
+      H = 0,
+      DPR = 1
+    function size() {
+      DPR = Math.min(devicePixelRatio || 1, 1.5)
+      W = innerWidth
+      H = innerHeight
+      for (const c of [flow, strands, revealC]) {
+        c.width = W * DPR
+        c.height = H * DPR
+        c.getContext("2d").setTransform(DPR, 0, 0, DPR, 0, 0)
+      }
+    }
+    // vortices sit on the sky plate's two spirals and the moon (fractions of the plate)
+    const VORT = [
+      [0.47, 0.47, 1.0],
+      [0.69, 0.6, 0.7],
+      [0.89, 0.22, 0.55],
+    ]
+    const PCOL = [
+      "rgba(223,196,137,",
+      "rgba(111,179,189,",
+      "rgba(130,170,220,",
+      "rgba(111,179,189,",
+      "rgba(236,227,200,",
+      "rgba(90,140,200,",
+    ]
+    const parts = []
+    function seed(p) {
+      p.x = Math.random() * W
+      p.y = Math.random() * H
+      p.life = 40 + Math.random() * 90
+      p.c = PCOL[(Math.random() * PCOL.length) | 0]
+      p.w = 1.6 + Math.random() * 2.4
+      return p
+    }
+    function field(x, y, t) {
+      let vx = 0.9 + 0.25 * Math.sin(y * 0.006 + t * 0.2),
+        vy = 0.18 * Math.sin(x * 0.004 + t * 0.15)
+      for (const [fx, fy, s] of VORT) {
+        const dx = x - fx * W,
+          dy = y - fy * H,
+          r2 = dx * dx + dy * dy,
+          R = Math.min(W, H) * 0.22,
+          k = s * 3.2 * Math.exp(-r2 / (R * R))
+        vx += (-dy / Math.sqrt(r2 + 1)) * k
+        vy += (dx / Math.sqrt(r2 + 1)) * k
+      }
+      return [vx, vy]
+    }
+    function drawFlow(t) {
+      fctx.globalCompositeOperation = "destination-out"
+      fctx.fillStyle = "rgba(0,0,0,0.045)"
+      fctx.fillRect(0, 0, W, H)
+      fctx.globalCompositeOperation = "source-over"
+      fctx.lineCap = "round"
+      while (parts.length < Math.round((W * H) / 4200)) parts.push(seed({}))
+      for (const p of parts) {
+        const [vx, vy] = field(p.x, p.y, t),
+          nx = p.x + vx * 2.2,
+          ny = p.y + vy * 2.2
+        fctx.strokeStyle = p.c + "0.36)"
+        fctx.lineWidth = p.w
+        fctx.beginPath()
+        fctx.moveTo(p.x, p.y)
+        fctx.lineTo(nx, ny)
+        fctx.stroke()
+        p.x = nx
+        p.y = ny
+        if (--p.life < 0 || p.x > W + 20 || p.y < -20 || p.y > H + 20) seed(p)
+      }
+    }
+    const SC = ["rgba(255,243,196,", "rgba(232,192,106,", "rgba(111,179,189,", "rgba(236,227,200,"]
+    function drawStrands(t) {
+      sctx.clearRect(0, 0, W, H)
+      sctx.globalCompositeOperation = "lighter"
+      const N = 56
+      for (let i = 0; i < N; i++) {
+        const o = (i - N / 2) * 2.2,
+          ph = i * 0.11
+        sctx.strokeStyle = SC[i % 4] + (0.07 + 0.05 * Math.sin(i * 1.7 + t)) + ")"
+        sctx.lineWidth = 0.8 + (i % 3) * 0.5
+        sctx.beginPath()
+        for (let x = -40; x <= W + 40; x += 18) {
+          const u = x / W,
+            base = H * (0.7 - 0.22 * u) + o
+          const y =
+            base +
+            Math.sin(u * 5.2 + t * 0.55 + ph) * H * 0.07 +
+            Math.sin(u * 11 - t * 0.35 + ph * 2) * H * 0.025 * (1 - u * 0.5)
+          x < 0 ? sctx.moveTo(x, y) : sctx.lineTo(x, y)
+        }
+        sctx.stroke()
+      }
+      sctx.globalCompositeOperation = "source-over"
+    }
+
+    // ---------- scroll-driven stage ----------
+    const quote = $(".quote")
+    const eye = $("#eye"),
+      sky = $("#sky"),
+      fieldL = $("#field"),
+      sky2 = $("#sky2"),
+      scrim = $("#scrim"),
+      wipe = $(".wipe")
+    const secs = {
+      iris: $("#beat-iris"),
+      world: $("#beat-world"),
+      about: $("#about"),
+      spiral: $("#spiral"),
+    }
+    let B = {}
+    function measure() {
+      const vh = innerHeight
+      for (const k in secs) B[k] = secs[k].offsetTop / vh
+      B.spiralLen = (secs.spiral.offsetHeight - vh) / vh
+    }
+    let flowOn = 0,
+      strandsOn = 0
+    function stage() {
+      const v = scrollY / innerHeight
+      if (RM) {
+        fieldL.style.opacity = 1
+        scrim.style.opacity = 0.62
+        eye.style.opacity = 0
+        flowOn = strandsOn = 0
+        return
+      }
+      // beat 1: zoom into the iris
+      const z = ease(ramp(v, 0, B.iris + 0.15))
+      eye.style.transform = `scale(${1 + 7 * z})`
+      eye.style.opacity = 1 - ramp(v, B.iris - 0.2, B.iris + 0.2)
+      // tunnel rings bloom out of the iris
+      const rv = ramp(v, 0.45, B.iris + 0.45),
+        rOp = Math.sin(rv * Math.PI)
+      ringsSvg.style.opacity = rOp * 0.7
+      if (rOp > 0.01)
+        ringEls.forEach((p, i) => {
+          const f = (i / RING_N + rv * 1.6) % 1,
+            s = 0.05 * Math.pow(60, f)
+          p.setAttribute(
+            "transform",
+            `scale(${s.toFixed(3)}) rotate(${(i * 11 + rv * 90).toFixed(1)})`,
+          )
+          p.setAttribute("stroke-opacity", (f < 0.12 ? f / 0.12 : 1).toFixed(2))
+        })
+      // beat 2: the sky
+      const skyIn = ramp(v, B.iris - 0.2, B.iris + 0.25),
+        skyOut = ramp(v, B.world - 0.3, B.world + 0.3)
+      quote.style.opacity = ramp(v, B.iris - 0.3, B.iris + 0.1).toFixed(3)
+      sky.style.opacity = skyIn * (1 - skyOut)
+      sky.style.transform = `scale(${1.35 - 0.35 * ease(ramp(v, B.iris - 0.2, B.world))})`
+      // beat 3: her world
+      const fIn = skyOut,
+        fOut = ramp(v, B.spiral - 0.6, B.spiral)
+      fieldL.style.opacity = fIn * (1 - fOut)
+      fieldL.style.transform = `scale(${1.18 - 0.18 * ease(ramp(v, B.world - 0.3, B.about))})`
+      // beat 5: back to the sky for the spiral
+      sky2.style.opacity = fOut
+      scrim.style.opacity = 0.74 * ramp(v, B.about - 0.5, B.about) * (1 - 0.25 * fOut)
+      flowOn = Math.max(sky.style.opacity * 1, fOut) * (1 - 0.35 * ramp(v, B.about - 0.5, B.about))
+      strandsOn = Math.sin(ramp(v, B.iris - 0.1, B.world + 0.1) * Math.PI)
+      $("#flow").style.opacity = flowOn
+      $("#strands").style.opacity = strandsOn
+      if (crowAnim) crowAnim.seek(ramp(v, B.world - 0.2, B.about + 0.1) * crowAnim.duration)
+      // spiral: wipe in, then turn the helix
+      const sp = ramp(v, B.spiral, B.spiral + B.spiralLen)
+      const wp = ease(ramp(v, B.spiral - 0.6, B.spiral + 0.2))
+      wipe.style.clipPath = `circle(${(wp * 150).toFixed(1)}% at 60% 55%)`
+      // under the spiral's dark wash the stage's ink only reads as smudges; there it lives on the cards
+      $("#reveal").style.opacity = (1 - wp).toFixed(3)
+      helix(sp)
+    }
+    // each card is projected on its own and stacked by depth, not placed in one shared 3D space:
+    // in a shared space neighbours closer than a card's width cut through each other as they turn
+    function helix(sp) {
+      if (RM) return
+      const narrow = innerWidth < 860,
+        R = narrow ? Math.min(200, innerWidth * 0.3) : 380,
+        STEP = narrow ? 44 : 40,
+        RISE = narrow ? 46 : 64,
+        P = 1400
+      const rot = sp * (cards.length - 1) * STEP
+      cards.forEach((c, i) => {
+        const th = i * STEP - rot,
+          rad = (th * Math.PI) / 180,
+          zz = R * Math.cos(rad) - R,
+          k = P / (P - zz),
+          x = R * Math.sin(rad) * k,
+          // the old rotateX tilt: cards further back sit higher
+          y = ((i - sp * (cards.length - 1)) * RISE + zz * 0.22) * k
+        const front = (Math.cos(rad) + 1) / 2
+        c.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) perspective(${P}px) translateZ(${zz.toFixed(1)}px) rotateY(${(th * 0.8).toFixed(1)}deg)`
+        // dim with an opaque wash, so a card never shows through the one in front; fade out only at the back
+        c.style.setProperty("--dim", ((1 - front) * 0.72).toFixed(3))
+        c.style.opacity = ramp(front, 0.45, 0.72).toFixed(3)
+        c.style.zIndex = Math.round(front * 100)
+        c.tabIndex = front > 0.55 ? 0 : -1
+      })
+    }
+    // keyboard: focusing a card scrolls the spiral to it
+    cards.forEach((c, i) =>
+      c.addEventListener("focus", () => {
+        if (RM) return
+        const top =
+          secs.spiral.offsetTop +
+          (i / (cards.length - 1)) * (secs.spiral.offsetHeight - innerHeight)
+        lenis ? lenis.scrollTo(top, { duration: 0.6 }) : scrollTo({ top })
+      }),
+    )
+
+    // ---------- cursor: ink that opens a window onto the inverted universe ----------
+    // After Buttermax: the cursor pours ink into a small fluid simulation, and wherever the ink lies
+    // the same scene shows in an inverted universe (ember sky, black moon, white-haired twin, doves
+    // for crows). The ink curls, drips and thins from its tail on its own once the cursor stops.
+    const revealC = $("#reveal"),
+      rctx = revealC.getContext("2d"),
+      cur = $("#cursor"),
+      halo = cur.querySelector(".halo")
+
+    // stable fluids on the GPU, after Pavel Dobryakov's WebGL Fluid Simulation (MIT)
+    function makeInk() {
+      const c = document.createElement("canvas")
+      const gl = c.getContext("webgl2", {
+        alpha: true,
+        premultipliedAlpha: false,
+        preserveDrawingBuffer: true,
+        antialias: false,
+        depth: false,
+      })
+      if (!gl || !gl.getExtension("EXT_color_buffer_float")) return null
+      const VS = `#version 300 es
+        in vec2 p; uniform vec2 tx; out vec2 uv, vL, vR, vT, vB;
+        void main() {
+          uv = p * .5 + .5;
+          vL = uv - vec2(tx.x, 0.); vR = uv + vec2(tx.x, 0.);
+          vT = uv + vec2(0., tx.y); vB = uv - vec2(0., tx.y);
+          gl_Position = vec4(p, 0., 1.);
+        }`
+      const HEAD = `#version 300 es
+        precision highp float; in vec2 uv, vL, vR, vT, vB; out vec4 o;`
+      const FS = {
+        splat: `uniform sampler2D T; uniform vec2 pt; uniform vec3 col; uniform float r, aspect;
+          void main() { vec2 d = uv - pt; d.x *= aspect; o = vec4(texture(T, uv).xyz + col * exp(-dot(d, d) / r), 1.); }`,
+        advect: `uniform sampler2D V, S; uniform vec2 tx; uniform float dt, diss;
+          void main() { vec2 c = uv - dt * texture(V, uv).xy * tx; o = texture(S, c) / (1. + diss * dt); }`,
+        div: `uniform sampler2D V;
+          void main() { o = vec4(.5 * (texture(V, vR).x - texture(V, vL).x + texture(V, vT).y - texture(V, vB).y), 0., 0., 1.); }`,
+        curl: `uniform sampler2D V;
+          void main() { o = vec4(.5 * (texture(V, vR).y - texture(V, vL).y - texture(V, vT).x + texture(V, vB).x), 0., 0., 1.); }`,
+        vort: `uniform sampler2D V, C; uniform float curl, dt;
+          void main() {
+            float L = texture(C, vL).x, R = texture(C, vR).x, T = texture(C, vT).x, B = texture(C, vB).x;
+            vec2 f = .5 * vec2(abs(T) - abs(B), abs(R) - abs(L));
+            f = f / (length(f) + 1e-4) * curl * texture(C, uv).x; f.y *= -1.;
+            o = vec4(texture(V, uv).xy + f * dt, 0., 1.);
+          }`,
+        pres: `uniform sampler2D P, D;
+          void main() { o = vec4((texture(P, vL).x + texture(P, vR).x + texture(P, vT).x + texture(P, vB).x - texture(D, uv).x) * .25, 0., 0., 1.); }`,
+        grad: `uniform sampler2D P, V;
+          void main() { o = vec4(texture(V, uv).xy - vec2(texture(P, vR).x - texture(P, vL).x, texture(P, vT).x - texture(P, vB).x), 0., 1.); }`,
+        fade: `uniform sampler2D T; uniform float k; void main() { o = k * texture(T, uv); }`,
+        // a hard threshold gives the ink its crisp, liquid edge
+        show: `uniform sampler2D T; void main() { o = vec4(1., 1., 1., smoothstep(.12, .2, texture(T, uv).x)); }`,
+      }
+      const shader = (type, src) => {
+        const s = gl.createShader(type)
+        gl.shaderSource(s, src)
+        gl.compileShader(s)
+        return s
+      }
+      const vs = shader(gl.VERTEX_SHADER, VS)
+      const P = {}
+      for (const k in FS) {
+        const pr = gl.createProgram()
+        gl.attachShader(pr, vs)
+        gl.attachShader(pr, shader(gl.FRAGMENT_SHADER, HEAD + FS[k]))
+        gl.bindAttribLocation(pr, 0, "p")
+        gl.linkProgram(pr)
+        if (!gl.getProgramParameter(pr, gl.LINK_STATUS)) return null
+        P[k] = { pr, u: {} }
+      }
+      gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer())
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW)
+      gl.enableVertexAttribArray(0)
+      gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0)
+      const fbo = (w, h) => {
+        const t = gl.createTexture()
+        gl.bindTexture(gl.TEXTURE_2D, t)
+        for (const [k, v] of [
+          [gl.TEXTURE_MIN_FILTER, gl.LINEAR],
+          [gl.TEXTURE_MAG_FILTER, gl.LINEAR],
+          [gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE],
+          [gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE],
+        ])
+          gl.texParameteri(gl.TEXTURE_2D, k, v)
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA16F, w, h, 0, gl.RGBA, gl.HALF_FLOAT, null)
+        const f = gl.createFramebuffer()
+        gl.bindFramebuffer(gl.FRAMEBUFFER, f)
+        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, t, 0)
+        gl.clearColor(0, 0, 0, 0)
+        gl.clear(gl.COLOR_BUFFER_BIT)
+        return { t, f, w, h }
+      }
+      const pair = (w, h) => {
+        const p = { read: fbo(w, h), write: fbo(w, h) }
+        p.swap = () => ([p.read, p.write] = [p.write, p.read])
+        return p
+      }
+      let vel, dye, pres, divF, curlF, tx
+      const res = (n) => (W > H ? [Math.round((n * W) / H), n] : [n, Math.round((n * H) / W)])
+      function resize() {
+        c.width = W
+        c.height = H
+        const [sw, sh] = res(128),
+          [dw, dh] = res(512)
+        vel = pair(sw, sh)
+        pres = pair(sw, sh)
+        divF = fbo(sw, sh)
+        curlF = fbo(sw, sh)
+        dye = pair(dw, dh)
+        tx = [1 / sw, 1 / sh]
+      }
+      function run(name, target, uni) {
+        const p = P[name]
+        gl.useProgram(p.pr)
+        let unit = 0
+        for (const k in uni) {
+          const loc = p.u[k] ?? (p.u[k] = gl.getUniformLocation(p.pr, k)),
+            v = uni[k]
+          if (v && v.t) {
+            gl.activeTexture(gl.TEXTURE0 + unit)
+            gl.bindTexture(gl.TEXTURE_2D, v.t)
+            gl.uniform1i(loc, unit++)
+          } else if (Array.isArray(v)) gl[`uniform${v.length}f`](loc, ...v)
+          else gl.uniform1f(loc, v)
+        }
+        gl.bindFramebuffer(gl.FRAMEBUFFER, target ? target.f : null)
+        gl.viewport(0, 0, target ? target.w : c.width, target ? target.h : c.height)
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4)
+      }
+      const ink = {
+        canvas: c,
+        resize,
+        // x, y and this frame's move in CSS pixels; r is the blob size in units of screen height squared
+        splat(x, y, dx, dy, r) {
+          const pt = [x / W, 1 - y / H],
+            aspect = W / H
+          run("splat", vel.write, {
+            tx,
+            T: vel.read,
+            pt,
+            col: [(dx / W) * 5000, (-dy / H) * 5000, 0],
+            r,
+            aspect,
+          })
+          vel.swap()
+          run("splat", dye.write, { tx, T: dye.read, pt, col: [0.3, 0, 0], r, aspect })
+          dye.swap()
+        },
+        step(dt) {
+          run("curl", curlF, { tx, V: vel.read })
+          run("vort", vel.write, { tx, V: vel.read, C: curlF, curl: 22, dt })
+          vel.swap()
+          run("div", divF, { tx, V: vel.read })
+          run("fade", pres.write, { tx, T: pres.read, k: 0.8 })
+          pres.swap()
+          for (let i = 0; i < 20; i++) {
+            run("pres", pres.write, { tx, P: pres.read, D: divF })
+            pres.swap()
+          }
+          run("grad", vel.write, { tx, P: pres.read, V: vel.read })
+          vel.swap()
+          run("advect", vel.write, { tx, V: vel.read, S: vel.read, dt, diss: 1.2 })
+          vel.swap()
+          run("advect", dye.write, { tx, V: vel.read, S: dye.read, dt, diss: 2.4 })
+          dye.swap()
+          run("show", null, { tx, T: dye.read })
+        },
+      }
+      return ink
+    }
+
+    // ---------- the twins ----------
+    // they load after the page's own art, so they never hold up the first screen; start on the window's
+    // load or the first pointer move, whichever comes first (inside the artifact frame the load event
+    // can fire before this script runs)
+    const TWIN = {}
+    for (const n of ["eye", "sky", "field", "almond"])
+      TWIN[n] = Object.assign(new Image(), { later: `img/${n}-alt.jpg` })
+    const startTwins = () => Object.values(TWIN).forEach((i) => i.src || (i.src = i.later))
+    addEventListener("load", startTwins, { once: true })
+    addEventListener("pointermove", startTwins, { once: true, passive: true })
+    // the eye twin was generated from text, so `fit` pins its iris (ax, ay) onto the original's (bx, by)
+    const FIT = { eye: [0.534, 0.605, 0.565, 0.62, 1.08] }
+    // object-fit: cover (and background-size: cover) at a given position, in the target's own pixels
+    function drawCover(ctx, name, w, h, px, py) {
+      const img = TWIN[name]
+      if (!img.complete || !img.naturalWidth) return
+      const k = Math.max(w / img.naturalWidth, h / img.naturalHeight),
+        iw = img.naturalWidth * k,
+        ih = img.naturalHeight * k,
+        x = (w - iw) * px,
+        y = (h - ih) * py,
+        f = FIT[name]
+      if (!f) return ctx.drawImage(img, x, y, iw, ih)
+      ctx.save()
+      ctx.translate(x + f[2] * iw, y + f[3] * ih)
+      ctx.scale(f[4], f[4])
+      ctx.drawImage(img, -f[0] * iw, -f[1] * ih, iw, ih)
+      ctx.restore()
+    }
+    const STAGE = [
+      [eye, "eye", 0.6, 0.5],
+      [sky, "sky", 0.5, 0.5],
+      [fieldL, "field", 0.5, 0.5],
+      [sky2, "sky", 0.5, 0.5],
+    ]
+    // apply an element's computed transform about its transform-origin, as the browser does
+    function applyCss(ctx, el) {
+      const cs = getComputedStyle(el)
+      if (cs.transform === "none") return
+      const [ox, oy] = cs.transformOrigin.split(" ").map(parseFloat),
+        m = new DOMMatrix(cs.transform)
+      ctx.translate(ox, oy)
+      ctx.transform(m.a, m.b, m.c, m.d, m.e, m.f)
+      ctx.translate(-ox, -oy)
+    }
+    // the inverted stage, composited exactly like the real one: same layers, opacities, zoom and drift
+    function drawStage() {
+      rctx.globalCompositeOperation = "source-over"
+      rctx.fillStyle = "#041833"
+      rctx.fillRect(0, 0, W, H)
+      for (const [el, name, px, py] of STAGE) {
+        const op = +el.style.opacity || 0
+        if (op < 0.01) continue
+        rctx.save()
+        rctx.globalAlpha = op
+        applyCss(rctx, el)
+        applyCss(rctx, el.querySelector("img"))
+        drawCover(rctx, name, W, H, px, py)
+        rctx.restore()
+      }
+      drawDoves()
+    }
+    // inside the ink every crow is a white dove, flying the same path
+    function drawDoves() {
+      const f = Math.sin(clock * 12)
+      for (const g of crowEls) {
+        const op = +getComputedStyle(g).opacity
+        if (op < 0.05) continue
+        const r = g.getBoundingClientRect()
+        if (!r.width) continue
+        const sc = r.width / 26
+        rctx.save()
+        rctx.globalAlpha = op
+        rctx.translate(r.left + r.width / 2, r.top + r.height / 2)
+        rctx.scale(sc, sc)
+        rctx.fillStyle = "#f6f1e6"
+        rctx.strokeStyle = "rgba(4,24,51,0.55)"
+        rctx.lineWidth = 0.8
+        for (const d of [-1, 1]) {
+          rctx.beginPath()
+          rctx.moveTo(0, 0)
+          rctx.quadraticCurveTo(d * 7, -9 * f - 2, d * 15, -6 * f - 1)
+          rctx.quadraticCurveTo(d * 8, -1, 0, 1.5)
+          rctx.fill()
+          rctx.stroke()
+        }
+        rctx.beginPath()
+        rctx.ellipse(1, 1.5, 6, 2.4, 0, 0, Math.PI * 2)
+        rctx.fill()
+        rctx.beginPath()
+        rctx.arc(6.5, 0.6, 1.9, 0, Math.PI * 2)
+        rctx.fill()
+        rctx.restore()
+      }
+    }
+    // each spiral card carries its own twin canvas inside it, so the browser's 3D transform and the
+    // card's depth dimming apply to it too; three corner pins give the card's on-screen placement
+    const cardTwins = cards.map((card, i) => {
+      const cv = document.createElement("canvas")
+      cv.className = "twin"
+      card.prepend(cv)
+      const pins = ["tl", "tr", "bl"].map((k) => {
+        const p = document.createElement("i")
+        p.className = "pin " + k
+        card.append(p)
+        return p
+      })
+      const [px, py] = ART[i][1].split(" ").map((v) => parseFloat(v) / 100)
+      return { card, cv, ctx: cv.getContext("2d"), pins, name: ART[i][0], px, py }
+    })
+    function drawCards() {
+      const r = secs.spiral.getBoundingClientRect()
+      const onScreen = r.bottom > 0 && r.top < H
+      for (const t of cardTwins) {
+        const w = t.card.offsetWidth,
+          h = t.card.offsetHeight,
+          d = Math.min(devicePixelRatio || 1, 1.5)
+        if (!onScreen || +t.card.style.opacity < 0.05) {
+          if (t.drawn) t.ctx.clearRect(0, 0, t.cv.width, t.cv.height)
+          t.drawn = false
+          continue
+        }
+        if (t.cv.width !== Math.round(w * d)) {
+          t.cv.width = Math.round(w * d)
+          t.cv.height = Math.round(h * d)
+        }
+        const [a, b, c] = t.pins.map((p) => p.getBoundingClientRect())
+        // card pixels -> screen pixels (an affine fit to three corners; close enough at these angles)
+        const m = new DOMMatrix([
+          (b.left - a.left) / w,
+          (b.top - a.top) / w,
+          (c.left - a.left) / h,
+          (c.top - a.top) / h,
+          a.left,
+          a.top,
+        ])
+        const x = t.ctx
+        x.setTransform(d, 0, 0, d, 0, 0)
+        x.globalCompositeOperation = "copy"
+        drawCover(x, t.name, w, h, t.px, t.py)
+        x.globalCompositeOperation = "destination-in"
+        x.setTransform(new DOMMatrix().scale(d).multiply(m.inverse()))
+        x.drawImage(ink.canvas, 0, 0, W, H)
+        t.drawn = true
+      }
+    }
+
+    // ---------- pointer ----------
+    const ink = FINE && !RM ? makeInk() : null
+    const ptr = { x: 0, y: 0, px: 0, py: 0, hx: 0, hy: 0, seen: false }
+    let clock = 0,
+      wet = Infinity // seconds since ink last went down; the sim idles once it has all dried
+    const CLICKABLE = "a, button, [role=button], summary, label, input, select, textarea"
+    function hover() {
+      const el = ptr.seen && document.elementFromPoint(ptr.x, ptr.y),
+        link = el && el.closest(CLICKABLE)
+      cur.classList.toggle("link", !!link)
+      // the spiral cards are links too, but they are paintings: ink pours over them
+      ptr.clean = !!link && !link.classList.contains("card")
+    }
+    if (ink) {
+      document.documentElement.classList.add("brush")
+      $("#brush-note").hidden = false
+      addEventListener(
+        "pointermove",
+        (e) => {
+          if (e.pointerType !== "mouse") return
+          ptr.x = e.clientX
+          ptr.y = e.clientY
+          if (!ptr.seen) {
+            ptr.seen = true
+            ptr.px = ptr.hx = ptr.x
+            ptr.py = ptr.hy = ptr.y
+          }
+          cur.classList.add("on")
+          hover()
+        },
+        { passive: true },
+      )
+      document.addEventListener("pointerleave", () => cur.classList.remove("on"))
+      addEventListener("scroll", hover, { passive: true })
+    } else cur.remove()
+    function brushStep(dt) {
+      if (!ink || !ptr.seen) return
+      if (ink.canvas.width !== W || ink.canvas.height !== H) ink.resize()
+      const k = 1 - Math.pow(0.000001, dt)
+      ptr.hx += (ptr.x - ptr.hx) * k
+      ptr.hy += (ptr.y - ptr.hy) * k
+      cur.style.transform = `translate3d(${ptr.x}px, ${ptr.y}px, 0)`
+      halo.style.transform = `translate3d(${(ptr.hx - ptr.x).toFixed(1)}px, ${(ptr.hy - ptr.y).toFixed(1)}px, 0)`
+      const dx = ptr.x - ptr.px,
+        dy = ptr.y - ptr.py,
+        moved = Math.hypot(dx, dy)
+      // faster moves pour a fatter blob; links stay clean so the halo reads, and a jump this big in one
+      // frame is the pointer re-entering, not a stroke
+      if (moved > 0.5 && moved < 220 && !ptr.clean) {
+        ink.splat(ptr.x, ptr.y, dx, dy, 0.0014 * (1 + Math.min(moved / dt / 1500, 1.8)))
+        wet = 0
+      }
+      ptr.px = ptr.x
+      ptr.py = ptr.y
+      clock += dt
+      wet += dt
+      if (wet > 4) return // dry: nothing left to draw
+      ink.step(dt)
+      drawStage()
+      rctx.globalCompositeOperation = "destination-in"
+      rctx.drawImage(ink.canvas, 0, 0, W, H)
+      rctx.globalCompositeOperation = "source-over"
+      drawCards()
+      if (wet > 3.9) {
+        rctx.clearRect(0, 0, W, H)
+        for (const t of cardTwins) t.ctx.clearRect(0, 0, t.cv.width, t.cv.height)
+      }
+    }
+
+    // ---------- loop ----------
+    let lenis = null
+    if (!RM && window.Lenis) {
+      lenis = new Lenis({
+        autoRaf: true,
+        anchors: true,
+        lerp: 0.09,
+        prevent: (node) => !!node.closest && !!node.closest(".sidebar"),
+      })
+    }
+    size()
+    measure()
+    placeIris()
+    stage()
+    addEventListener("resize", () => {
+      size()
+      measure()
+      placeIris()
+      stage()
+    })
+    addEventListener("scroll", stage, { passive: true })
+    if (document.fonts)
+      document.fonts.ready.then(() => {
+        measure()
+        stage()
+      })
+    let last = performance.now()
+    function frame(now) {
+      const dt = Math.min(0.05, (now - last) / 1000)
+      last = now
+      const t = now / 1000
+      if (!RM && !document.hidden) {
+        if (flowOn > 0.02) drawFlow(t)
+        else if (parts.length) fctx.clearRect(0, 0, W, H)
+        if (strandsOn > 0.02) drawStrands(t)
+        brushStep(dt)
+      }
+      requestAnimationFrame(frame)
+    }
+    requestAnimationFrame(frame)
+  })()
+</script>

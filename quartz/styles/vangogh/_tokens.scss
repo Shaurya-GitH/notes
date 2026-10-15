@@ -1,0 +1,57 @@
+// Starry Notes tokens. Quartz's nine colours live in quartz.config.ts, because Quartz writes them
+// after this file; these are the extras the design adds, plus the font stacks (the generated ones
+// fall back to sans-serif, the design falls back to serif).
+
+:root,
+:root[saved-theme="light"] {
+  --surface: #ebe2c9;
+  --surface-2: #e2d6b7;
+  --link-line: rgba(31, 78, 140, 0.38);
+  --ambient-light: rgba(255, 250, 232, 0.75);
+  --ambient-shade: rgba(64, 72, 38, 0.11);
+  --star: #85590c;
+  --node: #1f4e8c;
+  --c-info: #1d5f8a;
+  --c-tip: #4f6b2f;
+  --c-question: #3f3f9a;
+  --c-warning: #8a5a00;
+  --c-danger: #9c3a1e;
+  --c-example: #6b4a8a;
+  --c-quote: #5d6b4f;
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-fast: 120ms;
+  --duration: 150ms;
+  --duration-slow: 240ms;
+  color-scheme: light;
+}
+
+:root[saved-theme="dark"] {
+  --surface: #062645;
+  --surface-2: #09395b;
+  --link-line: rgba(232, 192, 106, 0.45);
+  --ambient-light: rgba(150, 196, 232, 0.075);
+  --ambient-shade: rgba(0, 6, 18, 0.5);
+  --star: #e8c06a;
+  --node: #6fb3bd;
+  --c-info: #7cc0d0;
+  --c-tip: #a8c48a;
+  --c-question: #a9b4f0;
+  --c-warning: #e8c06a;
+  --c-danger: #f0926e;
+  --c-example: #c9a8e8;
+  --c-quote: #8a9f85;
+  color-scheme: dark;
+}
+
+// doubled :root outranks the generated font variables, which come later at single specificity
+:root:root {
+  --headerFont: "Fraunces", "Iowan Old Style", Georgia, serif;
+  --titleFont: "Fraunces", "Iowan Old Style", Georgia, serif;
+  --bodyFont: "Source Serif 4", "Iowan Old Style", Georgia, serif;
+  --codeFont: "JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+
+body {
+  background-color: var(--light);
+  color: var(--darkgray);
+}

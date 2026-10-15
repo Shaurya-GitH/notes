@@ -1,0 +1,1335 @@
+/* =====================================================================
+   Starry Notes: note page and explorer.
+   Written against Quartz 4.5.2's own markup and class names, so this file
+   is the draft of quartz/styles/custom.scss. Rules marked PROTOTYPE ONLY
+   exist because the artifact cannot load KaTeX's stylesheet or fonts.
+   Layout: Quartz's three-column grid is kept; the article sits at a book
+   measure in the centre; the right rail is graph, contents, backlinks.
+   ===================================================================== */
+
+/* ---------- tokens: Quartz's nine theme variables plus three extras ---------- */
+:root,
+:root[saved-theme="light"] {
+  --light: #f3ecd9;
+  --lightgray: #d8cdb0;
+  --gray: #5d6b4f;
+  --darkgray: #2a3448;
+  --dark: #1b2a41;
+  --secondary: #1f4e8c;
+  --tertiary: #85590c;
+  --highlight: rgba(31, 78, 140, 0.08);
+  --textHighlight: rgba(232, 192, 106, 0.5);
+  --surface: #ebe2c9;
+  --surface-2: #e2d6b7;
+  --link-line: rgba(31, 78, 140, 0.38);
+  --ambient-light: rgba(255, 250, 232, 0.75);
+  --ambient-shade: rgba(64, 72, 38, 0.11);
+  --star: #85590c;
+  --node: #1f4e8c;
+  --c-info: #1d5f8a;
+  --c-tip: #4f6b2f;
+  --c-question: #3f3f9a;
+  --c-warning: #8a5a00;
+  --c-danger: #9c3a1e;
+  --c-example: #6b4a8a;
+  --c-quote: #5d6b4f;
+  --headerFont: "Fraunces", "Iowan Old Style", Georgia, serif;
+  --titleFont: "Fraunces", "Iowan Old Style", Georgia, serif;
+  --bodyFont: "Source Serif 4", "Iowan Old Style", Georgia, serif;
+  --codeFont: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-fast: 120ms;
+  --duration: 150ms;
+  --duration-slow: 240ms;
+  color-scheme: light;
+}
+:root[saved-theme="dark"] {
+  --light: #041833;
+  --lightgray: #165773;
+  --gray: #8a9f85;
+  --darkgray: #d6cfb6;
+  --dark: #ece3c8;
+  --secondary: #e8c06a;
+  --tertiary: #6fb3bd;
+  --highlight: rgba(111, 179, 189, 0.12);
+  --textHighlight: rgba(232, 192, 106, 0.3);
+  --surface: #062645;
+  --surface-2: #09395b;
+  --link-line: rgba(232, 192, 106, 0.45);
+  --ambient-light: rgba(150, 196, 232, 0.075);
+  --ambient-shade: rgba(0, 6, 18, 0.5);
+  --star: #e8c06a;
+  --node: #6fb3bd;
+  --c-info: #7cc0d0;
+  --c-tip: #a8c48a;
+  --c-question: #a9b4f0;
+  --c-warning: #e8c06a;
+  --c-danger: #f0926e;
+  --c-example: #c9a8e8;
+  --c-quote: #8a9f85;
+  color-scheme: dark;
+}
+body {
+  background-color: var(--light);
+  color: var(--darkgray);
+}
+
+/* ---------- ambient light: window slats and an almond branch shadow (CSS only) ---------- */
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  pointer-events: none;
+  z-index: 0;
+}
+body::before {
+  inset: -20vh -20vw;
+  background: repeating-linear-gradient(-32deg, transparent 0 46px, var(--ambient-light) 46px 92px);
+  filter: blur(14px);
+  -webkit-mask: radial-gradient(70% 60% at 82% 18%, #000 0%, transparent 72%);
+  mask: radial-gradient(70% 60% at 82% 18%, #000 0%, transparent 72%);
+  animation: slats 26s ease-in-out infinite alternate;
+}
+body::after {
+  top: -4vh;
+  right: -6vw;
+  width: min(48vw, 760px);
+  aspect-ratio: 9 / 7;
+  background: var(--ambient-shade);
+  -webkit-mask: url("__BRANCH__") no-repeat top right / contain;
+  mask: url("__BRANCH__") no-repeat top right / contain;
+  filter: blur(5px);
+  transform-origin: 100% 0;
+  animation: sway 14s ease-in-out infinite alternate;
+}
+@keyframes slats {
+  to {
+    transform: translate3d(-2.5%, 1.5%, 0) skewX(-2deg);
+  }
+}
+@keyframes sway {
+  from {
+    transform: rotate(-1.2deg);
+  }
+  to {
+    transform: rotate(1.6deg) translateY(4px);
+  }
+}
+/* falling petal shadows, after sunlit.place's leaves: a few soft ovals drifting down */
+#quartz-root::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0.9;
+  background-image:
+    radial-gradient(9px 5px at 50% 50%, var(--ambient-shade), transparent 70%),
+    radial-gradient(7px 4px at 50% 50%, var(--ambient-shade), transparent 70%),
+    radial-gradient(10px 6px at 50% 50%, var(--ambient-shade), transparent 70%),
+    radial-gradient(6px 4px at 50% 50%, var(--ambient-shade), transparent 70%);
+  background-size:
+    330px 520px,
+    410px 610px,
+    520px 700px,
+    290px 460px;
+  background-position:
+    72% 0,
+    88% 120px,
+    64% 300px,
+    94% 40px;
+  filter: blur(1.5px);
+  -webkit-mask: linear-gradient(to left, #000 0%, #000 30%, transparent 62%);
+  mask: linear-gradient(to left, #000 0%, #000 30%, transparent 62%);
+  animation: petals 38s linear infinite;
+}
+@keyframes petals {
+  to {
+    background-position:
+      calc(72% - 60px) 1040px,
+      calc(88% - 90px) 1340px,
+      calc(64% - 40px) 1700px,
+      calc(94% - 70px) 960px;
+  }
+}
+#quartz-root {
+  position: relative;
+  z-index: 1;
+}
+:root[reader-mode="on"] body::before,
+:root[reader-mode="on"] body::after,
+:root[reader-mode="on"] #quartz-root::before {
+  opacity: 0;
+  transition: opacity var(--duration-slow);
+}
+
+/* ---------- reading column ---------- */
+.page > #quartz-body .center {
+  max-width: 43rem;
+  margin-inline: auto;
+}
+.page > #quartz-body .page-header {
+  margin-top: 4.5rem;
+}
+.page article {
+  font-size: 1.125rem;
+  line-height: 1.72;
+}
+.page article p,
+.page article li {
+  max-width: 66ch;
+}
+.page article p {
+  margin: 0.9em 0;
+}
+.page article > p:first-child > strong:only-child {
+  /* Notes that open with a bold expansion (TLS -> Transport Layer Security) read as a dek */
+  display: block;
+  font: italic 400 1.35rem/1.35 var(--headerFont);
+  color: var(--gray);
+}
+.page article p > strong,
+.page article li > strong {
+  color: var(--dark);
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--headerFont);
+  color: var(--dark);
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  text-wrap: balance;
+}
+h1.article-title {
+  font-size: clamp(2.2rem, 4vw, 3rem);
+  line-height: 1.08;
+  font-weight: 400;
+  margin: 0.4rem 0 0.6rem;
+  letter-spacing: -0.015em;
+}
+article h2 {
+  font-size: 1.65rem;
+  line-height: 1.2;
+  margin: 2.4em 0 0.4em;
+}
+article h3 {
+  font-size: 1.3rem;
+  line-height: 1.25;
+  margin: 1.9em 0 0.3em;
+}
+article h4 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 1.6em 0 0.2em;
+}
+article h2 > a[role="anchor"],
+article h3 > a[role="anchor"],
+article h4 > a[role="anchor"] {
+  color: var(--gray);
+  background: none;
+}
+article ul,
+article ol {
+  padding-left: 1.4em;
+}
+article li {
+  margin: 0.25em 0;
+}
+article li::marker {
+  color: var(--tertiary);
+}
+article ol > li::marker {
+  font: 600 0.95em var(--headerFont);
+}
+.content-meta {
+  font: 0.82rem var(--codeFont);
+  color: var(--gray);
+  letter-spacing: 0.02em;
+  margin: 0;
+}
+.breadcrumb-container {
+  font-size: 0.9rem;
+  margin: 0;
+  gap: 0.3rem;
+}
+.breadcrumb-element a {
+  color: var(--gray);
+  font-weight: 400;
+}
+.breadcrumb-element p {
+  color: var(--lightgray);
+  margin: 0 0.35rem;
+}
+.tags {
+  gap: 0.4rem;
+}
+a.internal.tag-link {
+  font: 0.72rem var(--codeFont);
+  height: 1.3rem;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 0.5rem;
+  border-radius: 999px;
+  background: var(--highlight);
+  text-decoration: none;
+}
+
+/* links: underlined like a book, not boxed. Internal links keep a faint ground on hover only. */
+a {
+  font-weight: 500;
+  transition: color var(--duration) ease;
+}
+article a.internal,
+article a.external {
+  background: none;
+  padding: 0;
+  border-radius: 0;
+  text-decoration: underline;
+  text-decoration-color: var(--link-line);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
+  transition:
+    color var(--duration),
+    text-decoration-color var(--duration),
+    background-color var(--duration);
+}
+article a.internal:hover,
+article a.external:hover {
+  color: var(--secondary);
+  text-decoration-color: currentColor;
+  background-color: var(--highlight);
+}
+/* links to notes that are not written yet (class set by a small script; see notes) */
+article a.internal.unwritten {
+  color: var(--gray);
+  text-decoration-style: dashed;
+  text-decoration-color: var(--gray);
+  cursor: help;
+}
+:focus-visible {
+  outline: 2px solid var(--secondary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.text-highlight {
+  background: linear-gradient(transparent 12%, var(--textHighlight) 12% 88%, transparent 88%);
+  color: inherit;
+  padding: 0 0.12em;
+  border-radius: 2px;
+}
+::selection {
+  background: var(--textHighlight);
+  color: var(--dark);
+}
+
+/* a horizontal rule is one dry brush stroke */
+article hr {
+  border: 0;
+  height: 10px;
+  margin: 2.6rem 0;
+  background: var(--lightgray);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 10' preserveAspectRatio='none'%3E%3Cpath d='M2 6c60-3 140-4 230-3s200 3 280 1c40-1 70-2 86 0l-1 3c-90 1-210 2-330 1S30 7 3 8z'/%3E%3C/svg%3E")
+    center / 100% 100% no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 10' preserveAspectRatio='none'%3E%3Cpath d='M2 6c60-3 140-4 230-3s200 3 280 1c40-1 70-2 86 0l-1 3c-90 1-210 2-330 1S30 7 3 8z'/%3E%3C/svg%3E")
+    center / 100% 100% no-repeat;
+}
+
+blockquote:not(.callout) {
+  margin: 1.4rem 0;
+  padding: 0.2rem 0 0.2rem 1.2rem;
+  border-left: 3px solid var(--lightgray);
+  color: var(--darkgray);
+  font-style: italic;
+}
+
+/* ---------- callouts: Van Gogh hues per type, always with icon and label ---------- */
+.callout {
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  border-left-width: 4px;
+  background: var(--bg);
+  padding: 0.15rem 1.1rem;
+  margin: 1.5rem 0;
+}
+.callout[data-callout] {
+  --color: var(--c-info);
+}
+.callout[data-callout="info"],
+.callout[data-callout="todo"],
+.callout[data-callout="abstract"],
+.callout[data-callout="note"] {
+  --color: var(--c-info);
+}
+.callout[data-callout="tip"],
+.callout[data-callout="success"] {
+  --color: var(--c-tip);
+}
+.callout[data-callout="question"] {
+  --color: var(--c-question);
+}
+.callout[data-callout="warning"],
+.callout[data-callout="caution"] {
+  --color: var(--c-warning);
+}
+.callout[data-callout="failure"],
+.callout[data-callout="danger"],
+.callout[data-callout="bug"] {
+  --color: var(--c-danger);
+}
+.callout[data-callout="example"] {
+  --color: var(--c-example);
+}
+.callout[data-callout="quote"] {
+  --color: var(--c-quote);
+}
+.callout[data-callout] {
+  --border: color-mix(in srgb, var(--color) 32%, transparent);
+  --bg: color-mix(in srgb, var(--color) 7%, transparent);
+}
+.callout .callout-title {
+  color: var(--color);
+  font-family: var(--bodyFont);
+  gap: 0.55rem;
+  padding: 0.6rem 0;
+  align-items: flex-start;
+}
+.callout .callout-title-inner,
+.callout .callout-title-inner p {
+  font-weight: 600;
+  color: var(--color);
+  margin: 0;
+  line-height: 1.5;
+}
+.callout .callout-title-inner p {
+  max-width: none;
+}
+/* a single-line definition callout keeps its text calm: label in colour, sentence in body ink */
+.callout:not(:has(.callout-content)) .callout-title-inner p {
+  font-weight: 400;
+  color: var(--darkgray);
+}
+.callout .callout-icon {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin-top: 0.22rem;
+  background-color: var(--color);
+}
+.callout .callout-content {
+  color: var(--darkgray);
+  padding-bottom: 0.4rem;
+}
+
+/* ---------- code ---------- */
+code {
+  font-family: var(--codeFont);
+  font-size: 0.86em;
+  background: var(--surface);
+  color: var(--dark);
+  padding: 0.1em 0.35em;
+  border-radius: 5px;
+}
+pre {
+  border-radius: 10px;
+  border: 1px solid var(--lightgray);
+  background: var(--surface) !important;
+}
+pre > code,
+pre > code > [data-line] {
+  background: none;
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+figure[data-rehype-pretty-code-figure] > [data-rehype-pretty-code-title] {
+  font: 0.78rem var(--codeFont);
+  color: var(--gray);
+  background: var(--surface-2);
+  border: 1px solid var(--lightgray);
+  border-bottom: 0;
+  border-radius: 10px 10px 0 0;
+}
+.clipboard-button {
+  background: var(--light);
+  border-color: var(--lightgray);
+  color: var(--darkgray);
+  border-radius: 6px;
+}
+.clipboard-button:focus-visible {
+  opacity: 1;
+  outline: 2px solid var(--secondary);
+}
+
+/* ---------- tables ---------- */
+.table-container {
+  border: 1px solid var(--lightgray);
+  border-radius: 10px;
+  margin: 1.5rem 0;
+}
+.table-container > table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.55;
+}
+th {
+  font: 600 0.95rem var(--headerFont);
+  color: var(--dark);
+  background: var(--surface);
+  border-bottom: 1px solid var(--lightgray);
+  padding: 0.6rem 0.9rem;
+}
+td {
+  line-height: 1.55;
+  padding: 0.6rem 0.9rem;
+  vertical-align: top;
+  border-top: 1px solid color-mix(in srgb, var(--lightgray) 60%, transparent);
+}
+tr:first-child > td {
+  border-top: 0;
+}
+article img {
+  border-radius: 8px;
+}
+
+/* ---------- maths ---------- */
+.katex {
+  font-size: 1.05em;
+  color: var(--dark);
+}
+.katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  margin: 1.1rem 0;
+  padding: 0.2rem 0;
+}
+
+/* ---------- mermaid ---------- */
+pre:has(> code.mermaid) {
+  position: relative;
+  background: var(--surface) !important;
+  border: 1px solid var(--lightgray);
+  padding: 1.25rem 1rem;
+  text-align: center;
+}
+pre > code.mermaid {
+  display: inline-block;
+  background: none;
+}
+pre > .expand-button {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border-radius: 6px;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--darkgray);
+  opacity: 0;
+  transition: opacity var(--duration);
+  cursor: pointer;
+}
+pre:hover > .expand-button,
+pre > .expand-button:focus-visible {
+  opacity: 1;
+}
+pre > .expand-button svg {
+  fill: currentColor;
+}
+#mermaid-container {
+  display: none;
+}
+
+/* ---------- left sidebar ---------- */
+.page > #quartz-body .sidebar.left {
+  padding: 2.6rem 1.25rem 1.5rem 1.75rem;
+  gap: 1.25rem;
+}
+.page-title {
+  font: 600 1.7rem/1 var(--titleFont);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+.page-title a {
+  color: var(--dark);
+}
+.search > .search-button {
+  height: 2.4rem;
+  border-radius: 8px;
+  background: var(--surface);
+  border: 1px solid var(--lightgray);
+  color: var(--gray);
+  font-family: var(--bodyFont);
+  gap: 0.5rem;
+  padding: 0 0.75rem;
+  transition:
+    border-color var(--duration),
+    background-color var(--duration);
+}
+.search > .search-button:hover {
+  border-color: var(--gray);
+}
+.search > .search-button p {
+  font-size: 0.95rem;
+  margin: 0;
+}
+.search > .search-button svg {
+  width: 15px;
+  height: 15px;
+  stroke: currentColor;
+  flex: none;
+}
+.search > .search-button kbd {
+  margin-left: auto;
+  font: 0.72rem var(--codeFont);
+  color: var(--gray);
+}
+button.darkmode,
+button.readermode {
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  border: 1px solid transparent;
+  background: none;
+  color: var(--darkgray);
+  transition: background-color var(--duration);
+}
+button.darkmode:hover,
+button.readermode:hover {
+  background: var(--surface);
+}
+button.darkmode svg,
+button.readermode svg {
+  width: 18px;
+  height: 18px;
+  fill: var(--darkgray);
+}
+:root[reader-mode="on"] button.readermode {
+  background: var(--surface-2);
+}
+
+/* ---------- explorer ---------- */
+.explorer {
+  min-height: 0;
+  flex: 1 1 auto;
+}
+/* ---------- explorer scrolling: exactly one scroll area ----------
+   Stock Quartz nests two scroll areas and puts overscroll-behavior: contain on every list,
+   including each open folder's inner list. Those inner lists are overflow: hidden (for the
+   open/close animation), so they swallow the wheel and the explorer only scrolls when the
+   pointer is over a top-level folder. Here the outer list is the only scroller, it gets a
+   definite height from flexbox (no percentage max-height that Safari cannot resolve), and
+   inner lists pass the wheel through. */
+.explorer .explorer-content {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.explorer .explorer-content > ul.explorer-ul {
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: none;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  padding-right: 0.15rem;
+}
+.explorer .explorer-content .folder-outer > ul {
+  overscroll-behavior: auto;
+}
+
+/* fade the edges only when there is more to scroll in that direction */
+.explorer .explorer-content > ul.explorer-ul {
+  --fade-top: 0px;
+  --fade-bottom: 0px;
+  -webkit-mask: linear-gradient(
+    to bottom,
+    transparent 0,
+    #000 var(--fade-top),
+    #000 calc(100% - var(--fade-bottom)),
+    transparent 100%
+  );
+  mask: linear-gradient(
+    to bottom,
+    transparent 0,
+    #000 var(--fade-top),
+    #000 calc(100% - var(--fade-bottom)),
+    transparent 100%
+  );
+}
+.explorer .explorer-content > ul.explorer-ul.scrolled {
+  --fade-top: 28px;
+}
+.explorer .explorer-content > ul.explorer-ul.gradient-active {
+  --fade-bottom: 44px;
+}
+
+/* the scrollbar: a thin painted stroke that wakes up when you reach for it */
+.explorer .explorer-content > ul.explorer-ul {
+  --thumb: color-mix(in srgb, var(--gray) 42%, transparent);
+  --thumb-hover: var(--gray);
+  --thumb-active: var(--star);
+  scrollbar-width: thin;
+  scrollbar-color: var(--thumb) transparent;
+}
+.explorer:hover .explorer-content > ul.explorer-ul,
+.explorer:focus-within .explorer-content > ul.explorer-ul {
+  --thumb: var(--thumb-hover);
+}
+.explorer .explorer-content > ul.explorer-ul.dragging {
+  --thumb: var(--thumb-active);
+}
+/* Safari has no scrollbar-color: draw the same thumb with the WebKit pseudo-elements */
+@supports not (scrollbar-color: auto) {
+  .explorer .explorer-content > ul.explorer-ul::-webkit-scrollbar {
+    width: 10px;
+  }
+  .explorer .explorer-content > ul.explorer-ul::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .explorer .explorer-content > ul.explorer-ul::-webkit-scrollbar-thumb {
+    background: var(--thumb);
+    border: 3px solid transparent;
+    background-clip: padding-box;
+    border-radius: 999px;
+    min-height: 40px;
+  }
+  .explorer .explorer-content > ul.explorer-ul::-webkit-scrollbar-thumb:active {
+    background: var(--thumb-active);
+    background-clip: padding-box;
+  }
+}
+button.desktop-explorer {
+  gap: 0.3rem;
+  color: var(--gray);
+  padding: 0.25rem 0;
+}
+button.desktop-explorer h2 {
+  font: 500 0.7rem var(--codeFont);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gray);
+}
+.explorer-content {
+  margin-top: 0.35rem;
+  padding-right: 0.25rem;
+}
+.explorer-content ul {
+  display: grid;
+  gap: 1px;
+  /* the outer list fills the explorer's height so it can scroll; keep rows packed at the top
+     instead of letting the grid stretch them apart when the list is short */
+  align-content: start;
+}
+.explorer-content ul li > a {
+  display: block;
+  opacity: 1;
+  color: var(--darkgray);
+  font: 400 0.95rem/1.35 var(--bodyFont);
+  padding: 0.3rem 0.5rem;
+  border-radius: 6px;
+  transition:
+    background-color var(--duration-fast),
+    color var(--duration-fast);
+}
+.explorer-content ul li > a:hover {
+  background: var(--surface);
+  color: var(--dark);
+}
+.explorer-content ul li > a.active {
+  color: var(--secondary);
+  background: var(--surface-2);
+  font-weight: 600;
+  position: relative;
+}
+.explorer-content ul li > a.active {
+  padding-left: 1.35rem;
+}
+.explorer-content ul li > a.active::before {
+  /* a small painted star marks where you are */
+  content: "";
+  position: absolute;
+  left: 0.5rem;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  margin-top: -3.5px;
+  border-radius: 50%;
+  background: var(--star);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--star) 22%, transparent);
+}
+.folder-container {
+  gap: 0.15rem;
+  border-radius: 6px;
+}
+.folder-container > div {
+  flex: 1;
+  min-width: 0;
+}
+.folder-container div > a.folder-title {
+  display: block;
+  font: 600 0.95rem/1.35 var(--bodyFont);
+  color: var(--dark);
+  padding: 0.3rem 0.4rem 0.3rem 0.2rem;
+  border-radius: 6px;
+  transition: background-color var(--duration-fast);
+}
+.folder-container div > a.folder-title:hover {
+  background: var(--surface);
+  color: var(--dark);
+}
+/* the folder that holds the page you are on reads in ink colour even when closed */
+li:has(a.active) > .folder-container a.folder-title {
+  color: var(--secondary);
+}
+/* chevron is a real button (the one explorer fork): keyboard can open folders */
+button.folder-icon {
+  flex: none;
+  width: 1.6rem;
+  height: 1.6rem;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  color: var(--gray);
+  cursor: pointer;
+  transition: background-color var(--duration-fast);
+}
+button.folder-icon:hover {
+  background: var(--surface);
+  color: var(--dark);
+}
+button.folder-icon svg {
+  width: 11px;
+  height: 11px;
+  transform: rotate(-90deg);
+  transition: transform var(--duration-slow) var(--ease-expo);
+}
+.folder-container:has(+ .folder-outer.open) button.folder-icon svg {
+  transform: rotate(0deg);
+}
+.explorer-content .folder-outer {
+  transition-duration: var(--duration-slow);
+  transition-timing-function: var(--ease-expo);
+}
+.explorer-content .folder-outer > ul {
+  margin-left: 0.8rem;
+  padding-left: 0.85rem;
+  border-left: 1px solid var(--lightgray);
+}
+li:has(a.active) > .folder-outer > ul {
+  border-left-color: color-mix(in srgb, var(--star) 55%, var(--lightgray));
+}
+
+/* ---------- right rail ---------- */
+.page > #quartz-body .sidebar.right {
+  padding: 4.5rem 1.75rem 2rem 1.25rem;
+  gap: 2rem;
+}
+.sidebar.right h3,
+.toc-header h3,
+.graph > h3,
+.backlinks > h3 {
+  font: 500 0.7rem var(--codeFont);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gray);
+  margin: 0 0 0.6rem;
+}
+.graph > .graph-outer {
+  border-radius: 12px;
+  border: 1px solid var(--lightgray);
+  background: color-mix(in srgb, var(--surface) 70%, transparent);
+  height: 15rem;
+  overflow: hidden;
+  position: relative;
+}
+.graph-outer > .graph-container {
+  height: 100%;
+}
+.graph-container canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.global-graph-icon {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 6px;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--darkgray);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  opacity: 1;
+}
+.global-graph-icon:hover {
+  background: var(--surface);
+}
+.graph-legend {
+  display: flex;
+  gap: 0.9rem;
+  margin-top: 0.5rem;
+  font: 0.72rem var(--codeFont);
+  color: var(--gray);
+}
+.graph-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.graph-legend i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.global-graph-outer {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: color-mix(in srgb, var(--light) 80%, transparent);
+  backdrop-filter: blur(6px);
+  display: none;
+}
+.global-graph-outer.active {
+  display: block;
+}
+.global-graph-container {
+  position: absolute;
+  inset: 5vh 5vw;
+  border-radius: 14px;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  overflow: hidden;
+}
+.global-graph-close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 2;
+  font: 500 0.8rem var(--codeFont);
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  cursor: pointer;
+}
+.global-graph-caption {
+  position: absolute;
+  left: 1rem;
+  bottom: 0.9rem;
+  z-index: 2;
+  font: 0.8rem var(--codeFont);
+  color: var(--gray);
+}
+
+.toc-header {
+  color: var(--gray);
+}
+.toc-header svg {
+  width: 12px;
+  height: 12px;
+}
+.toc-content {
+  position: relative;
+}
+.toc-content li {
+  margin: 0;
+}
+ul.toc-content.overflow > li > a {
+  display: block;
+  color: var(--gray);
+  font: 400 0.9rem/1.35 var(--bodyFont);
+  padding: 0.28rem 0 0.28rem 0.85rem;
+  border-left: 2px solid var(--lightgray);
+  opacity: 1;
+  transition:
+    color var(--duration),
+    border-color var(--duration);
+}
+ul.toc-content.overflow > li.depth-1 > a {
+  padding-left: 1.7rem;
+  font-size: 0.86rem;
+}
+ul.toc-content.overflow > li > a:hover {
+  color: var(--dark);
+}
+ul.toc-content.overflow > li > a.in-view {
+  opacity: 1;
+  color: var(--dark);
+  border-left-color: var(--star);
+  font-weight: 500;
+}
+
+.backlinks ul {
+  display: grid;
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0;
+}
+.backlinks li {
+  list-style: none;
+}
+.backlinks li > a.internal {
+  display: block;
+  padding: 0.45rem 0.65rem 0.2rem;
+  border-radius: 8px;
+  background: none;
+  border: 1px solid transparent;
+  color: var(--dark);
+  font: 600 0.95rem/1.3 var(--bodyFont);
+  transition:
+    background-color var(--duration-fast),
+    border-color var(--duration-fast);
+}
+.backlinks li > a.internal:hover {
+  background: var(--surface);
+  border-color: var(--lightgray);
+}
+.backlinks .backlink-folder {
+  display: block;
+  font: 400 0.7rem var(--codeFont);
+  color: var(--gray);
+  letter-spacing: 0.04em;
+  margin-bottom: 0.1rem;
+}
+.backlinks .backlink-context {
+  display: block;
+  margin: 0.1rem 0 0;
+  padding: 0 0.65rem 0.35rem;
+  max-width: none;
+  font: 400 0.84rem/1.45 var(--bodyFont);
+  color: var(--darkgray);
+}
+.backlinks .backlink-context mark {
+  background: none;
+  color: var(--secondary);
+  font-weight: 600;
+}
+.backlinks .empty {
+  font-size: 0.9rem;
+  color: var(--gray);
+  margin: 0;
+}
+
+/* ---------- popover preview ---------- */
+.popover {
+  z-index: 70;
+  position: absolute;
+  pointer-events: none;
+  padding: 0;
+}
+.popover.active-popover {
+  animation: dropin var(--duration-slow) var(--ease-expo) forwards;
+}
+.popover > .popover-inner {
+  width: 22rem;
+  max-height: 16rem;
+  overflow: hidden;
+  padding: 1rem 1.15rem;
+  border-radius: 12px;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  box-shadow: 0 18px 40px -18px rgba(2, 10, 23, 0.45);
+  font: 400 0.95rem/1.55 var(--bodyFont);
+  color: var(--darkgray);
+}
+.popover .popover-folder {
+  font: 0.7rem var(--codeFont);
+  color: var(--gray);
+  letter-spacing: 0.04em;
+}
+.popover h1 {
+  font: 500 1.3rem/1.2 var(--headerFont);
+  margin: 0.15rem 0 0.4rem;
+}
+.popover p {
+  margin: 0;
+}
+.popover .unwritten-note {
+  color: var(--gray);
+  font-style: italic;
+}
+
+/* ---------- search ---------- */
+.search > .search-container {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: none;
+  background: color-mix(in srgb, var(--light) 70%, transparent);
+  backdrop-filter: blur(6px);
+}
+.search > .search-container.active {
+  display: block;
+}
+.search-space {
+  width: min(52rem, calc(100vw - 2rem));
+  margin: 10vh auto 0;
+  border-radius: 14px;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  box-shadow: 0 30px 60px -30px rgba(2, 10, 23, 0.5);
+  overflow: hidden;
+}
+input.search-bar {
+  width: 100%;
+  box-sizing: border-box;
+  border: 0;
+  border-bottom: 1px solid var(--lightgray);
+  background: none;
+  font: 400 1.15rem var(--bodyFont);
+  color: var(--dark);
+  padding: 1rem 1.2rem;
+}
+input.search-bar:focus {
+  outline: none;
+}
+input.search-bar::placeholder {
+  color: var(--gray);
+}
+.search-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+  max-height: 60vh;
+}
+.results-container {
+  overflow-y: auto;
+  padding: 0.5rem;
+  border-right: 1px solid var(--lightgray);
+}
+.result-card {
+  display: block;
+  padding: 0.6rem 0.75rem;
+  border-radius: 8px;
+  color: var(--darkgray);
+  font-weight: 400;
+}
+.result-card h3 {
+  font: 600 1rem var(--bodyFont);
+  margin: 0;
+  color: var(--dark);
+}
+.result-card .result-folder {
+  font: 0.7rem var(--codeFont);
+  color: var(--gray);
+}
+.result-card p {
+  margin: 0.15rem 0 0;
+  font-size: 0.86rem;
+  line-height: 1.45;
+  color: var(--darkgray);
+}
+.result-card.focus,
+.result-card:hover {
+  background: var(--surface);
+}
+.result-card mark,
+.preview-inner mark {
+  background: var(--textHighlight);
+  color: inherit;
+  border-radius: 2px;
+}
+.preview-container {
+  overflow-y: auto;
+  padding: 1.1rem 1.4rem;
+  font: 400 0.95rem/1.6 var(--bodyFont);
+  color: var(--darkgray);
+}
+.preview-container h1 {
+  font: 500 1.5rem var(--headerFont);
+  margin: 0 0 0.5rem;
+}
+.search-empty {
+  padding: 1.2rem;
+  color: var(--gray);
+  margin: 0;
+}
+.search-hint {
+  display: flex;
+  gap: 1rem;
+  padding: 0.55rem 1.2rem;
+  font: 0.72rem var(--codeFont);
+  color: var(--gray);
+  border-top: 1px solid var(--lightgray);
+}
+
+/* ---------- footer ---------- */
+.page > #quartz-body footer {
+  margin-top: 4rem;
+  padding: 1.5rem 0 3rem;
+  border-top: 1px solid var(--lightgray);
+  color: var(--gray);
+  font-size: 0.9rem;
+  opacity: 1;
+}
+footer ul {
+  display: flex;
+  gap: 1.2rem;
+  list-style: none;
+  padding: 0;
+  margin: 0.4rem 0 0;
+}
+
+/* ---------- tablet and phone ---------- */
+@media (max-width: 1200px) {
+  .page > #quartz-body .sidebar.right {
+    padding: 0;
+    gap: 1rem;
+  }
+}
+@media (max-width: 800px) {
+  .page > #quartz-body .page-header {
+    margin-top: 1rem;
+  }
+  .page article {
+    font-size: 1.06rem;
+  }
+  .page > #quartz-body .sidebar.left {
+    padding: 1rem 0;
+    background: color-mix(in srgb, var(--light) 92%, transparent);
+    backdrop-filter: blur(4px);
+    border-bottom: 1px solid var(--lightgray);
+    gap: 0.75rem;
+  }
+  .page-title {
+    font-size: 1.35rem;
+  }
+  .explorer .explorer-content {
+    background: var(--light);
+    padding: 1.25rem 1.25rem 2rem;
+  }
+  /* secondary panels on phones: one summary line, details behind a disclosure */
+  .page > #quartz-body .sidebar.right {
+    flex-direction: column;
+  }
+  .page > #quartz-body .sidebar.right > * {
+    flex: none;
+    max-height: none;
+  }
+  .rail-summary {
+    display: flex !important;
+  }
+  .sidebar.right:not(.rail-open) > .graph,
+  .sidebar.right:not(.rail-open) > .backlinks {
+    display: none;
+  }
+  .graph > .graph-outer {
+    height: 13rem;
+  }
+  .search-layout {
+    grid-template-columns: 1fr;
+  }
+  .preview-container {
+    display: none;
+  }
+  .results-container {
+    border-right: 0;
+  }
+  body::after {
+    width: 92vw;
+  }
+}
+.rail-summary {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border-radius: 10px;
+  border: 1px solid var(--lightgray);
+  background: var(--surface);
+  color: var(--dark);
+  font: 500 0.95rem var(--bodyFont);
+  cursor: pointer;
+  text-align: left;
+}
+.rail-summary small {
+  font: 0.75rem var(--codeFont);
+  color: var(--gray);
+}
+.rail-summary svg {
+  transition: transform var(--duration-slow) var(--ease-expo);
+}
+.sidebar.right.rail-open .rail-summary svg {
+  transform: rotate(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::before,
+  body::after,
+  #quartz-root::before {
+    animation: none;
+  }
+  button.folder-icon svg,
+  .explorer-content .folder-outer,
+  .rail-summary svg {
+    transition: none;
+  }
+}
+
+/* PROTOTYPE ONLY: Lenis' required rules (Quartz build would import lenis.css) */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis-stopped {
+  overflow: hidden;
+}
+
+/* search: one sheet, not Quartz's stacked boxes */
+.search > .search-container > .search-space > * {
+  margin: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+.search > .search-container > .search-space > input {
+  border: 0;
+  border-bottom: 1px solid var(--lightgray);
+}
+.search > .search-container > .search-space > .search-layout {
+  border: 0;
+  overflow: hidden;
+  max-height: 60vh;
+}
+.search > .search-container > .search-space > .search-layout > div {
+  height: auto;
+  max-height: 60vh;
+  border-radius: 0;
+}
+.search > .search-container > .search-space > .search-layout > .results-container .result-card {
+  border-bottom: 0;
+  margin: 0 0 2px;
+  line-height: 1.3;
+}
+.search > .search-container > .search-space .search-layout mark {
+  background: var(--textHighlight);
+  color: inherit;
+  padding: 0 0.1em;
+}
