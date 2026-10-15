@@ -218,7 +218,7 @@ body[data-slug="index"] {
     display: grid;
     place-items: center;
   }
-  .quote {
+  p.quote {
     font: italic 300 clamp(28px, 3.3vw, 48px)/1.22 var(--display);
     color: var(--cream);
     max-width: 22ch;

@@ -7,7 +7,14 @@ import homeScript from "./scripts/home.inline"
 // the beats above the note, the spiral of folders below it, and the painted stage behind both.
 // Their styles are styles/vangogh/_home.scss; the motion is scripts/home.inline.ts.
 
-type HomeCopy = { headline?: string; tagline?: string; quote?: string; label?: string }
+type HomeCopy = {
+  headline?: string
+  tagline?: string
+  quote?: string
+  label?: string
+  brush?: string
+  outro?: { tag?: string; headline?: string; text?: string }
+}
 
 export const HomeBeats = (() => {
   const HomeBeats: QuartzComponent = ({ fileData }: QuartzComponentProps) => {
@@ -66,8 +73,6 @@ const FALLBACK: [string, string][] = [
   ["field", "50% 60%"],
   ["eye", "50% 50%"],
 ]
-const WORDS = ["No", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten"]
-
 export const HomeSpiral = (() => {
   const HomeSpiral: QuartzComponent = ({ fileData, allFiles }: QuartzComponentProps) => {
     // top-level folders and how many notes each holds
@@ -83,19 +88,17 @@ export const HomeSpiral = (() => {
     const list = [...folders.entries()].sort(([a], [b]) =>
       a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" }),
     )
-    const n = list.length
+    const outro = ((fileData.frontmatter?.home ?? {}) as HomeCopy).outro ?? {}
     return (
       <section class="beat" id="spiral" aria-labelledby="spiral-h">
         <div class="sticky">
           <div class="wipe"></div>
           <div class="spiral-head">
             <div class="tag" style="color: var(--chrome)">
-              The notes
+              {outro.tag}
             </div>
-            <h2 id="spiral-h">{WORDS[n] ?? n} folders, one spiral.</h2>
-            <p>
-              Scroll turns the spiral. The explorer on the left is the list view of the same thing.
-            </p>
+            <h2 id="spiral-h">{outro.headline}</h2>
+            <p>{outro.text}</p>
           </div>
           <div class="helix">
             <ul id="cards">
@@ -130,8 +133,9 @@ export const HomeSpiral = (() => {
 export const HomeStage = (() => {
   const HomeStage: QuartzComponent = ({ fileData }: QuartzComponentProps) => {
     const img = (n: string) => `${pathToRoot(fileData.slug!)}/static/vg/${n}.jpg`
+    const home = (fileData.frontmatter?.home ?? {}) as HomeCopy
     return (
-      <div class="home-stage">
+      <div class="home-stage" data-brush={home.brush}>
         <div class="stage" aria-hidden="true">
           <div class="layer" id="eye">
             <img src={img("eye")} alt="" />

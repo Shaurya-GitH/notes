@@ -219,7 +219,7 @@ function startHome() {
   }
 
   // ---------- scroll-driven stage ----------
-  const quote = $(".quote")
+  const quote = $("p.quote")
   const eye = $("#eye"),
     sky = $("#sky"),
     fieldL = $("#field"),
@@ -670,8 +670,8 @@ function startHome() {
     const note = document.createElement("p")
     note.className = "margin"
     note.id = "brush-note"
-    note.textContent = "your cursor paints through to the other side"
-    secs.about.appendChild(note)
+    note.textContent = $(".home-stage").dataset.brush ?? ""
+    if (note.textContent) secs.about.appendChild(note)
     on(
       window,
       "pointermove",

@@ -8,6 +8,13 @@ home:
   tagline: Agentic AI · Full stack · DevOps · Security
   quote: "I build agents: systems that use tools, hold context, remember and act on someone's behalf."
   label: I enjoy hard problems more than any single technology.
+  # the handwritten note under the panel, shown when the ink cursor is on
+  brush: every system has another side. paint to find it.
+  # the spiral of folders at the end of the page
+  outro:
+    tag: Keep exploring
+    headline: From the model to the cluster.
+    text: Agents, the stack under them and the pipelines that ship them. Pick a painting to read how each part works.
 ---
 
 > [!quote] My Engineering Philosophy
