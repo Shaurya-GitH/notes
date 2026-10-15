@@ -5,6 +5,11 @@ import { getFullSlug, pathToRoot } from "../../util/path"
 
 // the home page's scroll story: painted stage, rings, sky, crows, spiral and the ink cursor.
 // Runs only on the home page, and returns everything it started to the SPA's cleanup.
+// the twins outlive a visit to the home page, so coming back from a note reuses the loaded images
+const TWIN = {}
+// this script first runs on the page the visitor landed on
+const LANDED_HOME = getFullSlug(window) === "index"
+
 function startHome() {
   let alive = true
   let raf = 0
@@ -509,12 +514,13 @@ function startHome() {
   // they load after the page's own art, so they never hold up the first screen; start on the window's
   // load or the first pointer move, whichever comes first (inside the artifact frame the load event
   // can fire before this script runs)
-  const TWIN = {}
   for (const n of ["eye", "sky", "field", "almond"])
-    TWIN[n] = Object.assign(new Image(), { later: `${IMG}${n}-alt.jpg` })
+    TWIN[n] ||= Object.assign(new Image(), { later: `${IMG}${n}-alt.jpg` })
   const startTwins = () => Object.values(TWIN).forEach((i) => i.src || (i.src = i.later))
-  // only where the ink runs, and after the first screen has painted
-  const twinTimer = FINE && !RM ? setTimeout(startTwins, 1200) : 0
+  // only where the ink runs; a landing on home waits for its first screen to paint, arriving from a
+  // note starts them at once, and a return visit finds them loaded
+  const twinTimer =
+    FINE && !RM && !TWIN.eye.src ? setTimeout(startTwins, LANDED_HOME ? 1200 : 0) : 0
   // the eye twin was generated from text, so `fit` pins its iris (ax, ay) onto the original's (bx, by)
   const FIT = { eye: [0.534, 0.605, 0.565, 0.62, 1.08] }
   // object-fit: cover (and background-size: cover) at a given position, in the target's own pixels
@@ -550,8 +556,11 @@ function startHome() {
     ctx.transform(m.a, m.b, m.c, m.d, m.e, m.f)
     ctx.translate(-ox, -oy)
   }
-  // the inverted stage, composited exactly like the real one: same layers, opacities, zoom and drift
+  // the inverted stage, composited exactly like the real one: same layers, opacities, zoom and drift;
+  // false while a showing layer's twin is still loading, so the ink never opens onto a bare fill
   function drawStage() {
+    for (const [el, name] of STAGE)
+      if (+el.style.opacity >= 0.01 && !TWIN[name].naturalWidth) return false
     rctx.globalCompositeOperation = "source-over"
     rctx.fillStyle = "#041833"
     rctx.fillRect(0, 0, W, H)
@@ -566,6 +575,7 @@ function startHome() {
       rctx.restore()
     }
     drawDoves()
+    return true
   }
   // inside the ink every crow is a white dove, flying the same path
   function drawDoves() {
@@ -715,10 +725,11 @@ function startHome() {
     wet += dt
     if (wet > 4) return // dry: nothing left to draw
     ink.step(dt)
-    drawStage()
-    rctx.globalCompositeOperation = "destination-in"
-    rctx.drawImage(ink.canvas, 0, 0, W, H)
-    rctx.globalCompositeOperation = "source-over"
+    if (drawStage()) {
+      rctx.globalCompositeOperation = "destination-in"
+      rctx.drawImage(ink.canvas, 0, 0, W, H)
+      rctx.globalCompositeOperation = "source-over"
+    } else rctx.clearRect(0, 0, W, H)
     drawCards()
     if (wet > 3.9) {
       rctx.clearRect(0, 0, W, H)

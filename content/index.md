@@ -6,7 +6,7 @@ description: Full-stack, applied AI engineer building agentic systems that use t
 home:
   headline: Full-stack engineer building agents that use tools, remember and act.
   tagline: Agentic AI · Full stack · DevOps · Security
-  quote: "I build agents: systems that use tools, hold context, remember and act on someone's behalf."
+  quote: I build agents, and the infrastructure that makes them reliable, measurable and fast.
   label: I take systems apart to understand why they work.
   # the handwritten note under the panel, shown when the ink cursor is on
   brush: every system has another side. paint to find it.
