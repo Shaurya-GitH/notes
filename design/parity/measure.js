@@ -27,6 +27,10 @@ async (page) => {
     ["theme button", ".darkmode"],
     ["reader button", ".readermode"],
     ["active note", ".explorer-content a.active"],
+    ["folder chevron", ".explorer-content button.folder-icon"],
+    ["chevron svg", ".explorer-content button.folder-icon svg"],
+    ["folder row", ".explorer-content .folder-container"],
+    ["nested list", ".explorer-content .folder-outer > ul"],
     ["centre column", ".center"],
     ["breadcrumbs", ".breadcrumb-container"],
     ["title", "h1.article-title"],
@@ -54,7 +58,8 @@ async (page) => {
     ["footer", "footer"],
   ]
   const PROPS = ["font-family", "font-size", "font-weight", "font-style", "line-height", "letter-spacing", "color",
-    "background-color", "padding", "margin", "border-radius", "border-top", "border-left", "text-transform", "opacity"]
+    "background-color", "padding", "margin", "border-radius", "border-top", "border-left", "text-transform", "opacity",
+    "transform", "width", "height", "scrollTop", "class"]
   const browser = page.context().browser()
   const visit = async (url, pr) => {
     const ctx = await browser.newContext({ viewport: { width: pr.size[0], height: pr.size[1] }, reducedMotion: "reduce" })
@@ -80,6 +85,7 @@ async (page) => {
         const st = {}
         for (const k of props) st[k] = cs.getPropertyValue(k)
         out[label] = { box: [r.left, r.top + scrollY, r.width, r.height].map((v) => Math.round(v * 10) / 10), st }
+        if (label === "explorer list") st["scrollTop"] = String(Math.round(el.scrollTop)), st["class"] = el.className
       }
       return out
     }, [PROBES, PROPS])

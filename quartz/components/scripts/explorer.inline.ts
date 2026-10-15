@@ -28,6 +28,12 @@ function toggleExplorer(this: HTMLElement) {
     "aria-expanded",
     nearestExplorer.getAttribute("aria-expanded") === "true" ? "false" : "true",
   )
+  this.setAttribute("aria-expanded", String(!explorerCollapsed))
+  if (this.classList.contains("mobile-explorer")) {
+    this.setAttribute("aria-label", explorerCollapsed ? "Open explorer" : "Close explorer")
+    // keep the page behind the open drawer still
+    document.getElementById("quartz-body")?.classList.toggle("lock-scroll", !explorerCollapsed)
+  }
 
   if (!explorerCollapsed) {
     // Stop <html> from being scrollable when mobile explorer is open
@@ -42,17 +48,7 @@ function toggleFolder(evt: MouseEvent) {
   const target = evt.target as MaybeHTMLElement
   if (!target) return
 
-  // Check if target was svg icon or button
-  const isSvg = target.nodeName === "svg"
-
-  // corresponding <ul> element relative to clicked button/folder
-  const folderContainer = (
-    isSvg
-      ? // svg -> div.folder-container
-        target.parentElement
-      : // button.folder-button -> div -> div.folder-container
-        target.parentElement?.parentElement
-  ) as MaybeHTMLElement
+  const folderContainer = target.closest(".folder-container") as MaybeHTMLElement
   if (!folderContainer) return
   const childFolderContainer = folderContainer.nextElementSibling as MaybeHTMLElement
   if (!childFolderContainer) return
@@ -62,6 +58,7 @@ function toggleFolder(evt: MouseEvent) {
   // Collapse folder container
   const isCollapsed = !childFolderContainer.classList.contains("open")
   setFolderState(childFolderContainer, isCollapsed)
+  labelFolderButton(folderContainer, !isCollapsed)
 
   const currentFolderState = currentExplorerState.find(
     (item) => item.path === folderContainer.dataset.folderpath,
@@ -90,6 +87,7 @@ function createFileNode(currentSlug: FullSlug, node: FileTrieNode): HTMLLIElemen
 
   if (currentSlug === node.slug) {
     a.classList.add("active")
+    a.setAttribute("aria-current", "page")
   }
 
   return li
@@ -143,6 +141,7 @@ function createFolderNode(
   if (!isCollapsed || folderIsPrefixOfCurrentSlug) {
     folderOuter.classList.add("open")
   }
+  labelFolderButton(folderContainer, folderOuter.classList.contains("open"), node.displayName)
 
   for (const child of node.children) {
     const childNode = child.isFolder
@@ -220,17 +219,22 @@ async function setupExplorer(currentSlug: FullSlug) {
     }
     explorerUl.insertBefore(fragment, explorerUl.firstChild)
 
-    // restore explorer scrollTop position if it exists
+    // centre the current note in the list; scrolling only the list, never the page
+    // (scrollIntoView also scrolls every ancestor, which threw the article halfway down on load)
+    const activeElement = explorerUl.querySelector("a.active")
     const scrollTop = sessionStorage.getItem("explorerScrollTop")
-    if (scrollTop) {
+    if (activeElement) {
+      const list = explorerUl as HTMLElement
+      requestAnimationFrame(() => {
+        list.scrollTop +=
+          activeElement.getBoundingClientRect().top -
+          list.getBoundingClientRect().top -
+          list.clientHeight / 2
+      })
+    } else if (scrollTop) {
       explorerUl.scrollTop = parseInt(scrollTop)
-    } else {
-      // try to scroll to the active element if it exists
-      const activeElement = explorerUl.querySelector(".active")
-      if (activeElement) {
-        activeElement.scrollIntoView({ behavior: "smooth" })
-      }
     }
+    watchEdges(explorerUl as HTMLElement)
 
     // Set up event handlers
     const explorerButtons = explorer.getElementsByClassName(
@@ -281,6 +285,9 @@ document.addEventListener("nav", async (e: CustomEventMap["nav"]) => {
     if (mobileExplorer.checkVisibility()) {
       explorer.classList.add("collapsed")
       explorer.setAttribute("aria-expanded", "false")
+      mobileExplorer.setAttribute("aria-expanded", "false")
+      mobileExplorer.setAttribute("aria-label", "Open explorer")
+      document.getElementById("quartz-body")?.classList.remove("lock-scroll")
 
       // Allow <html> to be scrollable when mobile explorer is collapsed
       document.documentElement.classList.remove("mobile-no-scroll")
@@ -299,6 +306,46 @@ window.addEventListener("resize", function () {
     return
   }
 })
+
+function labelFolderButton(folderContainer: HTMLElement, open: boolean, name?: string) {
+  const button = folderContainer.querySelector("button.folder-icon")
+  if (!button) return
+  name ??= folderContainer.querySelector(".folder-title")?.textContent ?? ""
+  button.setAttribute("aria-expanded", String(open))
+  button.setAttribute("aria-label", (open ? "Collapse " : "Expand ") + name)
+}
+
+// edge fades for the explorer's one scroll area: a top fade once scrolled, a bottom fade while
+// there is more below; also tints the thumb while it is dragged
+function watchEdges(list: HTMLElement) {
+  const edges = () => {
+    list.classList.toggle("scrolled", list.scrollTop > 2)
+    list.classList.toggle(
+      "gradient-active",
+      list.scrollTop + list.clientHeight < list.scrollHeight - 2,
+    )
+  }
+  const onDown = (e: PointerEvent) => {
+    if (e.offsetX <= list.clientWidth) return
+    list.classList.add("dragging")
+    addEventListener("pointerup", () => list.classList.remove("dragging"), { once: true })
+  }
+  const resize = new ResizeObserver(edges)
+  const folders = new MutationObserver(() => requestAnimationFrame(edges))
+  list.addEventListener("scroll", edges, { passive: true })
+  list.addEventListener("transitionend", edges)
+  list.addEventListener("pointerdown", onDown)
+  resize.observe(list)
+  folders.observe(list, { subtree: true, attributes: true, attributeFilter: ["class"] })
+  edges()
+  window.addCleanup(() => {
+    list.removeEventListener("scroll", edges)
+    list.removeEventListener("transitionend", edges)
+    list.removeEventListener("pointerdown", onDown)
+    resize.disconnect()
+    folders.disconnect()
+  })
+}
 
 function setFolderState(folderElement: HTMLElement, collapsed: boolean) {
   return collapsed ? folderElement.classList.remove("open") : folderElement.classList.add("open")
