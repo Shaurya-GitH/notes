@@ -20,6 +20,8 @@ import DesktopOnly from "./DesktopOnly"
 import MobileOnly from "./MobileOnly"
 import RecentNotes from "./RecentNotes"
 import Breadcrumbs from "./Breadcrumbs"
+import RailSummary from "./RailSummary"
+import SmoothScroll from "./SmoothScroll"
 import Comments from "./Comments"
 import Flex from "./Flex"
 import ConditionalRender from "./ConditionalRender"
@@ -47,6 +49,8 @@ export {
   RecentNotes,
   NotFound,
   Breadcrumbs,
+  RailSummary,
+  SmoothScroll,
   Comments,
   Flex,
   ConditionalRender,

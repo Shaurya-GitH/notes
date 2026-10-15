@@ -197,3 +197,9 @@ ul.toc-content.overflow > li > a.in-view {
   color: var(--gray);
   margin: 0;
 }
+
+// the design lets the contents list and backlinks end without Quartz's bottom fade
+.toc ul.overflow.gradient-active,
+.backlinks ul.overflow.gradient-active {
+  mask-image: none;
+}

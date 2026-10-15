@@ -13,5 +13,11 @@ export declare global {
   interface Window {
     spaNavigate(url: URL, isBack: boolean = false)
     addCleanup(fn: (...args: any[]) => void)
+    // the page's smooth scroller (SmoothScroll), paused while overlays are open
+    lenis?: {
+      stop(): void
+      start(): void
+      scrollTo(target: number | HTMLElement, opts?: object): void
+    }
   }
 }

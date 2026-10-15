@@ -95,8 +95,24 @@ export default ((opts?: Partial<GraphOptions>) => {
             </svg>
           </button>
         </div>
-        <div class="global-graph-outer">
+        <div
+          class="global-graph-outer"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Graph of all notes"
+        >
           <div class="global-graph-container" data-cfg={JSON.stringify(globalGraph)}></div>
+        </div>
+        <div class="graph-legend">
+          <span>
+            <i style="background:var(--star)"></i>This note
+          </span>
+          <span>
+            <i style="background:var(--node)"></i>Linked
+          </span>
+          <span>
+            <i style="border:1px dashed var(--gray)"></i>Not written
+          </span>
         </div>
       </div>
     )

@@ -4,6 +4,7 @@ import { resolveRelative, simplifySlug } from "../util/path"
 import { i18n } from "../i18n"
 import { classNames } from "../util/lang"
 import OverflowListFactory from "./OverflowList"
+import { backlinkContext } from "../util/backlinkContext"
 
 interface BacklinksOptions {
   hideWhenEmpty: boolean
@@ -33,13 +34,30 @@ export default ((opts?: Partial<BacklinksOptions>) => {
         <h3>{i18n(cfg.locale).components.backlinks.title}</h3>
         <OverflowList>
           {backlinkFiles.length > 0 ? (
-            backlinkFiles.map((f) => (
-              <li>
-                <a href={resolveRelative(fileData.slug!, f.slug!)} class="internal">
-                  {f.frontmatter?.title}
-                </a>
-              </li>
-            ))
+            backlinkFiles.map((f) => {
+              // folder of the linking note, and the sentence it links here with
+              const folder = (f.relativePath ?? "").split("/").slice(0, -1).join(" / ")
+              const ctx = backlinkContext(f.htmlAst, fileData.slug!)
+              return (
+                <li>
+                  <a
+                    href={resolveRelative(fileData.slug!, f.slug!)}
+                    class="internal"
+                    data-slug={f.slug}
+                  >
+                    <span class="backlink-folder">{folder}</span>
+                    {f.frontmatter?.title}
+                  </a>
+                  {ctx && (
+                    <p class="backlink-context">
+                      {ctx.before}
+                      {ctx.mark && <mark>{ctx.mark}</mark>}
+                      {ctx.after}
+                    </p>
+                  )}
+                </li>
+              )
+            })
           ) : (
             <li>{i18n(cfg.locale).components.backlinks.noBacklinksFound}</li>
           )}

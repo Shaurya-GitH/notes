@@ -68,11 +68,11 @@ async (page) => {
     await p.goto(url, { waitUntil: "commit", timeout: 60000 })
     await p.waitForFunction(() => document.readyState !== "loading", null, { timeout: 60000 })
     await p.evaluate(() => document.fonts && document.fonts.ready)
-    await p.waitForTimeout(1500)
+    await p.waitForTimeout(2500)
     // the design swaps its showcase notes in place, so open the wanted one through its own link
     if (url === pr.proto && pr.slug) {
       await p.evaluate((slug) => document.querySelector(`a[data-target="${slug}"]`).click(), pr.slug)
-      await p.waitForTimeout(800)
+      await p.waitForTimeout(3500) // the design renders mermaid from a CDN after the swap
     }
     await p.evaluate(() => scrollTo({ top: 0, behavior: "instant" }))
     await p.waitForTimeout(300)

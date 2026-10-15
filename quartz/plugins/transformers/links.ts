@@ -47,6 +47,26 @@ export const CrawlLinks: QuartzTransformerPlugin<Partial<Options>> = (userOpts) 
               strategy: opts.markdownLinkResolution,
               allSlugs: ctx.allSlugs,
             }
+            // a link is "unwritten" when no note, folder or tag page exists for it yet
+            const written = new Set<string>(ctx.allSlugs.map((s) => simplifySlug(s)))
+            const folders = new Set<string>(
+              ctx.allSlugs.flatMap((s) =>
+                s
+                  .split("/")
+                  .slice(0, -1)
+                  .map((_, i, parts) => parts.slice(0, i + 1).join("/")),
+              ),
+            )
+            const isUnwritten = (full: FullSlug) => {
+              const simple = simplifySlug(full) as string
+              return !(
+                written.has(simple) ||
+                folders.has(simple.replace(/\/$/, "")) ||
+                full.startsWith("tags/") ||
+                simple === "/" ||
+                simple === ""
+              )
+            }
 
             visit(tree, "element", (node, _index, _parent) => {
               // rewrite all links
@@ -123,6 +143,14 @@ export const CrawlLinks: QuartzTransformerPlugin<Partial<Options>> = (userOpts) 
                   const simple = simplifySlug(full)
                   outgoing.add(simple)
                   node.properties["data-slug"] = full
+                  if (isUnwritten(full)) {
+                    // no page to go to: drop the href so it never lands on a 404, keep it
+                    // focusable, and point it at the shared "Not written yet" note (Body.tsx)
+                    classes.push("unwritten")
+                    delete node.properties.href
+                    node.properties.tabIndex = 0
+                    node.properties["aria-describedby"] = "unwritten-tip"
+                  }
                 }
 
                 // rewrite link internals if prettylinks is on
