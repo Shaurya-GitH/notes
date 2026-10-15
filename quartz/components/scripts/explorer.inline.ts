@@ -76,6 +76,9 @@ function toggleFolder(evt: MouseEvent) {
   localStorage.setItem("fileTree", stringifiedFileTree)
 }
 
+const countNotes = (node: FileTrieNode): number =>
+  node.children.reduce((n, c) => n + (c.isFolder ? countNotes(c) : 1), 0)
+
 function createFileNode(currentSlug: FullSlug, node: FileTrieNode): HTMLLIElement {
   const template = document.getElementById("template-file") as HTMLTemplateElement
   const clone = template.content.cloneNode(true) as DocumentFragment
@@ -121,6 +124,11 @@ function createFolderNode(
     a.dataset.for = folderPath
     a.className = "folder-title"
     a.textContent = node.displayName
+    // note count, shown on the home page only (styles/vangogh/_home.scss)
+    const count = document.createElement("span")
+    count.className = "folder-count"
+    count.textContent = String(countNotes(node))
+    a.appendChild(count)
     button.replaceWith(a)
   } else {
     const span = titleContainer.querySelector(".folder-title") as HTMLElement
@@ -310,7 +318,8 @@ window.addEventListener("resize", function () {
 function labelFolderButton(folderContainer: HTMLElement, open: boolean, name?: string) {
   const button = folderContainer.querySelector("button.folder-icon")
   if (!button) return
-  name ??= folderContainer.querySelector(".folder-title")?.textContent ?? ""
+  // the folder name is the title's first text node; the note count follows it
+  name ??= folderContainer.querySelector(".folder-title")?.firstChild?.textContent ?? ""
   button.setAttribute("aria-expanded", String(open))
   button.setAttribute("aria-label", (open ? "Collapse " : "Expand ") + name)
 }

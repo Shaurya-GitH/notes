@@ -1,11 +1,25 @@
 import { PageLayout, SharedLayout } from "./quartz/cfg"
 import * as Component from "./quartz/components"
+import { QuartzComponent } from "./quartz/components/types"
+
+const isHome = (page: { fileData: { slug?: string } }) => page.fileData.slug === "index"
+const notHome = (page: { fileData: { slug?: string } }) => !isHome(page)
+// home-only and note-only versions of a component
+const onHome = (component: QuartzComponent) =>
+  Component.ConditionalRender({ component, condition: isHome })
+const offHome = (component: QuartzComponent) =>
+  Component.ConditionalRender({ component, condition: notHome })
 
 // components shared across all pages
 export const sharedPageComponents: SharedLayout = {
   head: Component.Head(),
   header: [],
-  afterBody: [Component.SmoothScroll()],
+  // the home page's spiral and painted stage (Home.tsx) render after its note
+  afterBody: [
+    Component.SmoothScroll(),
+    onHome(Component.HomeSpiral()),
+    onHome(Component.HomeStage()),
+  ],
   footer: Component.Footer({
     text: "Notes by Shaurya Mehta. Built with Quartz.",
     links: {
@@ -18,13 +32,12 @@ export const sharedPageComponents: SharedLayout = {
 // components for pages that display a single page (e.g. a single note)
 export const defaultContentPageLayout: PageLayout = {
   beforeBody: [
-    Component.ConditionalRender({
-      component: Component.Breadcrumbs(),
-      condition: (page) => page.fileData.slug !== "index",
-    }),
-    Component.ArticleTitle(),
-    Component.ContentMeta(),
-    Component.TagList(),
+    // the home page opens with its scroll story instead of a title block
+    onHome(Component.HomeBeats()),
+    offHome(Component.Breadcrumbs()),
+    offHome(Component.ArticleTitle()),
+    offHome(Component.ContentMeta()),
+    offHome(Component.TagList()),
   ],
   left: [
     Component.PageTitle(),
@@ -42,10 +55,10 @@ export const defaultContentPageLayout: PageLayout = {
     Component.Explorer(),
   ],
   right: [
-    Component.RailSummary(),
-    Component.Graph(),
-    Component.DesktopOnly(Component.TableOfContents()),
-    Component.Backlinks(),
+    offHome(Component.RailSummary()),
+    offHome(Component.Graph()),
+    offHome(Component.DesktopOnly(Component.TableOfContents())),
+    offHome(Component.Backlinks()),
   ],
 }
 

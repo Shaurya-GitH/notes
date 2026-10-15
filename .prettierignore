@@ -3,3 +3,5 @@ node_modules
 .quartz-cache
 design/parity/compare.js
 design/parity/measure.js
+design/parity/home.js
+design/parity/home-phone.js

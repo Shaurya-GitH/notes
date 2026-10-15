@@ -22,6 +22,7 @@ import RecentNotes from "./RecentNotes"
 import Breadcrumbs from "./Breadcrumbs"
 import RailSummary from "./RailSummary"
 import SmoothScroll from "./SmoothScroll"
+import { HomeBeats, HomeSpiral, HomeStage } from "./Home"
 import Comments from "./Comments"
 import Flex from "./Flex"
 import ConditionalRender from "./ConditionalRender"
@@ -51,6 +52,9 @@ export {
   Breadcrumbs,
   RailSummary,
   SmoothScroll,
+  HomeBeats,
+  HomeSpiral,
+  HomeStage,
   Comments,
   Flex,
   ConditionalRender,

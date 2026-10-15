@@ -1,0 +1,886 @@
+// The home page's scroll story, ported from design/prototype/starry-notes.html. The story, stage,
+// spiral and cursor rules are the design's own, scoped to the home page; the block at the end maps
+// the design's fixed sidebar, <main> and footer onto Quartz's grid, explorer and footer.
+// The home page is single-theme, "The Starry Night", whichever theme the reader saved.
+
+body[data-slug="index"] {
+  // the design's tokens, plus Quartz's nine colours pinned to their dark values
+  color-scheme: dark;
+  --night: #041833;
+  --night-2: #062645;
+  --prussian: #09395b;
+  --teal-deep: #165773;
+  --sage: #8a9f85;
+  --body: #d6cfb6;
+  --cream: #ece3c8;
+  --chrome: #e8c06a;
+  --teal: #6fb3bd;
+  --moon: #fff3c4;
+  --display: "Fraunces", "Iowan Old Style", Georgia, serif;
+  --serif: "Source Serif 4", "Iowan Old Style", Georgia, serif;
+  --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  --hand: "Caveat", "Bradley Hand", cursive;
+  --side: 300px;
+  --gutter: clamp(16px, 4vw, 56px);
+  --radius: 14px;
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --light: #041833;
+  --lightgray: #165773;
+  --gray: #8a9f85;
+  --darkgray: #d6cfb6;
+  --dark: #ece3c8;
+  --secondary: #e8c06a;
+  --tertiary: #6fb3bd;
+  --highlight: rgba(111, 179, 189, 0.12);
+  --textHighlight: rgba(232, 192, 106, 0.3);
+  --surface: #062645;
+  --surface-2: #09395b;
+  --link-line: rgba(232, 192, 106, 0.45);
+  background: var(--night);
+  color: var(--body);
+  font: 400 18px/1.65 var(--serif);
+
+  .skip {
+    position: fixed;
+    left: 12px;
+    top: calc(env(safe-area-inset-top, 0px) + 12px);
+    z-index: 50;
+    background: var(--night);
+    color: var(--chrome);
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--teal-deep);
+    font: 500 14px var(--mono);
+    transform: translateY(-160%);
+  }
+  .skip:focus {
+    transform: none;
+  }
+
+  /* ---------- stage ---------- */
+  .stage {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    background: var(--night);
+  }
+  .layer {
+    position: absolute;
+    inset: 0;
+    will-change: transform, opacity;
+  }
+  .layer img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  #eye img {
+    object-position: 60% 50%;
+  }
+  #iris {
+    position: absolute;
+    border-radius: 50%;
+    -webkit-mask: radial-gradient(circle, #000 48%, transparent 70%);
+    mask: radial-gradient(circle, #000 48%, transparent 70%);
+    background-repeat: no-repeat;
+    animation: iris-turn 90s linear infinite;
+    pointer-events: none;
+  }
+  @keyframes iris-turn {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  #sky,
+  #field,
+  #sky2 {
+    opacity: 0;
+  }
+  #sky img,
+  #sky2 img {
+    animation: breathe 38s ease-in-out infinite alternate;
+  }
+  @keyframes breathe {
+    from {
+      transform: scale(1);
+    }
+    to {
+      transform: scale(1.05) translate(-0.6%, 0.4%);
+    }
+  }
+  canvas.paint {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+  #flow {
+    mix-blend-mode: screen;
+    opacity: 0;
+  }
+  #strands {
+    mix-blend-mode: screen;
+    opacity: 0;
+  }
+  #rings {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  #crows {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+  .crow {
+    opacity: 0;
+  }
+  .crow path {
+    animation: flap 0.5s ease-in-out infinite alternate;
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+  @keyframes flap {
+    to {
+      transform: scaleY(0.45);
+    }
+  }
+  #scrim {
+    background: var(--night);
+    opacity: 0;
+  }
+  .grain {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.09;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* ---------- story ---------- */
+  .beat {
+    position: relative;
+    padding-inline: var(--gutter);
+  }
+  #beat-eye {
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    padding-block: 0 56px;
+  }
+  .panel {
+    background: color-mix(in srgb, var(--night) 86%, transparent);
+    border: 1px solid color-mix(in srgb, var(--teal-deep) 70%, transparent);
+    border-radius: var(--radius);
+    padding: 28px 32px;
+    backdrop-filter: blur(2px);
+  }
+  .intro {
+    max-width: 24rem;
+    display: grid;
+    gap: 12px;
+  }
+  .intro h1 {
+    font: 400 clamp(30px, 3.4vw, 46px)/1.12 var(--display);
+    color: var(--cream);
+    margin: 0;
+    text-wrap: balance;
+    letter-spacing: -0.01em;
+  }
+  .intro p {
+    margin: 0;
+    color: var(--body);
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: center;
+    font-size: 16px;
+  }
+  .actions a:last-child {
+    color: var(--sage);
+  }
+  #beat-iris {
+    height: 170vh;
+  }
+  .sticky {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: grid;
+    place-items: center;
+  }
+  .quote {
+    font: italic 300 clamp(28px, 3.3vw, 48px)/1.22 var(--display);
+    color: var(--cream);
+    max-width: 22ch;
+    text-align: center;
+    margin: 0;
+    text-wrap: balance;
+    text-shadow:
+      0 2px 24px rgba(2, 10, 23, 0.95),
+      0 0 2px rgba(2, 10, 23, 0.8);
+  }
+  #beat-world {
+    height: 140vh;
+  }
+  #beat-world .sticky {
+    place-items: end end;
+    padding-block: 0 64px;
+  }
+  .label {
+    max-width: 30rem;
+    display: grid;
+    gap: 6px;
+  }
+  .label h2 {
+    font: 400 clamp(22px, 2.2vw, 30px)/1.25 var(--display);
+    color: var(--cream);
+    margin: 0;
+    text-wrap: balance;
+  }
+  #about {
+    padding-block: 12vh 18vh;
+  }
+  .reading {
+    max-width: 46rem;
+    display: grid;
+    gap: 18px;
+  }
+  .reading h2 {
+    font: 400 clamp(32px, 3vw, 42px)/1.1 var(--display);
+    color: var(--cream);
+    margin: 0;
+  }
+  .reading p {
+    margin: 0;
+    max-width: 65ch;
+  }
+  .reading ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 14px;
+  }
+  .reading li {
+    max-width: 65ch;
+  }
+  .reading b {
+    color: var(--chrome);
+    font-weight: 600;
+  }
+  .margin {
+    font: 400 26px/1.1 var(--hand);
+    color: var(--teal);
+  }
+
+  /* ---------- spiral ---------- */
+  #spiral {
+    height: 300vh;
+    padding-inline: 0;
+  }
+  #spiral .sticky {
+    place-items: stretch;
+  }
+  .wipe {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      120% 90% at 60% 55%,
+      color-mix(in srgb, var(--prussian) 70%, transparent),
+      color-mix(in srgb, var(--night) 94%, transparent)
+    );
+    clip-path: circle(0% at 60% 55%);
+  }
+  .spiral-head {
+    position: absolute;
+    left: var(--gutter);
+    top: 10vh;
+    z-index: 2;
+    max-width: 26rem;
+    display: grid;
+    gap: 8px;
+  }
+  .spiral-head h2 {
+    font: 400 clamp(30px, 3vw, 42px)/1.1 var(--display);
+    color: var(--cream);
+    margin: 0;
+  }
+  .spiral-head p {
+    margin: 0;
+    color: var(--body);
+  }
+  .helix {
+    position: absolute;
+    inset: 0;
+  }
+  .helix ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    left: 62%;
+    top: 50%;
+    transform: rotate(-7deg);
+  }
+  .card {
+    position: absolute;
+    width: 290px;
+    height: 196px;
+    margin: -98px 0 0 -145px;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--teal-deep) 90%, transparent);
+    background-size: cover;
+    display: flex;
+    align-items: flex-end;
+    text-decoration: none;
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+  }
+  .card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--night);
+    opacity: var(--dim, 0);
+    pointer-events: none;
+  }
+  /* the card's twin sits under its label, and the depth wash (::after) still covers both */
+  .card canvas.twin {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+  .card .pin {
+    position: absolute;
+    width: 0;
+    height: 0;
+  }
+  .card .pin.tl {
+    left: 0;
+    top: 0;
+  }
+  .card .pin.tr {
+    right: 0;
+    top: 0;
+  }
+  .card .pin.bl {
+    left: 0;
+    bottom: 0;
+  }
+  .card span {
+    position: relative;
+    display: grid;
+    gap: 2px;
+    width: 100%;
+    padding: 12px 14px;
+    background: color-mix(in srgb, var(--night) 84%, transparent);
+  }
+  .card strong {
+    font: 600 18px/1.2 var(--display);
+    color: var(--cream);
+  }
+  .card em {
+    font: normal 12px var(--mono);
+    color: var(--sage);
+  }
+  .card:hover strong,
+  .card:focus-visible strong {
+    color: var(--chrome);
+  }
+  .mode {
+    position: absolute;
+    left: var(--gutter);
+    bottom: 8vh;
+    z-index: 2;
+    font: 13px var(--mono);
+    color: var(--sage);
+  }
+
+  /* ---------- cursor: a painted brush (after Buttermax's reactive cursor) ----------
+     The brush paints through the plate on stage to its twin in an inverted universe. It lives inside the
+     stage, under the scrim, so reading sections stay dark and text is never covered. */
+  html.brush,
+  html.brush * {
+    cursor: none !important;
+  }
+  .cursor {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 30;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 150ms;
+  }
+  .cursor.on {
+    opacity: 1;
+  }
+  .cursor > * {
+    position: absolute;
+    left: 0;
+    top: 0;
+    border-radius: 50%;
+  }
+  /* the star: a hot core in Starry Night's chrome yellow, outlined in night so it holds on the gold field */
+  .cursor .core {
+    width: 10px;
+    height: 10px;
+    margin: -5px 0 0 -5px;
+    background: radial-gradient(circle, var(--moon) 0 35%, var(--chrome) 60%);
+    box-shadow:
+      0 0 0 1.5px var(--night),
+      0 0 14px 3px color-mix(in srgb, var(--chrome) 55%, transparent);
+    transition: transform 220ms var(--ease-expo);
+  }
+  /* its halo: the dashed swirl Van Gogh rings his stars with; it lags the core and opens over anything clickable */
+  .cursor .halo {
+    width: 30px;
+    height: 30px;
+    margin: -15px 0 0 -15px;
+  }
+  .cursor .halo i {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 2px dashed var(--chrome);
+    outline: 1.5px solid color-mix(in srgb, var(--night) 70%, transparent);
+    outline-offset: -3.5px;
+    opacity: 0.75;
+    animation: halo-turn 9s linear infinite;
+    transition:
+      transform 320ms var(--ease-expo),
+      opacity 200ms,
+      border-color 200ms;
+  }
+  @keyframes halo-turn {
+    to {
+      rotate: 360deg;
+    }
+  }
+  .cursor.link .halo i {
+    transform: scale(1.9);
+    opacity: 1;
+    border-color: var(--moon);
+    animation-duration: 3s;
+  }
+  .cursor.link .core {
+    transform: scale(0.6);
+  }
+
+  /* ---------- narrow ---------- */
+  @media (max-width: 860px) {
+    --side: 0px;
+    #beat-eye {
+      align-items: flex-start;
+      padding-block: 76px 32px;
+    }
+    .panel {
+      padding: 22px;
+    }
+    .helix ul {
+      left: 50%;
+      top: 58%;
+    }
+    .card {
+      width: 190px;
+      height: 132px;
+      margin: -66px 0 0 -95px;
+    }
+    .spiral-head {
+      top: 12vh;
+    }
+  }
+
+  /* ---------- reduced motion ---------- */
+  @media (prefers-reduced-motion: reduce) {
+    #iris,
+    #sky img,
+    #sky2 img,
+    .crow path {
+      animation: none;
+    }
+    #beat-iris,
+    #beat-world {
+      height: auto;
+    }
+    #beat-iris .sticky,
+    #beat-world .sticky {
+      position: static;
+      height: auto;
+      padding-block: 18vh;
+    }
+    #spiral {
+      height: auto;
+    }
+    #spiral .sticky {
+      position: static;
+      height: auto;
+      display: block;
+      padding-block: 12vh;
+    }
+    .spiral-head,
+    .mode {
+      position: static;
+      padding-inline: var(--gutter);
+      margin-bottom: 24px;
+    }
+    .helix {
+      position: static;
+      padding-inline: var(--gutter);
+    }
+    .helix ul {
+      position: static;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+      transform: none;
+    }
+    .card {
+      position: relative;
+      margin: 0;
+      width: auto;
+      transform: none !important;
+      opacity: 1 !important;
+    }
+    .wipe {
+      clip-path: none;
+    }
+  }
+}
+
+// ---------- the design's composition on Quartz's markup ----------
+body[data-slug="index"] {
+  // the sunlit window light belongs to note pages
+  &::before,
+  &::after,
+  #quartz-root::before {
+    display: none;
+  }
+  // the design sizes every box border-box; scope that to the story's own elements
+  .home-beats,
+  .home-beats *,
+  #spiral,
+  #spiral *,
+  .home-stage,
+  .home-stage *,
+  .center > article {
+    box-sizing: border-box;
+  }
+  // Quartz gives every image a margin and a radius; the stage's plates are full-bleed
+  .home-stage img {
+    margin: 0;
+    border-radius: 0;
+    max-width: none;
+  }
+  // the design's labels (they lived in its sidebar section)
+  .tag {
+    font: 500 11px/1.4 var(--mono);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--sage);
+  }
+  // Quartz's base type would otherwise leak into the story: paragraph line-height, link weight,
+  // heading letter-spacing
+  .home-beats p:not(.quote),
+  #spiral p,
+  .center > article p,
+  .center > article li {
+    line-height: 1.65;
+  }
+  .spiral-head h2,
+  .label h2 {
+    letter-spacing: normal;
+  }
+  .home-beats a,
+  #spiral a {
+    color: var(--chrome);
+  }
+  .card {
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 1.65;
+  }
+  // the painted stage sits behind everything on the page
+  .stage {
+    z-index: -1;
+  }
+  .page {
+    max-width: none;
+  }
+  .page > #quartz-body {
+    grid-template-columns: var(--side) minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    grid-template-areas:
+      "grid-sidebar-left grid-center"
+      "grid-sidebar-left grid-footer";
+    column-gap: 0;
+    row-gap: 0;
+    padding: 0;
+
+    .sidebar.right {
+      display: none;
+    }
+    .center {
+      max-width: none;
+      margin: 0;
+      overflow-x: clip;
+    }
+    .page-header,
+    .page-footer {
+      margin: 0;
+    }
+    .center > hr {
+      display: none;
+    }
+
+    // the design's sidebar: brand, search, explorer
+    .sidebar.left {
+      width: var(--side);
+      padding: calc(env(safe-area-inset-top, 0px) + 32px) 24px 24px;
+      gap: 22px;
+      background: color-mix(in srgb, var(--night) 84%, transparent);
+      border-right: 1px solid color-mix(in srgb, var(--teal-deep) 60%, transparent);
+    }
+    .page-title {
+      font: 600 28px/1 var(--display);
+      letter-spacing: -0.01em;
+      margin: 0;
+    }
+    .page-title a {
+      color: var(--cream);
+    }
+    // a single-theme page has no theme or reader switch
+    .flex-component > div:has(> .darkmode),
+    .flex-component > div:has(> .readermode) {
+      display: none;
+    }
+    // the search box fills the sidebar's width (the sidebar is a column, so only the row grows)
+    .flex-component {
+      width: 100%;
+    }
+    .flex-component > div:has(> .search),
+    .search {
+      width: 100%;
+      max-width: none;
+      flex-grow: 1;
+    }
+    .search > .search-button {
+      height: auto;
+      gap: 8px;
+      padding: 9px 12px;
+      border-radius: 8px;
+      background: var(--night-2);
+      border: 1px solid var(--teal-deep);
+      color: var(--sage);
+      font-size: 15px;
+    }
+    .search > .search-button > p {
+      margin: 0;
+      font-size: 15px;
+      line-height: 1.65;
+    }
+    .search > .search-button::after {
+      content: "⌘K";
+      margin-left: auto;
+      font: 12px var(--mono);
+      color: var(--sage);
+    }
+    // the design's "Explorer" label: no fold arrow, 22px above the list, no scrollbar gutter
+    .explorer .desktop-explorer {
+      padding: 0;
+    }
+    .explorer .desktop-explorer svg.fold {
+      display: none;
+    }
+    .explorer .explorer-content {
+      margin-top: 22px;
+      padding-right: 0;
+    }
+    .explorer .explorer-content > ul.explorer-ul {
+      padding-right: 0;
+      scrollbar-gutter: auto;
+    }
+    .explorer .desktop-explorer h2 {
+      margin: 0;
+      font: 500 11px/1.4 var(--mono);
+      letter-spacing: 0.12em;
+      color: var(--sage);
+    }
+    .explorer-content a.folder-title,
+    .explorer-content li > a {
+      display: flex;
+      flex: 1;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 6px 8px;
+      border-radius: 6px;
+      color: var(--body);
+      font: 400 16px/1.3 var(--serif);
+    }
+    .explorer-content a.folder-title:hover,
+    .explorer-content li > a:hover {
+      background: var(--night-2);
+      color: var(--cream);
+    }
+    // with every folder closed the explorer is the design's flat list: folder name and count,
+    // linking to the folder page
+    .explorer-content button.folder-icon,
+    .explorer-content .folder-outer {
+      display: none;
+    }
+    .explorer-content ul {
+      gap: 2px;
+    }
+    .folder-count {
+      display: inline;
+      font: 12px var(--mono);
+      color: var(--sage);
+      font-variant-numeric: tabular-nums;
+    }
+
+    // the note itself is the "Who I Am" reading panel
+    .center > article {
+      box-sizing: border-box;
+      max-width: 46rem;
+      margin: 12vh var(--gutter) 18vh;
+      padding: 28px 32px;
+      display: grid;
+      gap: 18px;
+      font-size: 18px;
+      line-height: 1.65;
+      background: color-mix(in srgb, var(--night) 86%, transparent);
+      border: 1px solid color-mix(in srgb, var(--teal-deep) 70%, transparent);
+      border-radius: var(--radius);
+      backdrop-filter: blur(2px);
+      & > * {
+        margin: 0;
+      }
+      & h2 {
+        font: 400 clamp(32px, 3vw, 42px)/1.1 var(--display);
+        color: var(--cream);
+        letter-spacing: normal;
+        margin: 0;
+      }
+      & p,
+      & li {
+        max-width: 65ch;
+      }
+      & > ul {
+        list-style: none;
+        padding: 0;
+        display: grid;
+        gap: 14px;
+      }
+      & > ul > li {
+        margin: 0;
+      }
+      & strong {
+        color: var(--chrome);
+        font-weight: 600;
+      }
+    }
+
+    footer {
+      position: relative;
+      margin: 0;
+      padding: 48px var(--gutter) 64px;
+      font-size: 15px;
+      color: var(--sage);
+      border-top: 1px solid color-mix(in srgb, var(--teal-deep) 50%, transparent);
+      background: var(--night);
+      opacity: 1;
+    }
+    footer p {
+      max-width: 65ch;
+      margin: 0 0 8px;
+    }
+
+    // phones: Quartz's mobile sidebar becomes the design's top bar, the explorer its drawer
+    @media all and (max-width: 800px) {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-areas:
+        "grid-sidebar-left"
+        "grid-center"
+        "grid-footer";
+      .sidebar.left {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        width: auto;
+        z-index: 25;
+        flex-direction: row;
+        align-items: center;
+        gap: 12px;
+        padding: calc(env(safe-area-inset-top, 0px) + 10px) 16px 10px;
+        background: color-mix(in srgb, var(--night) 88%, transparent);
+        border-right: 0;
+        border-bottom: 1px solid color-mix(in srgb, var(--teal-deep) 50%, transparent);
+      }
+      .sidebar.left > .explorer {
+        order: -1;
+      }
+      .sidebar.left > .flex-component,
+      .sidebar.left > .spacer {
+        display: none;
+      }
+      .page-title {
+        font-size: 22px;
+      }
+      // the drawer is the design's sidebar sliding in: search, "Explorer" label, list. Quartz slides
+      // the page aside while it is open; the design does not (and a transformed page would carry
+      // the fixed stage with it)
+      &.lock-scroll > :not(.sidebar.left:has(.explorer)) {
+        transform: none;
+      }
+      .explorer .explorer-content {
+        width: min(320px, 86vw);
+        padding: calc(env(safe-area-inset-top, 0px) + 139px) 24px 24px;
+        margin-top: 0;
+        background: color-mix(in srgb, var(--night) 84%, transparent);
+        border-right: 1px solid color-mix(in srgb, var(--teal-deep) 60%, transparent);
+      }
+      .explorer .explorer-content::before {
+        content: "Explorer";
+        display: block;
+        margin-bottom: 22px;
+        font: 500 11px/1.4 var(--mono);
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--sage);
+      }
+      .sidebar.left:has(.explorer:not(.collapsed)) > .flex-component {
+        display: flex;
+        position: fixed;
+        top: calc(env(safe-area-inset-top, 0px) + 72px);
+        left: 24px;
+        width: calc(min(320px, 86vw) - 48px);
+        z-index: 102;
+      }
+      // the brand stays readable above the open drawer, as the design's top bar does
+      .page-title {
+        position: relative;
+        z-index: 101;
+      }
+    }
+  }
+}
+
+// folder note counts are the home page's list view of the spiral
+.folder-count {
+  display: none;
+}

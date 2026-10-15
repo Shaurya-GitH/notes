@@ -248,17 +248,19 @@ document.addEventListener("nav", async () => {
   for (let i = 0; i < nodes.length; i++) {
     const codeBlock = nodes[i] as HTMLElement
     const pre = codeBlock.parentElement as HTMLPreElement
-    const clipboardBtn = pre.querySelector(".clipboard-button") as HTMLButtonElement
+    const clipboardBtn = pre.querySelector(".clipboard-button") as HTMLButtonElement | null
     const expandBtn = pre.querySelector(".expand-button") as HTMLButtonElement
 
-    const clipboardStyle = window.getComputedStyle(clipboardBtn)
-    const clipboardWidth =
-      clipboardBtn.offsetWidth +
-      parseFloat(clipboardStyle.marginLeft || "0") +
-      parseFloat(clipboardStyle.marginRight || "0")
-
-    // Set expand button position
-    expandBtn.style.right = `calc(${clipboardWidth}px + 0.3rem)`
+    // diagrams have no copy button (clipboard.inline.ts), so the expand button keeps its CSS spot;
+    // only make room when a copy button is there
+    if (clipboardBtn) {
+      const clipboardStyle = window.getComputedStyle(clipboardBtn)
+      const clipboardWidth =
+        clipboardBtn.offsetWidth +
+        parseFloat(clipboardStyle.marginLeft || "0") +
+        parseFloat(clipboardStyle.marginRight || "0")
+      expandBtn.style.right = `calc(${clipboardWidth}px + 0.3rem)`
+    }
     pre.prepend(expandBtn)
 
     // query popup container

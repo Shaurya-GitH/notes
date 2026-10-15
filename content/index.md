@@ -2,11 +2,13 @@
 title: Shaurya Mehta
 layout: index
 description: Full-stack, applied AI engineer building agentic systems that use tools, remember and act, with DevOps and security depth and the notes to show how it all works.
+# the home page's scroll story (HomeBeats); the note below is the reading panel
+home:
+  headline: Full-stack engineer building agents that use tools, remember and act.
+  tagline: Agentic AI · Full stack · DevOps · Security
+  quote: "I build agents: systems that use tools, hold context, remember and act on someone's behalf."
+  label: I enjoy hard problems more than any single technology.
 ---
-
-# Shaurya Mehta
-
-### **Full-Stack Engineer • Agentic AI • DevOps • Security**
 
 > [!quote] My Engineering Philosophy
 > I believe an engineer is a problem solver who should be capable of addressing any type of challenge they encounter. My approach is centered on deconstructing the **"why"** and **"what"** of every system to understand it inside out. By identifying architectural **patterns**, I can solve complex problems more efficiently and adapt to new technologies quickly.
