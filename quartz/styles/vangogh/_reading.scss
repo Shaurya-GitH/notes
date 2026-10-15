@@ -387,3 +387,9 @@ pre > .expand-button svg {
 #mermaid-container {
   display: none;
 }
+
+// folder and tag pages: Quartz fades each note's date to 60%, which falls under AA
+li.section-li > .section .meta {
+  opacity: 1;
+  color: var(--gray);
+}

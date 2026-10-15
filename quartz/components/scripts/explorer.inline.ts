@@ -24,10 +24,6 @@ function toggleExplorer(this: HTMLElement) {
   const nearestExplorer = this.closest(".explorer") as HTMLElement
   if (!nearestExplorer) return
   const explorerCollapsed = nearestExplorer.classList.toggle("collapsed")
-  nearestExplorer.setAttribute(
-    "aria-expanded",
-    nearestExplorer.getAttribute("aria-expanded") === "true" ? "false" : "true",
-  )
   this.setAttribute("aria-expanded", String(!explorerCollapsed))
   if (this.classList.contains("mobile-explorer")) {
     this.setAttribute("aria-label", explorerCollapsed ? "Open explorer" : "Close explorer")
@@ -292,7 +288,6 @@ document.addEventListener("nav", async (e: CustomEventMap["nav"]) => {
 
     if (mobileExplorer.checkVisibility()) {
       explorer.classList.add("collapsed")
-      explorer.setAttribute("aria-expanded", "false")
       mobileExplorer.setAttribute("aria-expanded", "false")
       mobileExplorer.setAttribute("aria-label", "Open explorer")
       document.getElementById("quartz-body")?.classList.remove("lock-scroll")

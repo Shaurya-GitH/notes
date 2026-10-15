@@ -11,6 +11,7 @@ import {
 } from "../../util/path"
 import path from "path"
 import { visit } from "unist-util-visit"
+import { unwrittenChecker } from "../../util/unwritten"
 import isAbsoluteUrl from "is-absolute-url"
 import { Root } from "hast"
 
@@ -48,25 +49,7 @@ export const CrawlLinks: QuartzTransformerPlugin<Partial<Options>> = (userOpts) 
               allSlugs: ctx.allSlugs,
             }
             // a link is "unwritten" when no note, folder or tag page exists for it yet
-            const written = new Set<string>(ctx.allSlugs.map((s) => simplifySlug(s)))
-            const folders = new Set<string>(
-              ctx.allSlugs.flatMap((s) =>
-                s
-                  .split("/")
-                  .slice(0, -1)
-                  .map((_, i, parts) => parts.slice(0, i + 1).join("/")),
-              ),
-            )
-            const isUnwritten = (full: FullSlug) => {
-              const simple = simplifySlug(full) as string
-              return !(
-                written.has(simple) ||
-                folders.has(simple.replace(/\/$/, "")) ||
-                full.startsWith("tags/") ||
-                simple === "/" ||
-                simple === ""
-              )
-            }
+            const isUnwritten = unwrittenChecker(ctx.allSlugs)
 
             visit(tree, "element", (node, _index, _parent) => {
               // rewrite all links

@@ -44,3 +44,24 @@ export async function fetchCanonical(url: URL): Promise<Response> {
   const [_, redirect] = text.match(canonicalRegex) ?? []
   return redirect ? fetch(`${new URL(redirect, url)}`) : res
 }
+
+// keep Tab and Shift+Tab inside an open overlay (a modal dialog, the search sheet)
+export function trapFocus(container: HTMLElement, e: KeyboardEvent) {
+  if (e.key !== "Tab") return
+  const items = [
+    ...container.querySelectorAll<HTMLElement>(
+      'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])',
+    ),
+  ].filter((el) => el.offsetParent !== null || el === document.activeElement)
+  if (!items.length) return
+  const first = items[0],
+    last = items[items.length - 1]
+  const inside = container.contains(document.activeElement)
+  if (e.shiftKey && (document.activeElement === first || !inside)) {
+    e.preventDefault()
+    last.focus()
+  } else if (!e.shiftKey && (document.activeElement === last || !inside)) {
+    e.preventDefault()
+    first.focus()
+  }
+}

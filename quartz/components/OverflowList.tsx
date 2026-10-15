@@ -17,6 +17,8 @@ export default () => {
   const id = `list-${numLists++}`
 
   return {
+    // the id the list really carries (an id prop is overridden), for aria-controls
+    id,
     OverflowList: (props: JSX.HTMLAttributes<HTMLUListElement>) => (
       <OverflowList {...props} id={id} />
     ),

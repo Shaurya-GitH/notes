@@ -319,6 +319,8 @@ function startHome() {
       c.style.opacity = ramp(front, 0.45, 0.72).toFixed(3)
       c.style.zIndex = Math.round(front * 100)
       c.tabIndex = front > 0.55 ? 0 : -1
+      // only the front card takes clicks; the ones behind it are mostly covered (WCAG 2.5.8)
+      c.style.pointerEvents = front > 0.9 ? "" : "none"
     })
   }
   // keyboard: focusing a card scrolls the spiral to it

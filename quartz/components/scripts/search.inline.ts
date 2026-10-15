@@ -1,6 +1,7 @@
 import type { ContentDetails } from "../../plugins/emitters/contentIndex"
 import { FullSlug, getFullSlug, resolveRelative } from "../../util/path"
 import { Hit, rank, snippet } from "./searchRank"
+import { trapFocus } from "./util"
 
 // Starry Notes search: one sheet with results on the left and a preview on the right. Every word
 // must appear in the title or text; title hits rank first. "#tag" words match tags instead.
@@ -35,7 +36,7 @@ document.addEventListener("nav", async () => {
   const current = getFullSlug(window)
 
   layout.innerHTML =
-    '<div class="results-container" role="listbox" aria-label="Results"></div><div class="preview-container" aria-live="polite"></div>'
+    '<div class="results-container" id="search-results" role="listbox" aria-label="Results"></div><div class="preview-container" aria-live="polite"></div>'
   space.querySelector(".search-hint")?.remove()
   const hint = document.createElement("div")
   hint.className = "search-hint"
@@ -44,6 +45,7 @@ document.addEventListener("nav", async () => {
   input.setAttribute("role", "combobox")
   input.setAttribute("aria-expanded", "true")
   input.setAttribute("aria-autocomplete", "list")
+  input.setAttribute("aria-controls", "search-results")
 
   const box = layout.querySelector(".results-container") as HTMLElement
   const prev = layout.querySelector(".preview-container") as HTMLElement
@@ -121,6 +123,7 @@ document.addEventListener("nav", async () => {
     if (t === container || t.closest(".result-card")) close()
   }
   const onDocKey = (e: KeyboardEvent) => {
+    if (container!.classList.contains("active")) trapFocus(container!, e)
     if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
       e.preventDefault()
       if (container!.classList.contains("active")) close()

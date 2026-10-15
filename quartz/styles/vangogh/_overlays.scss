@@ -142,3 +142,19 @@ input.search-bar::placeholder {
   color: var(--gray);
   border-top: 1px solid var(--lightgray);
 }
+
+// the design meant the focused result to sit on --surface; Quartz's deeper selector gave it
+// --lightgray, where its folder label and marks fail AA. Restated with enough weight to win.
+body
+  .search
+  > .search-container
+  > .search-space
+  > .search-layout
+  > .results-container
+  .result-card {
+  &:hover,
+  &:focus,
+  &.focus {
+    background: var(--surface);
+  }
+}

@@ -1,5 +1,7 @@
 import type { ContentDetails } from "../../plugins/emitters/contentIndex"
 import { FullSlug, getFullSlug, resolveRelative } from "../../util/path"
+import { trapFocus } from "./util"
+import { placeRadial } from "./graphLayout"
 
 // Starry Notes graph: notes drawn as haloed stars on a 2D canvas. The local graph puts this note
 // in the middle, the notes it links to on the right and the notes linking here on the left; the
@@ -265,24 +267,13 @@ function buildLocal(
     `Graph of ${labelOf(index, current)} and the ${nodes.length - 1} notes it connects to`,
   )
   // radial layout: this note in the middle, links out on the right, backlinks on the left
-  const w = container.clientWidth || 260,
-    h = container.clientHeight || 240
-  const me = nodes.find((n) => n.id === current)!
-  me.x = w / 2
-  me.y = h / 2
-  const outs = new Set<string>(index[current]?.links ?? [])
-  const right = nodes.filter((n) => n !== me && outs.has(n.id)),
-    left = nodes.filter((n) => n !== me && !outs.has(n.id))
-  const R = Math.min(w * 0.24, h * 0.36)
-  const place = (arr: Node[], a0: number, a1: number) =>
-    arr.forEach((n, i) => {
-      const a = arr.length === 1 ? (a0 + a1) / 2 : a0 + ((a1 - a0) * i) / (arr.length - 1)
-      const r = R * (i % 2 ? 0.86 : 1)
-      n.x = w / 2 + Math.cos(a) * r
-      n.y = h / 2 + Math.sin(a) * r
-    })
-  place(right, -Math.PI * 0.42, Math.PI * 0.42)
-  place(left, Math.PI * 1.42, Math.PI * 0.58)
+  placeRadial(
+    nodes,
+    current,
+    new Set<string>(index[current]?.links ?? []),
+    container.clientWidth || 260,
+    container.clientHeight || 240,
+  )
   // also draw links between neighbours, so clusters show
   for (const a of nodes)
     for (const l of index[a.id]?.links ?? [])
@@ -389,8 +380,16 @@ document.addEventListener("nav", async () => {
     drawLocal()
   }
   renderLocal()
-  // labels are drawn on canvas, so draw again once the web fonts have arrived
-  document.fonts?.ready.then(drawLocal)
+  // canvas text does not make the browser fetch a font, so load the label faces explicitly and
+  // redraw: labels measured in the fallback face get truncated too early
+  Promise.all(
+    ['400 11.5px "Source Serif 4"', '600 11.5px "Source Serif 4"', '400 12px "Source Serif 4"'].map(
+      (f) => document.fonts?.load(f),
+    ),
+  ).then(
+    () => drawLocal(),
+    () => {},
+  )
   // the phone rail opens the graph later (RailSummary), so build it whenever it becomes visible
   on(document, "railopen", renderLocal)
   let rz = 0
@@ -483,6 +482,7 @@ document.addEventListener("nav", async () => {
   // the backdrop (outside the sheet) closes it too
   if (outer) on(outer, "click", (e: MouseEvent) => e.target === outer && closeGlobal())
   on(document, "keydown", (e: KeyboardEvent) => {
+    if (outer?.classList.contains("active")) trapFocus(outer, e)
     if (e.key === "Escape") closeGlobal()
     if (e.key === "g" && (e.ctrlKey || e.metaKey) && !e.shiftKey) {
       e.preventDefault()

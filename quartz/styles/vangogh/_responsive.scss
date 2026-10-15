@@ -44,7 +44,8 @@ footer ul {
   }
   .explorer .explorer-content {
     background: var(--light);
-    padding: 1.25rem 1.25rem 2rem;
+    // the top padding clears the drawer's close button, which sits over the first row otherwise
+    padding: 4rem 1.25rem 2rem;
   }
   /* secondary panels on phones: one summary line, details behind a disclosure */
   .page > #quartz-body .sidebar.right {

@@ -34,7 +34,7 @@ const config: QuartzConfig = {
         lightMode: {
           light: "#f3ecd9",
           lightgray: "#d8cdb0",
-          gray: "#5d6b4f",
+          gray: "#5a684c", // the design's #5d6b4f, darkened to pass AA on --surface
           darkgray: "#2a3448",
           dark: "#1b2a41",
           secondary: "#1f4e8c",
@@ -64,7 +64,8 @@ const config: QuartzConfig = {
       }),
       Plugin.SyntaxHighlighting({
         theme: {
-          light: "github-light",
+          // high-contrast: plain github-light's red reads 3.5:1 on the cream code background
+          light: "github-light-high-contrast",
           dark: "github-dark",
         },
         keepBackground: false,
