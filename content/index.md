@@ -7,7 +7,7 @@ home:
   headline: Full-stack engineer building agents that use tools, remember and act.
   tagline: Agentic AI · Full stack · DevOps · Security
   quote: "I build agents: systems that use tools, hold context, remember and act on someone's behalf."
-  label: I enjoy hard problems more than any single technology.
+  label: I take systems apart to understand why they work.
   # the handwritten note under the panel, shown when the ink cursor is on
   brush: every system has another side. paint to find it.
   # the spiral of folders at the end of the page
@@ -24,9 +24,9 @@ home:
 
 ## Who I Am
 
-I'm a full-stack engineer who enjoys hard problems more than any single technology. I like understanding a system end to end, finding the bottleneck, and building something that makes a measurable difference. These days that covers four things: I do AI, I do full stack, I do DevOps, and I do security.
+I'm an engineer with 1.5 years of experience building AI and full-stack systems. I specialize in agentic applied AI: conversational voice AI, coding agents, multi-agent systems, research and workflow automation agents, evaluation pipelines, and the infrastructure that makes them reliable, measurable and fast. I also work across full-stack engineering, DevOps and security.
 
-AI is the part I've gotten really into, and it's where most of my time goes now. I'm an applied AI engineer, and I build agents: systems that use tools, hold context, remember and act on someone's behalf. I care about measuring them as much as building them.
+I'm currently at The Product Highway, building production AI agents: systems that use tools, hold context, remember and act on someone's behalf. I care about measuring them as much as building them. Some of what I've built:
 
 - **Porter AI.** A voice-and-text shopping agent wired into a live storefront. It calls server tools for product, variant, warranty and shipping data, and client-side actions that reveal page sections and navigate shoppers, working from live page, cart and dwell context and starting conversations with proactive nudges.
 - **Alfred-OS.** A voice-controlled macOS agent that routes commands to browser and desktop agents, runs them as background tasks, and asks for spoken confirmation before anything destructive.
@@ -37,9 +37,11 @@ AI is the part I've gotten really into, and it's where most of my time goes now.
 
 I build the whole thing, not just the model. That means Next.js and React Native front ends, FastAPI, Spring Boot and Kotlin back ends, and the pipelines that ship them, like the CI/CD on Kubernetes that cut release time by 60%.
 
-Security is part of how I think about software. I spent a year working in fintech, building Open Banking APIs with HSM-managed keys, JWE, OAuth and mTLS under PSD2 and QWAC/QSEAL compliance. It shows up in how I build agents too: they confirm before anything destructive, and every action a model asks for is validated first.
+Before that I spent a year at SBS, in fintech, building Open Banking APIs secured with HSM-managed keys, JWE encryption, OAuth and mTLS under PSD2, Wero and QWAC/QSEAL compliance. I also worked in a forward-deployed capacity: when client meetings surfaced bugs, I was the one who took them on, gave quick answers and shipped quick fixes, and at delivery time I turned my debugging into hotfixes. On the DevOps side, I designed CI/CD pipelines and deployments with GitLab CI/CD, Docker, Helm, Kubernetes and AWS.
 
-Above all, I learn by building real systems, take ownership of difficult problems, and want to understand how software works from infrastructure to product. The notes below are the working record: AI, system design, security, Kubernetes, Docker and more.
+Security stays part of how I think about software, and it shows up in how I build agents too: they confirm before anything destructive, and every action a model asks for is validated first.
+
+I'm a problem solver and a passionate engineer. I like taking a system apart to understand why it works, learning new tools by building real things with them, and following a problem from the infrastructure all the way up to the product. The notes below are the working record: AI, system design, security, Kubernetes, Docker and more.
 
 ---
 
