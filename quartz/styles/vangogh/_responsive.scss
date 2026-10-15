@@ -26,6 +26,11 @@ footer ul {
   }
 }
 @media (max-width: 800px) {
+  // Quartz's phone column is "auto", which grows to its widest code block or table and widens the
+  // whole page; a 0-minimum column keeps the page at the screen's width and lets those scroll
+  .page > #quartz-body {
+    grid-template-columns: minmax(0, 1fr);
+  }
   .page > #quartz-body .page-header {
     margin-top: 1rem;
   }
@@ -41,6 +46,7 @@ footer ul {
   }
   .page-title {
     font-size: 1.35rem;
+    white-space: nowrap;
   }
   .explorer .explorer-content {
     background: var(--light);
@@ -76,6 +82,33 @@ footer ul {
   }
   body::after {
     width: 92vw;
+  }
+}
+/* small phones: the top bar keeps one row; the search pill keeps its icon, and its label stays for screen readers */
+@media (max-width: 420px) {
+  .page > #quartz-body .sidebar.left,
+  .page > #quartz-body .sidebar.left > .flex-component {
+    gap: 0.4rem;
+  }
+  .page-title {
+    font-size: 1.15rem;
+  }
+  .search > .search-button {
+    padding: 0 0.65rem;
+  }
+  .search > .search-button > p {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+/* the smallest phones: reader mode gives up its spot so the name and search fit on one row */
+@media (max-width: 360px) {
+  .page > #quartz-body .sidebar.left .readermode {
+    display: none;
   }
 }
 .rail-summary {

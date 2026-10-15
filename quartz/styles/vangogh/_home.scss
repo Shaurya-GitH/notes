@@ -301,6 +301,8 @@ body[data-slug="index"] {
     );
     clip-path: circle(0% at 60% 55%);
   }
+  // the heading reads above the orbiting cards (the orbit is its own layer below it), with the sky
+  // quote's shadow so it stays legible over a painting; clicks pass through to the cards
   .spiral-head {
     position: absolute;
     left: var(--gutter);
@@ -309,6 +311,10 @@ body[data-slug="index"] {
     max-width: 26rem;
     display: grid;
     gap: 8px;
+    pointer-events: none;
+    text-shadow:
+      0 2px 18px rgba(2, 10, 23, 0.95),
+      0 0 2px rgba(2, 10, 23, 0.85);
   }
   .spiral-head h2 {
     font: 400 clamp(30px, 3vw, 42px)/1.1 var(--display);
@@ -322,6 +328,7 @@ body[data-slug="index"] {
   .helix {
     position: absolute;
     inset: 0;
+    z-index: 1;
   }
   .helix ul {
     list-style: none;
@@ -480,8 +487,8 @@ body[data-slug="index"] {
     transform: scale(0.6);
   }
 
-  /* ---------- narrow ---------- */
-  @media (max-width: 860px) {
+  /* ---------- narrow (Quartz's phone breakpoint) ---------- */
+  @media (max-width: 800px) {
     --side: 0px;
     #beat-eye {
       align-items: flex-start;
@@ -490,9 +497,10 @@ body[data-slug="index"] {
     .panel {
       padding: 22px;
     }
+    // the orbit sits below the heading so cards never cross its text
     .helix ul {
       left: 50%;
-      top: 58%;
+      top: 66%;
     }
     .card {
       width: 190px;
@@ -796,6 +804,7 @@ body[data-slug="index"] {
 
     footer {
       position: relative;
+      box-sizing: border-box;
       margin: 0;
       padding: 48px var(--gutter) 64px;
       font-size: 15px;

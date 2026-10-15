@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="100%" height="100%">
+  <!-- the site's tab icon: a Starry Night crescent over two swirls, in the home page's palette
+       (night, teal-deep, teal, chrome, cream); rendered to quartz/static/icon.png -->
+  <defs>
+    <radialGradient id="glow" cx="40" cy="22" r="18" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#e8c06a" stop-opacity="0.55" />
+      <stop offset="1" stop-color="#e8c06a" stop-opacity="0" />
+    </radialGradient>
+    <mask id="crescent">
+      <circle cx="40" cy="22" r="11" fill="#fff" />
+      <circle cx="45" cy="18" r="9.5" fill="#000" />
+    </mask>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="#041833" />
+  <!-- swirls: thick brush strokes, Van Gogh's sky -->
+  <path d="M6 46c8-10 20-12 28-6s16 4 24-4" fill="none" stroke="#165773" stroke-width="7" stroke-linecap="round" />
+  <path d="M6 46c8-10 20-12 28-6s16 4 24-4" fill="none" stroke="#6fb3bd" stroke-width="2.6" stroke-linecap="round" />
+  <path d="M10 57c6-5 13-6 19-3" fill="none" stroke="#6fb3bd" stroke-width="2.2" stroke-linecap="round" opacity="0.8" />
+  <path d="M8 26a10 10 0 1 1 9 10" fill="none" stroke="#6fb3bd" stroke-width="2.4" stroke-linecap="round" opacity="0.85" />
+  <circle cx="40" cy="22" r="18" fill="url(#glow)" />
+  <rect width="64" height="64" fill="#e8c06a" mask="url(#crescent)" />
+  <circle cx="21" cy="12" r="1.8" fill="#ece3c8" />
+  <circle cx="55" cy="40" r="1.4" fill="#ece3c8" />
+</svg>

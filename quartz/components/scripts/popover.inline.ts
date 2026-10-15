@@ -57,6 +57,7 @@ document.addEventListener("nav", async () => {
   }
 
   const onOver = (e: PointerEvent) => {
+    if (e.pointerType !== "mouse") return // a tap opens the link; it is not a hover
     const a = (e.target as Element).closest?.(LINKS) as HTMLElement | null
     if (!a) return
     clearTimeout(timer)

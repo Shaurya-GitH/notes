@@ -3,6 +3,9 @@
 
 /* ---------- reading column ---------- */
 .page > #quartz-body .center {
+  // auto margins stop a grid item stretching, so without the width a wide code block sizes the
+  // column (past the screen on phones); with it the column fills its track up to the cap
+  width: 100%;
   max-width: 43rem;
   margin-inline: auto;
 }

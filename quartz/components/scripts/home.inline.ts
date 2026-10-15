@@ -301,13 +301,18 @@ function startHome() {
   }
   // each card is projected on its own and stacked by depth, not placed in one shared 3D space:
   // in a shared space neighbours closer than a card's width cut through each other as they turn
+  const orbit = $("#cards")
   function helix(sp) {
     if (RM) return
-    const narrow = innerWidth < 860,
+    // the phone layout starts where Quartz's does (800px); on short screens the whole orbit shrinks
+    // so its cards stay clear of the heading above them
+    const narrow = innerWidth <= 800,
+      fit = Math.min(1, innerHeight / (narrow ? 700 : 860)),
       R = narrow ? Math.min(200, innerWidth * 0.3) : 380,
       STEP = narrow ? 44 : 40,
       RISE = narrow ? 46 : 64,
       P = 1400
+    orbit.style.transform = `rotate(-7deg) scale(${fit.toFixed(3)})`
     const rot = sp * (cards.length - 1) * STEP
     cards.forEach((c, i) => {
       const th = i * STEP - rot,
@@ -336,6 +341,21 @@ function startHome() {
         docTop(secs.spiral) + (i / (cards.length - 1)) * (secs.spiral.offsetHeight - innerHeight)
       window.lenis ? window.lenis.scrollTo(top, { duration: 0.6 }) : scrollTo({ top })
     }),
+  )
+  // a card that slid under a still pointer while the page scrolled is not a choice: a pointer click
+  // during a scroll, or within 250 ms of it, is dropped; keyboard activation (detail 0) always opens
+  let scrolledAt = -Infinity
+  on(window, "scroll", () => (scrolledAt = performance.now()), { passive: true })
+  on(
+    secs.spiral,
+    "click",
+    (e) => {
+      if (e.detail === 0 || performance.now() - scrolledAt > 250 || !e.target.closest(".card"))
+        return
+      e.preventDefault()
+      e.stopPropagation()
+    },
+    true,
   )
 
   // ---------- cursor: ink that opens a window onto the inverted universe ----------
