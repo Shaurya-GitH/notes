@@ -12,8 +12,10 @@ const config: QuartzConfig = {
     pageTitleSuffix: " · Notes",
     enableSPA: true,
     enablePopovers: true,
+    // visits per day: https://shauryamehta.goatcounter.com
     analytics: {
-      provider: "plausible",
+      provider: "goatcounter",
+      websiteId: "shauryamehta",
     },
     locale: "en-US",
     baseUrl: "shauryamehta.me",
