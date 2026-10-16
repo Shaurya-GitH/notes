@@ -24,7 +24,7 @@ export const sharedPageComponents: SharedLayout = {
     text: "Designed and Developed by Shaurya Mehta. Built with Quartz.",
     links: {
       GitHub: "https://github.com/Shaurya-GitH",
-      Home: "https://shaurya-gith.github.io/notes/",
+      Home: "https://shauryamehta.me/",
     },
   }),
 }
