@@ -1,5 +1,5 @@
 import { i18n } from "../i18n"
-import { FullSlug, getFileExtension, joinSegments, pathToRoot } from "../util/path"
+import { FullSlug, getFileExtension, joinSegments, pathToRoot, simplifySlug } from "../util/path"
 import { CSSResourceToStyleElement, JSResourceToScriptElement } from "../util/resources"
 import { googleFontHref, googleFontSubsetHref } from "../util/theme"
 import { QuartzComponent, QuartzComponentConstructor, QuartzComponentProps } from "./types"
@@ -13,7 +13,9 @@ export default (() => {
     ctx,
   }: QuartzComponentProps) => {
     const titleSuffix = cfg.pageTitleSuffix ?? ""
+    // a note can name itself for browsers and search results (socialTitle), like socialDescription
     const title =
+      fileData.frontmatter?.socialTitle ??
       (fileData.frontmatter?.title ?? i18n(cfg.locale).propertyDefaults.title) + titleSuffix
     const description =
       fileData.frontmatter?.socialDescription ??
@@ -27,9 +29,26 @@ export default (() => {
     const baseDir = fileData.slug === "404" ? path : pathToRoot(fileData.slug!)
     const iconPath = joinSegments(baseDir, "static/icon.png")
 
-    // Url of current page
+    // Url of current page: a folder or the home page by its clean address ("/", not "/index"), so
+    // the canonical link and social cards agree with the URL people actually visit
     const socialUrl =
-      fileData.slug === "404" ? url.toString() : joinSegments(url.toString(), fileData.slug!)
+      fileData.slug === "404"
+        ? url.toString()
+        : new URL(
+            simplifySlug(fileData.slug!).replace(/^\/$/, ""),
+            url.toString().replace(/\/?$/, "/"),
+          ).toString()
+    // the home page's person (front matter `person:`) as schema.org data, so search engines can tie
+    // this site to the same person's profiles
+    const person = fileData.frontmatter?.person as Record<string, unknown> | undefined
+    const personLd =
+      person &&
+      JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "Person",
+        url: socialUrl,
+        ...person,
+      }).replace(/</g, "\\u003c")
 
     const usesCustomOgImage = ctx.cfg.plugins.emitters.some(
       (e) => e.name === CustomOgImagesEmitterName,
@@ -82,6 +101,10 @@ export default (() => {
           </>
         )}
 
+        {cfg.baseUrl && fileData.slug !== "404" && <link rel="canonical" href={socialUrl} />}
+        {personLd && (
+          <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: personLd }} />
+        )}
         <link rel="icon" href={iconPath} />
         <meta name="description" content={description} />
         <meta name="generator" content="Quartz" />

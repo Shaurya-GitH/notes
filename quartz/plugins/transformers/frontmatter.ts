@@ -145,6 +145,7 @@ declare module "vfile" {
         published: string
         description: string
         socialDescription: string
+        socialTitle: string
         publish: boolean | string
         draft: boolean | string
         lang: string

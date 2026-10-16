@@ -1,7 +1,20 @@
 ---
 title: Shaurya Mehta
 layout: index
+socialTitle: Shaurya Mehta · AI Engineer
 description: Full-stack, applied AI engineer building AI agents and apps that scale and stay secure, with DevOps and security depth and the notes to show how it all works.
+# who this site belongs to, for search engines (schema.org Person on the home page)
+person:
+  name: Shaurya Mehta
+  jobTitle: AI Engineer
+  worksFor:
+    "@type": Organization
+    name: The Product Highway
+  sameAs:
+    - https://www.linkedin.com/in/shaurya-mehta-0b916a349/
+    - https://github.com/Shaurya-GitH
+    - https://x.com/ShauryaCODE
+    - https://leetcode.com/ShauryaLC
 # the home page's scroll story (HomeBeats); the note below is the reading panel
 home:
   headline: I build AI agents and apps that scale and stay secure.
