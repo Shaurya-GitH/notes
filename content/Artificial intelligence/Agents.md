@@ -5,7 +5,7 @@ An agent consists of the following components :-
 1. AI model = An AI model call has to be made in the agentic pipeline. The model can be of many types depending on the use case. Usual parameters measured while choosing a model are -
 	1. Speed
 	2. Quality
-	3. [[Context window 1]]
+	3. [[Context window]]
 	4. Cost
 	5. Tool calling
 	6. Streaming capabilities
