@@ -1,1 +1,1 @@
-(mem0, mempalace, obsidian)
+(mem0, mempalace, obsidian, supermemory)
