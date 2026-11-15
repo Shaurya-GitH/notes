@@ -34,6 +34,7 @@ export const defaultContentPageLayout: PageLayout = {
   beforeBody: [
     onPortfolio(Component.PortfolioNav()),
     onSlug("index")(Component.PortfolioHome()),
+    onSlug("journey")(Component.Journey()),
     offPortfolio(Component.Breadcrumbs()),
     offPortfolio(Component.ArticleTitle()),
     offPortfolio(Component.ContentMeta()),

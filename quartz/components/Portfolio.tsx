@@ -118,8 +118,15 @@ export const PortfolioNav = (() => {
         {name}
       </a>
     ))
+    // a page's keyboard-only skip link (front matter `skip:`), the first thing Tab reaches
+    const skip = fileData.frontmatter?.skip as { text: string; href: string } | undefined
     return (
       <header class="pf-nav">
+        {skip && (
+          <a class="pf-skip" href={skip.href}>
+            {skip.text}
+          </a>
+        )}
         <a class="brand" href={href(fileData, "index")}>
           {cfg.pageTitle}
         </a>

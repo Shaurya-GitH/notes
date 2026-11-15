@@ -480,10 +480,13 @@ function startPage() {
   // the eye twin was generated from text, so `fit` pins its iris (ax, ay) onto the original's (bx, by)
   const FIT = { eye: [0.534, 0.605, 0.565, 0.62, 1.08] }
   // object-fit: cover (and background-size: cover) at a given position, in the target's own pixels
-  function drawCover(ctx, name, w, h, px, py) {
+  // (sw: the plate's background-size as a fraction of the element's width, when it is not cover)
+  function drawCover(ctx, name, w, h, px, py, sw = 0) {
     const img = TWIN[name]
     if (!img.complete || !img.naturalWidth) return
-    const k = Math.max(w / img.naturalWidth, h / img.naturalHeight),
+    const k = sw
+        ? (sw * w) / img.naturalWidth
+        : Math.max(w / img.naturalWidth, h / img.naturalHeight),
       iw = img.naturalWidth * k,
       ih = img.naturalHeight * k,
       x = (w - iw) * px,
@@ -578,7 +581,8 @@ function startPage() {
     cv.setAttribute("aria-hidden", "true")
     el.append(cv)
     const [px, py] = (el.dataset.pos ?? "50% 50%").split(" ").map((v) => parseFloat(v) / 100)
-    return { el, cv, ctx: cv.getContext("2d"), name: el.dataset.twin, px, py }
+    const sw = el.dataset.size ? parseFloat(el.dataset.size) / 100 : 0
+    return { el, cv, ctx: cv.getContext("2d"), name: el.dataset.twin, px, py, sw }
   })
   function drawTargets() {
     const d = Math.min(devicePixelRatio || 1, 1.5)
@@ -596,7 +600,7 @@ function startPage() {
       const x = t.ctx
       x.setTransform(d, 0, 0, d, 0, 0)
       x.globalCompositeOperation = "copy"
-      drawCover(x, t.name, r.width, r.height, t.px, t.py)
+      drawCover(x, t.name, r.width, r.height, t.px, t.py, t.sw)
       x.globalCompositeOperation = "destination-in"
       x.drawImage(ink.canvas, -r.left, -r.top, W, H)
       t.drawn = true

@@ -25,6 +25,7 @@ import SmoothScroll from "./SmoothScroll"
 import { PortfolioNav, SiteFooter } from "./Portfolio"
 import NotesIndex from "./NotesIndex"
 import PortfolioHome from "./PortfolioHome"
+import Journey from "./Journey"
 import Comments from "./Comments"
 import Flex from "./Flex"
 import ConditionalRender from "./ConditionalRender"
@@ -58,6 +59,7 @@ export {
   SiteFooter,
   NotesIndex,
   PortfolioHome,
+  Journey,
   Comments,
   Flex,
   ConditionalRender,

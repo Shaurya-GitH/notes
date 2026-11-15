@@ -1,4 +1,4 @@
-// The portfolio footer's motion switch and the contact band's copy-email button.
+// The portfolio footer's motion switch, the contact band's copy-email button and the skip link.
 
 document.addEventListener("nav", () => {
   const html = document.documentElement
@@ -31,8 +31,16 @@ document.addEventListener("nav", () => {
   }
   copy?.addEventListener("click", copyEmail)
 
+  // the skip link moves focus too, so the next Tab continues from the target (smooth scrolling
+  // takes over the jump itself)
+  const skip = document.querySelector<HTMLAnchorElement>(".pf-skip")
+  const skipTo = () =>
+    skip?.hash && document.querySelector<HTMLElement>(skip.hash)?.focus({ preventScroll: true })
+  skip?.addEventListener("click", skipTo)
+
   window.addCleanup(() => {
     toggle?.removeEventListener("click", flip)
     copy?.removeEventListener("click", copyEmail)
+    skip?.removeEventListener("click", skipTo)
   })
 })
