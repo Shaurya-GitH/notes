@@ -1,7 +1,7 @@
 import { PageLayout, SharedLayout } from "./quartz/cfg"
 import * as Component from "./quartz/components"
 import { QuartzComponent, QuartzComponentProps } from "./quartz/components/types"
-import { isPortfolio } from "./quartz/components/Portfolio"
+import { isCaseStudy, isPortfolio } from "./quartz/components/Portfolio"
 
 // Portfolio pages (front matter `layout: portfolio` or `case-study`: home, Journey, Shipped, How I
 // work, case studies) get the top nav and footer and no sidebars; note pages keep theirs.
@@ -12,6 +12,7 @@ const only = (condition: When) => (component: QuartzComponent) =>
 const onPortfolio = only(portfolio)
 const offPortfolio = only((page) => !portfolio(page))
 const onSlug = (slug: string) => only((page) => page.fileData.slug === slug)
+const onCaseStudy = only((page) => isCaseStudy(page.fileData))
 
 // the notes' explorer lists notes only: the portfolio pages (and case studies, kept in shipped/)
 // live in the top nav. Serialised into the page, so it must not use anything from this file.
@@ -25,7 +26,11 @@ const explorer = () =>
 export const sharedPageComponents: SharedLayout = {
   head: Component.Head(),
   header: [],
-  afterBody: [Component.SmoothScroll(), onSlug("notes")(Component.NotesIndex())],
+  afterBody: [
+    Component.SmoothScroll(),
+    onSlug("notes")(Component.NotesIndex()),
+    onCaseStudy(Component.CaseStudyRest()),
+  ],
   footer: Component.SiteFooter(
     Component.Footer({
       text: "Designed and Developed by Shaurya Mehta. Built with Quartz.",
@@ -44,6 +49,7 @@ export const defaultContentPageLayout: PageLayout = {
     onSlug("index")(Component.PortfolioHome()),
     onSlug("journey")(Component.Journey()),
     onSlug("shipped")(Component.Shipped()),
+    onCaseStudy(Component.CaseStudyHead()),
     offPortfolio(Component.Breadcrumbs()),
     offPortfolio(Component.ArticleTitle()),
     offPortfolio(Component.ContentMeta()),

@@ -995,6 +995,214 @@ body:has(.pf-nav) {
     }
   }
 
+  /* ---------- plain pages (case studies, How I work): a solid nav, then the page ---------- */
+  .pf-nav.solid {
+    position: relative;
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 22px;
+    @media (max-width: $phone) {
+      padding-bottom: 16px;
+    }
+  }
+  .crumb {
+    padding: 40px var(--gutter) 0;
+    a {
+      color: var(--muted);
+    }
+    @media (max-width: $phone) {
+      padding-top: 24px;
+    }
+  }
+  .pf-case .head,
+  .pf-page .head {
+    padding: 20px var(--gutter) 56px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    max-width: 1000px;
+    h1 {
+      font-size: 56px;
+      line-height: 1.08;
+    }
+    .lead {
+      font-size: 22px;
+      color: #d8d0b6;
+      max-width: 62ch;
+    }
+    @media (max-width: $phone) {
+      padding: 16px var(--gutter) 32px;
+      h1 {
+        font-size: 34px;
+      }
+      .lead {
+        font-size: 18px;
+      }
+    }
+  }
+  .tldr {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    margin: 0 var(--gutter);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: var(--bg2);
+    div {
+      padding: 18px 20px;
+      border-right: 1px solid var(--line);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    div:last-child {
+      border-right: none;
+    }
+    dd {
+      margin: 0;
+      color: var(--ink);
+    }
+    @media (max-width: $phone) {
+      grid-template-columns: 1fr 1fr;
+      div {
+        border-right: none;
+        border-bottom: 1px solid var(--line);
+        padding: 14px 16px;
+      }
+      div:last-child {
+        grid-column: 1 / -1;
+        border-bottom: none;
+      }
+    }
+  }
+  // the article column: the problem heading, the page's markdown, then the rest of the study
+  .pf-case h2.problem {
+    padding: 48px var(--gutter) 0;
+  }
+  .pf-case .article,
+  .pf-case h2.problem,
+  &:has(.pf-case, .pf-page) .center > article {
+    box-sizing: border-box;
+    max-width: calc(760px + 2 * var(--gutter));
+  }
+  &:has(.pf-case, .pf-page) .center > article {
+    padding: 22px var(--gutter) 0;
+    font-size: 19px;
+    line-height: 1.7;
+    color: var(--ink);
+    p,
+    li {
+      max-width: 65ch;
+    }
+    h2,
+    h3 {
+      font-family: var(--display);
+      font-weight: 500;
+      color: var(--cream);
+      letter-spacing: -0.01em;
+    }
+    a {
+      color: var(--gold);
+      text-decoration: underline;
+      text-underline-offset: 4px;
+      font-weight: 400;
+    }
+    @media (max-width: $phone) {
+      font-size: 17px;
+    }
+  }
+  .pf-case {
+    h2.problem,
+    .article h2 {
+      font-size: 30px;
+      line-height: 1.2;
+    }
+    .article {
+      padding: 0 var(--gutter);
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+      font-size: 19px;
+      section {
+        display: flex;
+        flex-direction: column;
+        gap: 22px;
+        margin-top: 18px;
+      }
+      p {
+        max-width: 65ch;
+        line-height: 1.7;
+      }
+    }
+    .dec {
+      border-left: 2px solid var(--line);
+      padding: 4px 0 4px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      b {
+        font-weight: 600;
+        color: var(--cream);
+      }
+    }
+    .rej {
+      font-size: 16px;
+      color: var(--muted);
+    }
+    .side {
+      margin: 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      align-items: start;
+      img {
+        width: 100%;
+        height: auto;
+        border-radius: 16px;
+        border: 1px solid var(--line);
+      }
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .stat {
+      margin: 0;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      background: var(--bg2);
+    }
+    .n {
+      font: 500 34px/1.2 var(--display);
+      color: var(--cream);
+    }
+    .links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 24px;
+    }
+    @media (max-width: $phone) {
+      h2.problem,
+      .article h2 {
+        font-size: 24px;
+      }
+      .article {
+        font-size: 17px;
+      }
+      .side,
+      .stats {
+        grid-template-columns: 1fr;
+      }
+    }
+  }
+
   /* ---------- sunlit: the note pages' window light, scoped to plain sections ---------- */
   .sunlit {
     position: relative;

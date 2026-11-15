@@ -120,8 +120,10 @@ export const PortfolioNav = (() => {
     ))
     // a page's keyboard-only skip link (front matter `skip:`), the first thing Tab reaches
     const skip = fileData.frontmatter?.skip as { text: string; href: string } | undefined
+    // pages without a painted hero (case studies, How I work) get a solid bar
+    const solid = isCaseStudy(fileData) || fileData.frontmatter?.nav === "solid"
     return (
-      <header class="pf-nav">
+      <header class={solid ? "pf-nav solid" : "pf-nav"}>
         {skip && (
           <a class="pf-skip" href={skip.href}>
             {skip.text}
