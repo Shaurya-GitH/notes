@@ -121,6 +121,18 @@ export function normalizeRelativeURLs(el: Element | Document, destination: strin
   el.querySelectorAll('[src=""], [src^="./"], [src^="../"]').forEach((item) =>
     _rebaseHtmlElement(item, "src", destination),
   )
+  // inline styles' url()s too: the browser parses them on insertion, before the address changes
+  el.querySelectorAll('[style*="url("]').forEach((item) =>
+    item.setAttribute("style", rebaseCssUrls(item.getAttribute("style")!, destination)),
+  )
+}
+
+// rewrite every relative url(...) in a CSS declaration to a path from the site root
+export function rebaseCssUrls(css: string, destination: string | URL) {
+  return css.replace(/url\((["']?)(\.{1,2}\/[^"')]*)\1\)/g, (_, q: string, rel: string) => {
+    const rebased = new URL(rel, destination)
+    return `url(${q}${rebased.pathname}${q})`
+  })
 }
 
 const _rebaseHastElement = (

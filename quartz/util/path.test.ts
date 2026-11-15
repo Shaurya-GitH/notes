@@ -361,3 +361,18 @@ describe("resolveRelative", () => {
     assert.strictEqual(path.resolveRelative("abc/def" as FullSlug, "ghi/" as SimpleSlug), "../ghi/")
   })
 })
+
+describe("rebaseCssUrls", () => {
+  test("rebases relative url()s against the destination, leaves others alone", () => {
+    const css =
+      'background-image:url("./static/a.jpg");background-image:image-set(url("../static/b.webp") type("image/webp"), url(\'/c.jpg\'), url(https://x.y/d.png))'
+    assert.strictEqual(
+      path.rebaseCssUrls(css, "http://localhost:8090/journey"),
+      'background-image:url("/static/a.jpg");background-image:image-set(url("/static/b.webp") type("image/webp"), url(\'/c.jpg\'), url(https://x.y/d.png))',
+    )
+    assert.strictEqual(
+      path.rebaseCssUrls("background:url(./x.jpg)", "http://h/Docker/Intro"),
+      "background:url(/Docker/x.jpg)",
+    )
+  })
+})
