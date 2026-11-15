@@ -1,0 +1,549 @@
+// The portfolio pages (home, Journey, Shipped, How I work, case studies), ported from the design
+// mockup (kb-evidence design/2026-11/portfolio-final-mockups/build_final10.py). Every rule is scoped
+// to pages that render the portfolio nav, so note pages cannot change. The portfolio is single-theme,
+// "The Starry Night", whichever theme the reader saved for the notes.
+
+$phone: 800px;
+
+body:has(.pf-nav) {
+  // the design's tokens, plus Quartz's nine colours pinned to their dark values
+  color-scheme: dark;
+  --bg: #041833;
+  --bg2: #071f3d;
+  --ink: #ece3c8;
+  --cream: #f2ead8;
+  --muted: #b9b29a;
+  --label: #a9a28a;
+  --gold: #e8c06a;
+  --teal: #6fb3bd;
+  --line: rgba(111, 179, 189, 0.28);
+  --display: "Fraunces", "Iowan Old Style", Georgia, serif;
+  --serif: "Source Serif 4", "Iowan Old Style", Georgia, serif;
+  --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  --hand: "Caveat", "Bradley Hand", cursive;
+  --gutter: 56px;
+  --light: #041833;
+  --lightgray: #165773;
+  --gray: #8a9f85;
+  --darkgray: #d6cfb6;
+  --dark: #ece3c8;
+  --secondary: #e8c06a;
+  --tertiary: #6fb3bd;
+  --highlight: rgba(111, 179, 189, 0.12);
+  --textHighlight: rgba(232, 192, 106, 0.3);
+  --ambient-light: rgba(150, 196, 232, 0.075);
+  --ambient-shade: rgba(0, 6, 18, 0.5);
+  background: var(--bg);
+  color: var(--ink);
+  font: 400 18px/1.65 var(--serif);
+  @media (max-width: $phone) {
+    --gutter: 20px;
+  }
+
+  // the page-wide window light belongs to note pages; here it lives in .sunlit sections
+  &::before,
+  &::after,
+  #quartz-root::before {
+    display: none;
+  }
+
+  // Quartz's three-column grid becomes one full-width column
+  .page {
+    max-width: none;
+  }
+  .page > #quartz-body {
+    display: block;
+    padding: 0;
+    .sidebar {
+      display: none;
+    }
+    .center {
+      max-width: none;
+      min-width: 0;
+      margin: 0;
+      overflow-x: clip;
+    }
+    .page-header,
+    .page-footer {
+      margin: 0;
+    }
+    .center > hr,
+    .center > article:not(:has(*)) {
+      display: none;
+    }
+  }
+
+  // the design's type: no Quartz margins on its own blocks
+  :is(.pf-nav, .pf, .pf-foot, .pf-contact) {
+    box-sizing: border-box;
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+    :is(h1, h2, h3) {
+      font-family: var(--display);
+      font-weight: 500;
+      margin: 0;
+      letter-spacing: -0.01em;
+      color: var(--cream);
+    }
+    p {
+      margin: 0;
+      line-height: 1.65;
+    }
+    img {
+      margin: 0;
+      border-radius: 0;
+      max-width: none;
+    }
+    a {
+      font-weight: inherit;
+    }
+  }
+
+  // focus: gold ring with a navy gap, so it holds over paintings (2.4.11, 1.4.11)
+  :focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 2px var(--bg);
+  }
+
+  // gold is rationed: the primary button, links and the focus ring
+  .link {
+    color: var(--gold);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 4px;
+  }
+  .k {
+    font: 500 12px/1.4 var(--mono);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--label);
+  }
+  .mono {
+    font: 13px/1.5 var(--mono);
+    color: var(--muted);
+  }
+  .btn {
+    display: inline-block;
+    background: var(--gold);
+    color: #041833;
+    font: 600 16px/1.4 var(--serif);
+    padding: 13px 22px;
+    border-radius: 999px;
+    white-space: nowrap;
+    text-decoration: none;
+  }
+  .btn.ghost {
+    background: transparent;
+    color: var(--cream);
+    border: 1px solid rgba(236, 227, 200, 0.45);
+  }
+  .row {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  /* ---------- nav: a navy fade behind the links so they never sit on raw paint ---------- */
+  .pf-nav {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 20;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 22px var(--gutter) 46px;
+    background: linear-gradient(
+      180deg,
+      rgba(4, 24, 51, 0.92) 0%,
+      rgba(4, 24, 51, 0.6) 55%,
+      rgba(4, 24, 51, 0) 100%
+    );
+    font-size: 16px;
+    .brand {
+      font: 400 24px/1.2 var(--display);
+      color: var(--cream);
+      text-decoration: none;
+    }
+    nav {
+      display: flex;
+      gap: 32px;
+      align-items: center;
+    }
+    .links {
+      display: flex;
+      gap: 32px;
+    }
+    a:not(.btn) {
+      color: var(--cream);
+      text-decoration: none;
+    }
+    a[aria-current="page"] {
+      text-decoration: underline;
+      text-underline-offset: 6px;
+      text-decoration-color: var(--gold);
+    }
+    .btn {
+      padding: 10px 18px;
+      font-size: 15px;
+    }
+    .menu {
+      display: none;
+      position: relative;
+    }
+    summary {
+      list-style: none;
+      display: grid;
+      place-items: center;
+      width: 44px;
+      height: 44px;
+      cursor: pointer;
+    }
+    summary::-webkit-details-marker {
+      display: none;
+    }
+    .burger {
+      width: 22px;
+      height: 14px;
+      border-top: 2px solid var(--ink);
+      border-bottom: 2px solid var(--ink);
+      position: relative;
+    }
+    .burger::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 4px;
+      border-top: 2px solid var(--ink);
+    }
+    .sheet {
+      position: absolute;
+      right: 0;
+      top: calc(100% + 8px);
+      display: grid;
+      min-width: 200px;
+      padding: 8px;
+      background: var(--bg);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      a {
+        padding: 12px 14px;
+      }
+    }
+    @media (max-width: $phone) {
+      padding: 16px var(--gutter) 36px;
+      .brand {
+        font-size: 20px;
+      }
+      nav {
+        gap: 12px;
+      }
+      .links {
+        display: none;
+      }
+      .menu {
+        display: block;
+      }
+    }
+  }
+
+  /* ---------- footer ---------- */
+  .pf-foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin: 80px 0 0;
+    padding: 48px var(--gutter) 40px;
+    border-top: 1px solid var(--line);
+    background: var(--bg);
+    font: 13px/1.5 var(--mono);
+    color: var(--muted);
+    opacity: 1;
+    p {
+      margin: 0;
+    }
+    ul {
+      display: flex;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      gap: 0;
+    }
+    li + li::before {
+      content: "·";
+      padding: 0 8px;
+    }
+    // 24px targets (2.5.8)
+    a {
+      display: inline-block;
+      padding: 3px 0;
+      color: var(--muted);
+      font-weight: 400;
+      text-decoration: none;
+    }
+    a:hover {
+      color: var(--cream);
+    }
+    .toggle {
+      display: inline-flex;
+      gap: 10px;
+      align-items: center;
+      min-height: 24px;
+      padding: 0;
+      background: none;
+      border: 0;
+      font: inherit;
+      color: var(--cream);
+      cursor: pointer;
+    }
+    .sw {
+      width: 34px;
+      height: 20px;
+      border-radius: 999px;
+      background: var(--gold);
+      position: relative;
+    }
+    .sw::after {
+      content: "";
+      position: absolute;
+      right: 3px;
+      top: 3px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #041833;
+    }
+    .off {
+      display: none;
+    }
+    @media (max-width: $phone) {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 28px var(--gutter);
+      margin-top: 56px;
+    }
+  }
+
+  /* ---------- contact band ---------- */
+  .pf-contact {
+    position: relative;
+    margin: 104px var(--gutter) 0;
+    border-radius: 24px;
+    overflow: hidden;
+    min-height: 460px;
+    background-size: cover;
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        90deg,
+        rgba(4, 24, 51, 0.95) 0%,
+        rgba(4, 24, 51, 0.82) 55%,
+        rgba(4, 24, 51, 0.35) 100%
+      );
+    }
+    .in {
+      position: relative;
+      padding: 64px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      max-width: 780px;
+    }
+    h2 {
+      font-size: 52px;
+      line-height: 1.08;
+    }
+    p {
+      font-size: 19px;
+      color: #d8d0b6;
+    }
+    &.closing {
+      min-height: 0;
+      h2 {
+        font-size: 36px;
+      }
+    }
+    .email {
+      display: inline-flex;
+      gap: 12px;
+      align-items: center;
+      border: 1px solid rgba(236, 227, 200, 0.35);
+      border-radius: 999px;
+      padding: 6px 6px 6px 16px;
+      font: 14px var(--mono);
+      color: var(--cream);
+      background: rgba(4, 24, 51, 0.6);
+    }
+    .cp {
+      min-height: 32px;
+      padding: 0 10px 0 12px;
+      border: 0;
+      border-left: 1px solid var(--line);
+      background: none;
+      font: inherit;
+      color: var(--muted);
+      cursor: pointer;
+    }
+    @media (max-width: $phone) {
+      margin: 64px var(--gutter) 0;
+      min-height: 0;
+      &::before {
+        background: rgba(4, 24, 51, 0.86);
+      }
+      .in {
+        padding: 28px 22px;
+      }
+      h2 {
+        font-size: 32px;
+      }
+      p {
+        font-size: 16px;
+      }
+    }
+  }
+
+  /* ---------- sunlit: the note pages' window light, scoped to plain sections ---------- */
+  .sunlit {
+    position: relative;
+    isolation: isolate;
+  }
+  .sunlit > :not(.pf-sun) {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+// the sunlit layer sits in the top right of its section, the same light the note pages fix to the
+// window; every loop runs on transform only
+.pf-sun {
+  position: absolute;
+  inset: 0 0 auto;
+  height: min(900px, 100%);
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+  }
+  &::before {
+    inset: -20% -20%;
+    background: repeating-linear-gradient(
+      -32deg,
+      transparent 0 46px,
+      var(--ambient-light) 46px 92px
+    );
+    filter: blur(14px);
+    -webkit-mask: radial-gradient(70% 60% at 82% 18%, #000 0%, transparent 72%);
+    mask: radial-gradient(70% 60% at 82% 18%, #000 0%, transparent 72%);
+    animation: slats 26s ease-in-out infinite alternate;
+  }
+  &::after {
+    top: -4%;
+    right: -6%;
+    width: min(48%, 760px);
+    aspect-ratio: 9 / 7;
+    background: var(--ambient-shade);
+    -webkit-mask: url("static/vg/branch.svg") no-repeat top right / contain;
+    mask: url("static/vg/branch.svg") no-repeat top right / contain;
+    filter: blur(5px);
+    transform-origin: 100% 0;
+    animation: sway 14s ease-in-out infinite alternate;
+  }
+  // falling petal shadows: each layer is a tiled sheet that slides down, so only transform animates
+  i {
+    position: absolute;
+    left: 0;
+    right: -120px;
+    top: calc(-1 * var(--fall));
+    bottom: 0;
+    opacity: 0.9;
+    background: radial-gradient(var(--petal), var(--ambient-shade), transparent 70%) var(--at) /
+      var(--tile);
+    filter: blur(1.5px);
+    -webkit-mask: linear-gradient(to left, #000 0%, #000 30%, transparent 62%);
+    mask: linear-gradient(to left, #000 0%, #000 30%, transparent 62%);
+    animation: petal 38s linear infinite;
+  }
+  i:nth-child(1) {
+    --petal: 9px 5px at 50% 50%;
+    --tile: 330px 520px;
+    --at: 72% 0;
+    --fall: 1040px;
+    --drift: -60px;
+  }
+  i:nth-child(2) {
+    --petal: 7px 4px at 50% 50%;
+    --tile: 410px 610px;
+    --at: 88% 120px;
+    --fall: 1220px;
+    --drift: -90px;
+  }
+  i:nth-child(3) {
+    --petal: 10px 6px at 50% 50%;
+    --tile: 520px 700px;
+    --at: 64% 300px;
+    --fall: 1400px;
+    --drift: -40px;
+  }
+  i:nth-child(4) {
+    --petal: 6px 4px at 50% 50%;
+    --tile: 290px 460px;
+    --at: 94% 40px;
+    --fall: 920px;
+    --drift: -70px;
+  }
+}
+@keyframes petal {
+  to {
+    transform: translate3d(var(--drift), var(--fall), 0);
+  }
+}
+
+// motion off (the footer switch, or the system setting before the visitor chooses): every loop
+// stops (WCAG 2.2.2); the note pages' window light too
+html[data-motion="reduce"] {
+  .pf-sun::before,
+  .pf-sun::after,
+  .pf-sun i,
+  body::before,
+  body::after,
+  #quartz-root::before {
+    animation: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pf-sun::before,
+  .pf-sun::after,
+  .pf-sun i {
+    animation: none;
+  }
+}
+html[data-motion="reduce"] body:has(.pf-nav) .pf-foot {
+  .sw {
+    background: rgba(236, 227, 200, 0.25);
+  }
+  .sw::after {
+    right: auto;
+    left: 3px;
+    background: var(--cream);
+  }
+  .on {
+    display: none;
+  }
+  .off {
+    display: inline;
+  }
+}
