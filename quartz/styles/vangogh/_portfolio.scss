@@ -300,6 +300,10 @@ body:has(.pf-nav) {
       padding: 0;
       gap: 0;
     }
+    // a squeezed row (tablet) must not break a link away from its separator
+    li {
+      white-space: nowrap;
+    }
     li + li::before {
       content: "·";
       padding: 0 8px;
