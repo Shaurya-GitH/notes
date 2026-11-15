@@ -26,6 +26,7 @@ import { PortfolioNav, SiteFooter } from "./Portfolio"
 import NotesIndex from "./NotesIndex"
 import PortfolioHome from "./PortfolioHome"
 import Journey from "./Journey"
+import Shipped from "./Shipped"
 import Comments from "./Comments"
 import Flex from "./Flex"
 import ConditionalRender from "./ConditionalRender"
@@ -60,6 +61,7 @@ export {
   NotesIndex,
   PortfolioHome,
   Journey,
+  Shipped,
   Comments,
   Flex,
   ConditionalRender,

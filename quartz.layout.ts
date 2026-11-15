@@ -13,6 +13,14 @@ const onPortfolio = only(portfolio)
 const offPortfolio = only((page) => !portfolio(page))
 const onSlug = (slug: string) => only((page) => page.fileData.slug === slug)
 
+// the notes' explorer lists notes only: the portfolio pages (and case studies, kept in shipped/)
+// live in the top nav. Serialised into the page, so it must not use anything from this file.
+const explorer = () =>
+  Component.Explorer({
+    filterFn: (node) =>
+      !["tags", "journey", "shipped", "how-i-work", "notes"].includes(node.slugSegment),
+  })
+
 // components shared across all pages
 export const sharedPageComponents: SharedLayout = {
   head: Component.Head(),
@@ -35,6 +43,7 @@ export const defaultContentPageLayout: PageLayout = {
     onPortfolio(Component.PortfolioNav()),
     onSlug("index")(Component.PortfolioHome()),
     onSlug("journey")(Component.Journey()),
+    onSlug("shipped")(Component.Shipped()),
     offPortfolio(Component.Breadcrumbs()),
     offPortfolio(Component.ArticleTitle()),
     offPortfolio(Component.ContentMeta()),
@@ -55,7 +64,7 @@ export const defaultContentPageLayout: PageLayout = {
         ],
       }),
     ),
-    offPortfolio(Component.Explorer()),
+    offPortfolio(explorer()),
   ],
   right: [
     offPortfolio(Component.RailSummary()),
@@ -80,7 +89,7 @@ export const defaultListPageLayout: PageLayout = {
         { Component: Component.Darkmode() },
       ],
     }),
-    Component.Explorer(),
+    explorer(),
   ],
   right: [],
 }
