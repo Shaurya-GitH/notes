@@ -645,6 +645,13 @@ body:has(.pf-nav) {
         width: auto;
         gap: 16px;
       }
+      // the two buttons stack, as they wrap at 390 px: left to wrap, they fit side by side in the
+      // fallback font and not in Source Serif on ~410 px screens, and the bottom-anchored copy jumped
+      // when the web font arrived (CLS)
+      .row {
+        flex-direction: column;
+        align-items: flex-start;
+      }
       // the portrait plate puts the eye's bright skin behind the copy, above the scrim's fade (higher
       // still when the brush note shows): a navy halo keeps the text's worst point readable
       // (WCAG 1.4.3) without darkening the painting
