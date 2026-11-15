@@ -957,22 +957,7 @@ body:has(.pf-nav) {
     .art {
       position: relative;
       height: 220px;
-      padding: 12px;
       background-size: cover;
-    }
-    .af {
-      position: relative;
-      z-index: 1;
-      height: 100%;
-      border-radius: 8px;
-      background: rgba(4, 24, 51, 0.9);
-      border: 1px dashed var(--teal);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.6ch;
-      font: 12px var(--mono);
-      color: var(--teal);
     }
     .body {
       padding: 22px;

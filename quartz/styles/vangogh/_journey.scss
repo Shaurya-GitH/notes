@@ -362,6 +362,35 @@ $phone: 800px;
     padding-bottom: 0;
   }
 
+  // Below this width the labelled rail and the 640px panel cannot share a row.
+  @media (max-width: 1100px) {
+    .stop {
+      padding-top: 148px;
+    }
+    // Reserve the corner above the panel for compact, keyboard-accessible rail targets.
+    .rail {
+      left: auto;
+      right: 16px;
+      top: 84px;
+      transform: none;
+      padding: 8px 12px;
+      // dots 25px apart, each with a 25px target (2.5.8)
+      ol {
+        flex-direction: row;
+        gap: 16px;
+      }
+      a {
+        display: inline-block;
+        font-size: 0;
+        padding: 8px;
+        margin: -8px;
+      }
+      a::before {
+        margin: 0;
+      }
+    }
+  }
+
   /* ---------- phones ---------- */
   @media (max-width: $phone) {
     #beat-world .sticky::before {
@@ -414,28 +443,6 @@ $phone: 800px;
       }
       ul {
         font-size: 15px;
-      }
-    }
-    // the rail shrinks to its dots in the corner; the names stay for screen readers
-    .rail {
-      left: auto;
-      right: 16px;
-      top: 84px;
-      transform: none;
-      padding: 8px 12px;
-      // dots 25px apart, each with a 25px target (2.5.8)
-      ol {
-        flex-direction: row;
-        gap: 16px;
-      }
-      a {
-        display: inline-block;
-        font-size: 0;
-        padding: 8px;
-        margin: -8px;
-      }
-      a::before {
-        margin: 0;
       }
     }
     .bigq {

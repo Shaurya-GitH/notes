@@ -48,11 +48,7 @@ export const Recommendation = ({
   photoSrc?: string
 }) => (
   <div class="person">
-    {photoSrc ? (
-      <img class="pphoto" src={photoSrc} alt={r.name} width={44} height={44} />
-    ) : (
-      <div class="pphoto" aria-hidden="true"></div>
-    )}
+    {photoSrc && <img class="pphoto" src={photoSrc} alt={r.name} width={44} height={44} />}
     <div>
       <b>{r.name}</b>
       <span>{r.role}</span>

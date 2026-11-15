@@ -721,6 +721,8 @@ function startPage() {
     clearTimeout(twinTimer)
     offs.forEach((f) => f())
     crowAnim?.revert?.()
+    ringsSvg?.replaceChildren()
+    crowsSvg?.replaceChildren()
     ink?.canvas.getContext("webgl2")?.getExtension("WEBGL_lose_context")?.loseContext()
     document.documentElement.classList.remove("brush")
     cur.remove()

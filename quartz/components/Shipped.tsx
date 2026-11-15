@@ -12,7 +12,6 @@ import stageScript from "./scripts/stage.inline"
 type Project = {
   kind: string
   art: string
-  artefact: string
   title: string
   text: string
   metric: string
@@ -59,12 +58,7 @@ export default (() => {
                     class="art"
                     style={paint(fd, p.art)}
                     data-twin={TWINS.has(p.art) ? p.art : undefined}
-                  >
-                    <div class="af">
-                      <span aria-hidden="true">▣</span>
-                      {p.artefact}
-                    </div>
-                  </div>
+                  ></div>
                   <div class="body">
                     <p class="k">{p.kind}</p>
                     <h2>{p.title}</h2>
