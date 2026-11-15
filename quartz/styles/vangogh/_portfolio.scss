@@ -1305,11 +1305,14 @@ html[data-motion="reduce"] {
     animation: none;
   }
 }
+// without the script's stamp (no JS) the system setting decides; with it, the visitor's choice wins
 @media (prefers-reduced-motion: reduce) {
-  .pf-sun::before,
-  .pf-sun::after,
-  .pf-sun i {
-    animation: none;
+  html:not([data-motion]) {
+    .pf-sun::before,
+    .pf-sun::after,
+    .pf-sun i {
+      animation: none;
+    }
   }
 }
 html[data-motion="reduce"] body:has(.pf-nav) .page > #quartz-body .pf-foot {
