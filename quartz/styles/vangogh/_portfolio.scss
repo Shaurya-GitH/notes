@@ -1040,6 +1040,12 @@ body:has(.pf-nav) {
       }
     }
   }
+  .pf-page .head {
+    padding-top: 56px;
+    @media (max-width: $phone) {
+      padding-top: 32px;
+    }
+  }
   .tldr {
     display: grid;
     grid-template-columns: repeat(5, 1fr);

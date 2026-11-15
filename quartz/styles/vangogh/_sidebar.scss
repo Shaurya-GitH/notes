@@ -288,3 +288,8 @@ button.folder-icon svg {
 li:has(a.active) > .folder-outer > ul {
   border-left-color: color-mix(in srgb, var(--star) 55%, var(--lightgray));
 }
+
+// the explorer's folder note counts were the old home page's list view; note pages never show them
+.folder-count {
+  display: none;
+}

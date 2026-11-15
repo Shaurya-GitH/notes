@@ -30,6 +30,7 @@ export const sharedPageComponents: SharedLayout = {
     Component.SmoothScroll(),
     onSlug("notes")(Component.NotesIndex()),
     onCaseStudy(Component.CaseStudyRest()),
+    onSlug("how-i-work")(Component.Closing()),
   ],
   footer: Component.SiteFooter(
     Component.Footer({
@@ -50,6 +51,7 @@ export const defaultContentPageLayout: PageLayout = {
     onSlug("journey")(Component.Journey()),
     onSlug("shipped")(Component.Shipped()),
     onCaseStudy(Component.CaseStudyHead()),
+    onSlug("how-i-work")(Component.PageHead()),
     offPortfolio(Component.Breadcrumbs()),
     offPortfolio(Component.ArticleTitle()),
     offPortfolio(Component.ContentMeta()),

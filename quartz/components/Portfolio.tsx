@@ -150,6 +150,28 @@ export const PortfolioNav = (() => {
   return PortfolioNav
 }) satisfies QuartzComponentConstructor
 
+// a plain portfolio page's head (How I work): its title and description on the sunlit tier
+export const PageHead = (() => {
+  const PageHead: QuartzComponent = ({ fileData }: QuartzComponentProps) => (
+    <div class="pf pf-page sunlit">
+      <Sun />
+      <div class="head">
+        <h1>{fileData.frontmatter?.title}</h1>
+        <p class="lead">{fileData.frontmatter?.description}</p>
+      </div>
+    </div>
+  )
+  return PageHead
+}) satisfies QuartzComponentConstructor
+
+// the closing contact band of a plain page
+export const Closing = (() => {
+  const Closing: QuartzComponent = ({ fileData, allFiles }: QuartzComponentProps) => (
+    <ContactBand fd={fileData} allFiles={allFiles} />
+  )
+  return Closing
+}) satisfies QuartzComponentConstructor
+
 type Contact = { heading?: string; text?: string; email?: string }
 
 // "Hiring, or building an AI agent?": the home page's contact section (with its line) and the

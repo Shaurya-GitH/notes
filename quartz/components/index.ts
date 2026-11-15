@@ -22,7 +22,7 @@ import RecentNotes from "./RecentNotes"
 import Breadcrumbs from "./Breadcrumbs"
 import RailSummary from "./RailSummary"
 import SmoothScroll from "./SmoothScroll"
-import { PortfolioNav, SiteFooter } from "./Portfolio"
+import { Closing, PageHead, PortfolioNav, SiteFooter } from "./Portfolio"
 import NotesIndex from "./NotesIndex"
 import PortfolioHome from "./PortfolioHome"
 import Journey from "./Journey"
@@ -58,6 +58,8 @@ export {
   RailSummary,
   SmoothScroll,
   PortfolioNav,
+  PageHead,
+  Closing,
   SiteFooter,
   NotesIndex,
   PortfolioHome,
