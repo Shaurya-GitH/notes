@@ -72,6 +72,7 @@ test("motion restarts replace generated rings and crows, and navigation removes 
     createElementNS: () => new Element(),
   })
   const cleanups: (() => void)[] = []
+  let frames = 0
   const window = Object.assign(new EventTarget(), {
     document,
     addCleanup: (cleanup: () => void) => cleanups.push(cleanup),
@@ -98,7 +99,7 @@ test("motion restarts replace generated rings and crows, and navigation removes 
     devicePixelRatio: 1,
     scrollY: 0,
     performance,
-    requestAnimationFrame: () => 1,
+    requestAnimationFrame: () => ++frames,
     cancelAnimationFrame() {},
     clearTimeout() {},
   })
@@ -115,4 +116,10 @@ test("motion restarts replace generated rings and crows, and navigation removes 
   assert.deepEqual(counts(), [0, 0])
   document.dispatchEvent(new Event("nav"))
   assert.deepEqual(counts(), [16, 16])
+
+  // motion off schedules no frame loop at all
+  html.dataset.motion = "reduce"
+  const before = frames
+  document.dispatchEvent(new Event("motionchange"))
+  assert.equal(frames, before, "no requestAnimationFrame with motion off")
 })

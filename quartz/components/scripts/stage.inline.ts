@@ -713,7 +713,8 @@ function startPage() {
     }
     if (alive) raf = requestAnimationFrame(frame)
   }
-  raf = requestAnimationFrame(frame)
+  // with motion off nothing draws per frame (scroll still places the stage), so no loop runs
+  if (!RM) raf = requestAnimationFrame(frame)
 
   return () => {
     alive = false
