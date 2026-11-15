@@ -10,22 +10,14 @@ const portfolio: When = (page) => isPortfolio(page.fileData)
 const only = (condition: When) => (component: QuartzComponent) =>
   Component.ConditionalRender({ component, condition })
 const onPortfolio = only(portfolio)
+const offPortfolio = only((page) => !portfolio(page))
 const onSlug = (slug: string) => only((page) => page.fileData.slug === slug)
-// the old home page's scroll story (replaced by the home hub next)
-const onHome = onSlug("index")
-const offPortfolio = only((page) => !portfolio(page) && page.fileData.slug !== "index")
-const offPortfolioSides = only((page) => !portfolio(page))
 
 // components shared across all pages
 export const sharedPageComponents: SharedLayout = {
   head: Component.Head(),
   header: [],
-  afterBody: [
-    Component.SmoothScroll(),
-    onHome(Component.HomeSpiral()),
-    onHome(Component.HomeStage()),
-    onSlug("notes")(Component.NotesIndex()),
-  ],
+  afterBody: [Component.SmoothScroll(), onSlug("notes")(Component.NotesIndex())],
   footer: Component.SiteFooter(
     Component.Footer({
       text: "Designed and Developed by Shaurya Mehta. Built with Quartz.",
@@ -41,16 +33,16 @@ export const sharedPageComponents: SharedLayout = {
 export const defaultContentPageLayout: PageLayout = {
   beforeBody: [
     onPortfolio(Component.PortfolioNav()),
-    onHome(Component.HomeBeats()),
+    onSlug("index")(Component.PortfolioHome()),
     offPortfolio(Component.Breadcrumbs()),
     offPortfolio(Component.ArticleTitle()),
     offPortfolio(Component.ContentMeta()),
     offPortfolio(Component.TagList()),
   ],
   left: [
-    offPortfolioSides(Component.PageTitle()),
-    offPortfolioSides(Component.MobileOnly(Component.Spacer())),
-    offPortfolioSides(
+    offPortfolio(Component.PageTitle()),
+    offPortfolio(Component.MobileOnly(Component.Spacer())),
+    offPortfolio(
       Component.Flex({
         components: [
           {
@@ -62,7 +54,7 @@ export const defaultContentPageLayout: PageLayout = {
         ],
       }),
     ),
-    offPortfolioSides(Component.Explorer()),
+    offPortfolio(Component.Explorer()),
   ],
   right: [
     offPortfolio(Component.RailSummary()),

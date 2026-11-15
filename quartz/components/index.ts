@@ -22,9 +22,9 @@ import RecentNotes from "./RecentNotes"
 import Breadcrumbs from "./Breadcrumbs"
 import RailSummary from "./RailSummary"
 import SmoothScroll from "./SmoothScroll"
-import { HomeBeats, HomeSpiral, HomeStage } from "./Home"
 import { PortfolioNav, SiteFooter } from "./Portfolio"
 import NotesIndex from "./NotesIndex"
+import PortfolioHome from "./PortfolioHome"
 import Comments from "./Comments"
 import Flex from "./Flex"
 import ConditionalRender from "./ConditionalRender"
@@ -54,12 +54,10 @@ export {
   Breadcrumbs,
   RailSummary,
   SmoothScroll,
-  HomeBeats,
-  HomeSpiral,
-  HomeStage,
   PortfolioNav,
   SiteFooter,
   NotesIndex,
+  PortfolioHome,
   Comments,
   Flex,
   ConditionalRender,

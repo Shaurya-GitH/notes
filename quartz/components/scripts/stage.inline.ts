@@ -3,14 +3,19 @@
 import { animate, stagger } from "animejs"
 import { getFullSlug, pathToRoot } from "../../util/path"
 
-// the home page's scroll story: painted stage, rings, sky, crows, spiral and the ink cursor.
-// Runs only on the home page, and returns everything it started to the SPA's cleanup.
-// the twins outlive a visit to the home page, so coming back from a note reuses the loaded images
+// The Journey's scroll story (painted stage, rings, sky, crows) and the ink cursor that paints any
+// plate with a twin (the stage, and every element marked data-twin: the home hero, painted cards,
+// Journey stops). Runs on any page that has either, and returns everything it started to the SPA's
+// cleanup. Motion "reduce" (html[data-motion]) keeps the stage still and turns the ink off.
+// the twins outlive a visit to a page, so coming back reuses the loaded images
 const TWIN = {}
 // this script first runs on the page the visitor landed on
-const LANDED_HOME = getFullSlug(window) === "index"
+const LANDED = getFullSlug(window)
 
-function startHome() {
+function startPage() {
+  const stageEl = document.querySelector(".pf-stage")
+  const targets = [...document.querySelectorAll("[data-twin]")]
+  if (!stageEl && !targets.length) return null
   let alive = true
   let raf = 0
   const offs = []
@@ -22,25 +27,19 @@ function startHome() {
   // a section's top in document coordinates (the design measured offsetTop inside <main>)
   const docTop = (el) => el.getBoundingClientRect().top + scrollY
 
-  const RM = matchMedia("(prefers-reduced-motion: reduce)").matches
+  const RM = document.documentElement.dataset.motion === "reduce"
   const FINE = matchMedia("(pointer: fine)").matches
   const $ = (s) => document.querySelector(s)
   const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v))
   const ramp = (v, a, b) => clamp((v - a) / (b - a))
   const ease = (t) => 1 - Math.pow(1 - t, 3)
 
-  // ---------- content ----------
-  // the cards are rendered at build time (Home.tsx); their paintings are set here, after the SPA
-  // router has moved to this URL, so the relative image paths resolve from the home page
-  const cards = [...document.querySelectorAll(".card")]
-  for (const c of cards) {
-    c.style.backgroundImage = `url(${IMG}${c.dataset.art}.jpg)`
-    c.style.backgroundPosition = c.dataset.pos
-  }
+  // ---------- the stage (Journey only) ----------
   const irisEl = $("#iris")
-  irisEl.style.backgroundImage = `url(${IMG}eye.jpg)`
+  if (irisEl) irisEl.style.backgroundImage = `url(${IMG}eye.jpg)`
   // keep the turning iris copy registered with the painting under it (object-fit: cover math)
   function placeIris() {
+    if (!stageEl) return
     const s = Math.max(innerWidth / 1376, innerHeight / 768),
       rw = 1376 * s,
       rh = 768 * s,
@@ -69,7 +68,7 @@ function startHome() {
 
   // ---------- rings (sleep-well style tunnel, painted) ----------
   const ringsSvg = $("#rings"),
-    RING_N = 16,
+    RING_N = stageEl ? 16 : 0,
     ringEls = []
   const ringCols = ["#e8c06a", "#09395b", "#6fb3bd", "#041833", "#dfc489", "#165773"]
   for (let i = 0; i < RING_N; i++) {
@@ -99,7 +98,7 @@ function startHome() {
 
   // ---------- crows ----------
   const crowsSvg = $("#crows"),
-    CROWS = 16
+    CROWS = stageEl ? 16 : 0
   for (let i = 0; i < CROWS; i++) {
     const g = document.createElementNS("http://www.w3.org/2000/svg", "g")
     g.setAttribute("class", "crow")
@@ -107,9 +106,9 @@ function startHome() {
     g.innerHTML = `<path d="M-14 0 Q-7 -${8 * s} 0 0 Q7 -${8 * s} 14 0" fill="none" stroke="#08090d" stroke-width="${3.2 * s}" stroke-linecap="round" style="animation-delay:-${(i * 0.13) % 0.5}s"/>`
     crowsSvg.appendChild(g)
   }
-  const crowEls = [...crowsSvg.querySelectorAll(".crow")]
+  const crowEls = crowsSvg ? [...crowsSvg.querySelectorAll(".crow")] : []
   let crowAnim = null
-  if (!RM) {
+  if (!RM && crowEls.length) {
     crowAnim = animate(crowEls, {
       x: [(el, i) => 640 + ((i * 53) % 220), (el, i) => 760 + ((i * 97) % 260)],
       y: [(el, i) => 430 + ((i * 29) % 60), (el, i) => 60 + ((i * 41) % 140)],
@@ -123,9 +122,9 @@ function startHome() {
 
   // ---------- canvases ----------
   const flow = $("#flow"),
-    fctx = flow.getContext("2d")
+    fctx = flow?.getContext("2d")
   const strands = $("#strands"),
-    sctx = strands.getContext("2d")
+    sctx = strands?.getContext("2d")
   let W = 0,
     H = 0,
     DPR = 1
@@ -134,6 +133,7 @@ function startHome() {
     W = innerWidth
     H = innerHeight
     for (const c of [flow, strands, revealC]) {
+      if (!c) continue
       c.width = W * DPR
       c.height = H * DPR
       c.getContext("2d").setTransform(DPR, 0, 0, DPR, 0, 0)
@@ -224,33 +224,35 @@ function startHome() {
   }
 
   // ---------- scroll-driven stage ----------
-  const quote = $("p.quote")
   const eye = $("#eye"),
     sky = $("#sky"),
     fieldL = $("#field"),
-    sky2 = $("#sky2"),
-    scrim = $("#scrim"),
-    wipe = $(".wipe")
+    scrim = $("#scrim")
   const secs = {
     iris: $("#beat-iris"),
     world: $("#beat-world"),
-    about: $(".center > article"),
-    spiral: $("#spiral"),
+    stops: $("#stops"),
   }
   let B = {}
   function measure() {
+    if (!stageEl) return
     const vh = innerHeight
     for (const k in secs) B[k] = docTop(secs[k]) / vh
-    B.spiralLen = (secs.spiral.offsetHeight - vh) / vh
   }
   let flowOn = 0,
     strandsOn = 0
   function stage() {
+    if (!stageEl) return
     const v = scrollY / innerHeight
+    // reduced motion: the last frame, still (the transition beats are hidden by CSS)
     if (RM) {
       fieldL.style.opacity = 1
-      scrim.style.opacity = 0.62
+      fieldL.style.transform = ""
+      sky.style.opacity = 0
+      scrim.style.opacity = 0
       eye.style.opacity = 0
+      ringsSvg.style.opacity = 0
+      flow.style.opacity = strands.style.opacity = 0
       flowOn = strandsOn = 0
       return
     }
@@ -275,97 +277,30 @@ function startHome() {
     // beat 2: the sky
     const skyIn = ramp(v, B.iris - 0.2, B.iris + 0.25),
       skyOut = ramp(v, B.world - 0.3, B.world + 0.3)
-    quote.style.opacity = ramp(v, B.iris - 0.3, B.iris + 0.1).toFixed(3)
     sky.style.opacity = skyIn * (1 - skyOut)
     sky.style.transform = `scale(${1.35 - 0.35 * ease(ramp(v, B.iris - 0.2, B.world))})`
-    // beat 3: her world
-    const fIn = skyOut,
-      fOut = ramp(v, B.spiral - 0.6, B.spiral)
-    fieldL.style.opacity = fIn * (1 - fOut)
-    fieldL.style.transform = `scale(${1.18 - 0.18 * ease(ramp(v, B.world - 0.3, B.about))})`
-    // beat 5: back to the sky for the spiral
-    sky2.style.opacity = fOut
-    scrim.style.opacity = 0.74 * ramp(v, B.about - 0.5, B.about) * (1 - 0.25 * fOut)
-    flowOn = Math.max(sky.style.opacity * 1, fOut) * (1 - 0.35 * ramp(v, B.about - 0.5, B.about))
+    // beat 3: her world, where the Journey's title sits; the stops then slide over the stage
+    fieldL.style.opacity = skyOut
+    fieldL.style.transform = `scale(${1.18 - 0.18 * ease(ramp(v, B.world - 0.3, B.stops))})`
+    scrim.style.opacity = 0.74 * ramp(v, B.stops - 0.5, B.stops)
+    flowOn = sky.style.opacity * (1 - 0.35 * ramp(v, B.stops - 0.5, B.stops))
     strandsOn = Math.sin(ramp(v, B.iris - 0.1, B.world + 0.1) * Math.PI)
-    $("#flow").style.opacity = flowOn
-    $("#strands").style.opacity = strandsOn
-    if (crowAnim) crowAnim.seek(ramp(v, B.world - 0.2, B.about + 0.1) * crowAnim.duration)
-    // spiral: wipe in, then turn the helix
-    const sp = ramp(v, B.spiral, B.spiral + B.spiralLen)
-    const wp = ease(ramp(v, B.spiral - 0.6, B.spiral + 0.2))
-    wipe.style.clipPath = `circle(${(wp * 150).toFixed(1)}% at 60% 55%)`
-    // under the spiral's dark wash the stage's ink only reads as smudges; there it lives on the cards
-    $("#reveal").style.opacity = (1 - wp).toFixed(3)
-    helix(sp)
+    flow.style.opacity = flowOn
+    strands.style.opacity = strandsOn
+    if (crowAnim) crowAnim.seek(ramp(v, B.world - 0.2, B.stops + 0.1) * crowAnim.duration)
   }
-  // each card is projected on its own and stacked by depth, not placed in one shared 3D space:
-  // in a shared space neighbours closer than a card's width cut through each other as they turn
-  const orbit = $("#cards")
-  function helix(sp) {
-    if (RM) return
-    // the phone layout starts where Quartz's does (800px); on short screens the whole orbit shrinks
-    // so its cards stay clear of the heading above them
-    const narrow = innerWidth <= 800,
-      fit = Math.min(1, innerHeight / (narrow ? 700 : 860)),
-      R = narrow ? Math.min(200, innerWidth * 0.3) : 380,
-      STEP = narrow ? 44 : 40,
-      RISE = narrow ? 46 : 64,
-      P = 1400
-    orbit.style.transform = `rotate(-7deg) scale(${fit.toFixed(3)})`
-    const rot = sp * (cards.length - 1) * STEP
-    cards.forEach((c, i) => {
-      const th = i * STEP - rot,
-        rad = (th * Math.PI) / 180,
-        zz = R * Math.cos(rad) - R,
-        k = P / (P - zz),
-        x = R * Math.sin(rad) * k,
-        // the old rotateX tilt: cards further back sit higher
-        y = ((i - sp * (cards.length - 1)) * RISE + zz * 0.22) * k
-      const front = (Math.cos(rad) + 1) / 2
-      c.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) perspective(${P}px) translateZ(${zz.toFixed(1)}px) rotateY(${(th * 0.8).toFixed(1)}deg)`
-      // dim with an opaque wash, so a card never shows through the one in front; fade out only at the back
-      c.style.setProperty("--dim", ((1 - front) * 0.72).toFixed(3))
-      c.style.opacity = ramp(front, 0.45, 0.72).toFixed(3)
-      c.style.zIndex = Math.round(front * 100)
-      c.tabIndex = front > 0.55 ? 0 : -1
-      // only the front card takes clicks; the ones behind it are mostly covered (WCAG 2.5.8)
-      c.style.pointerEvents = front > 0.9 ? "" : "none"
-    })
-  }
-  // keyboard: focusing a card scrolls the spiral to it
-  cards.forEach((c, i) =>
-    on(c, "focus", () => {
-      if (RM) return
-      const top =
-        docTop(secs.spiral) + (i / (cards.length - 1)) * (secs.spiral.offsetHeight - innerHeight)
-      window.lenis ? window.lenis.scrollTo(top, { duration: 0.6 }) : scrollTo({ top })
-    }),
-  )
-  // a card that slid under a still pointer while the page scrolled is not a choice: a pointer click
-  // during a scroll, or within 250 ms of it, is dropped; keyboard activation (detail 0) always opens
-  let scrolledAt = -Infinity
-  on(window, "scroll", () => (scrolledAt = performance.now()), { passive: true })
-  on(
-    secs.spiral,
-    "click",
-    (e) => {
-      if (e.detail === 0 || performance.now() - scrolledAt > 250 || !e.target.closest(".card"))
-        return
-      e.preventDefault()
-      e.stopPropagation()
-    },
-    true,
-  )
-
   // ---------- cursor: ink that opens a window onto the inverted universe ----------
   // After Buttermax: the cursor pours ink into a small fluid simulation, and wherever the ink lies
   // the same scene shows in an inverted universe (ember sky, black moon, white-haired twin, doves
   // for crows). The ink curls, drips and thins from its tail on its own once the cursor stops.
   const revealC = $("#reveal"),
-    rctx = revealC.getContext("2d"),
-    cur = $("#cursor"),
-    halo = cur.querySelector(".halo")
+    rctx = revealC?.getContext("2d")
+  // the cursor: a star with a dashed halo (the markup is decoration, so it is made here)
+  const cur = document.createElement("div")
+  cur.className = "pf-cursor"
+  cur.setAttribute("aria-hidden", "true")
+  cur.innerHTML = '<div class="halo"><i></i></div><div class="core"></div>'
+  const halo = cur.querySelector(".halo")
 
   // stable fluids on the GPU, after Pavel Dobryakov's WebGL Fluid Simulation (MIT)
   function makeInk() {
@@ -534,13 +469,14 @@ function startHome() {
   // they load after the page's own art, so they never hold up the first screen; start on the window's
   // load or the first pointer move, whichever comes first (inside the artifact frame the load event
   // can fire before this script runs)
-  for (const n of ["eye", "sky", "field", "almond"])
-    TWIN[n] ||= Object.assign(new Image(), { later: `${IMG}${n}-alt.jpg` })
-  const startTwins = () => Object.values(TWIN).forEach((i) => i.src || (i.src = i.later))
-  // only where the ink runs; a landing on home waits for its first screen to paint, arriving from a
-  // note starts them at once, and a return visit finds them loaded
+  const names = new Set(targets.map((t) => t.dataset.twin))
+  if (stageEl) ["eye", "sky", "field"].forEach((n) => names.add(n))
+  for (const n of names) TWIN[n] ||= Object.assign(new Image(), { later: `${IMG}${n}-alt.jpg` })
+  const startTwins = () => names.forEach((n) => TWIN[n].src || (TWIN[n].src = TWIN[n].later))
+  // only where the ink runs; a landing waits for its first screen to paint, arriving from another
+  // page starts them at once, and a return visit finds them loaded
   const twinTimer =
-    FINE && !RM && !TWIN.eye.src ? setTimeout(startTwins, LANDED_HOME ? 1200 : 0) : 0
+    FINE && !RM ? setTimeout(startTwins, LANDED === getFullSlug(window) ? 1200 : 0) : 0
   // the eye twin was generated from text, so `fit` pins its iris (ax, ay) onto the original's (bx, by)
   const FIT = { eye: [0.534, 0.605, 0.565, 0.62, 1.08] }
   // object-fit: cover (and background-size: cover) at a given position, in the target's own pixels
@@ -560,12 +496,13 @@ function startHome() {
     ctx.drawImage(img, -f[0] * iw, -f[1] * ih, iw, ih)
     ctx.restore()
   }
-  const STAGE = [
-    [eye, "eye", 0.6, 0.5],
-    [sky, "sky", 0.5, 0.5],
-    [fieldL, "field", 0.5, 0.5],
-    [sky2, "sky", 0.5, 0.5],
-  ]
+  const STAGE = stageEl
+    ? [
+        [eye, "eye", 0.6, 0.5],
+        [sky, "sky", 0.5, 0.5],
+        [fieldL, "field", 0.5, 0.5],
+      ]
+    : []
   // apply an element's computed transform about its transform-origin, as the browser does
   function applyCss(ctx, el) {
     const cs = getComputedStyle(el)
@@ -578,9 +515,12 @@ function startHome() {
   }
   // the inverted stage, composited exactly like the real one: same layers, opacities, zoom and drift;
   // false while a showing layer's twin is still loading, so the ink never opens onto a bare fill
+  // a layer showing its portrait crop (phones) has no twin to match it
+  const portrait = (el) => el.querySelector("img")?.currentSrc.includes("portrait")
   function drawStage() {
+    if (!stageEl) return false
     for (const [el, name] of STAGE)
-      if (+el.style.opacity >= 0.01 && !TWIN[name].naturalWidth) return false
+      if (+el.style.opacity >= 0.01 && (!TWIN[name].naturalWidth || portrait(el))) return false
     rctx.globalCompositeOperation = "source-over"
     rctx.fillStyle = "#041833"
     rctx.fillRect(0, 0, W, H)
@@ -630,54 +570,35 @@ function startHome() {
       rctx.restore()
     }
   }
-  // each spiral card carries its own twin canvas inside it, so the browser's 3D transform and the
-  // card's depth dimming apply to it too; three corner pins give the card's on-screen placement
-  const cardTwins = cards.map((card, i) => {
+  // every data-twin element carries its own twin canvas, laid over its plate and under its content;
+  // the twin is drawn as the element's plate is (cover, at data-pos), and the ink masks it in place
+  const elTwins = targets.map((el) => {
     const cv = document.createElement("canvas")
     cv.className = "twin"
-    card.prepend(cv)
-    const pins = ["tl", "tr", "bl"].map((k) => {
-      const p = document.createElement("i")
-      p.className = "pin " + k
-      card.append(p)
-      return p
-    })
-    const [px, py] = card.dataset.pos.split(" ").map((v) => parseFloat(v) / 100)
-    return { card, cv, ctx: cv.getContext("2d"), pins, name: card.dataset.art, px, py }
+    cv.setAttribute("aria-hidden", "true")
+    el.append(cv)
+    const [px, py] = (el.dataset.pos ?? "50% 50%").split(" ").map((v) => parseFloat(v) / 100)
+    return { el, cv, ctx: cv.getContext("2d"), name: el.dataset.twin, px, py }
   })
-  function drawCards() {
-    const r = secs.spiral.getBoundingClientRect()
-    const onScreen = r.bottom > 0 && r.top < H
-    for (const t of cardTwins) {
-      const w = t.card.offsetWidth,
-        h = t.card.offsetHeight,
-        d = Math.min(devicePixelRatio || 1, 1.5)
-      if (!onScreen || +t.card.style.opacity < 0.05) {
+  function drawTargets() {
+    const d = Math.min(devicePixelRatio || 1, 1.5)
+    for (const t of elTwins) {
+      const r = t.el.getBoundingClientRect()
+      if (r.bottom < 0 || r.top > H || !r.width || portrait(t.el)) {
         if (t.drawn) t.ctx.clearRect(0, 0, t.cv.width, t.cv.height)
         t.drawn = false
         continue
       }
-      if (t.cv.width !== Math.round(w * d)) {
-        t.cv.width = Math.round(w * d)
-        t.cv.height = Math.round(h * d)
+      if (t.cv.width !== Math.round(r.width * d) || t.cv.height !== Math.round(r.height * d)) {
+        t.cv.width = Math.round(r.width * d)
+        t.cv.height = Math.round(r.height * d)
       }
-      const [a, b, c] = t.pins.map((p) => p.getBoundingClientRect())
-      // card pixels -> screen pixels (an affine fit to three corners; close enough at these angles)
-      const m = new DOMMatrix([
-        (b.left - a.left) / w,
-        (b.top - a.top) / w,
-        (c.left - a.left) / h,
-        (c.top - a.top) / h,
-        a.left,
-        a.top,
-      ])
       const x = t.ctx
       x.setTransform(d, 0, 0, d, 0, 0)
       x.globalCompositeOperation = "copy"
-      drawCover(x, t.name, w, h, t.px, t.py)
+      drawCover(x, t.name, r.width, r.height, t.px, t.py)
       x.globalCompositeOperation = "destination-in"
-      x.setTransform(new DOMMatrix().scale(d).multiply(m.inverse()))
-      x.drawImage(ink.canvas, 0, 0, W, H)
+      x.drawImage(ink.canvas, -r.left, -r.top, W, H)
       t.drawn = true
     }
   }
@@ -692,16 +613,15 @@ function startHome() {
     const el = ptr.seen && document.elementFromPoint(ptr.x, ptr.y),
       link = el && el.closest(CLICKABLE)
     cur.classList.toggle("link", !!link)
-    // the spiral cards are links too, but they are paintings: ink pours over them
-    ptr.clean = !!link && !link.classList.contains("card")
+    // painted cards are links too, but they are paintings: ink pours over them
+    ptr.clean = !!link && !link.classList.contains("painted")
   }
+  // the brush note ("paint to find it") shows only where the ink runs
+  const note = $(".brush-note")
   if (ink) {
     document.documentElement.classList.add("brush")
-    const note = document.createElement("p")
-    note.className = "margin"
-    note.id = "brush-note"
-    note.textContent = $(".home-stage").dataset.brush ?? ""
-    if (note.textContent) secs.about.appendChild(note)
+    document.body.append(cur)
+    if (note) note.hidden = false
     on(
       window,
       "pointermove",
@@ -721,7 +641,7 @@ function startHome() {
     )
     on(document, "pointerleave", () => cur.classList.remove("on"))
     on(window, "scroll", hover, { passive: true })
-  } else cur.remove()
+  }
   function brushStep(dt) {
     if (!ink || !ptr.seen) return
     if (ink.canvas.width !== W || ink.canvas.height !== H) ink.resize()
@@ -749,11 +669,11 @@ function startHome() {
       rctx.globalCompositeOperation = "destination-in"
       rctx.drawImage(ink.canvas, 0, 0, W, H)
       rctx.globalCompositeOperation = "source-over"
-    } else rctx.clearRect(0, 0, W, H)
-    drawCards()
+    } else rctx?.clearRect(0, 0, W, H)
+    drawTargets()
     if (wet > 3.9) {
-      rctx.clearRect(0, 0, W, H)
-      for (const t of cardTwins) t.ctx.clearRect(0, 0, t.cv.width, t.cv.height)
+      rctx?.clearRect(0, 0, W, H)
+      for (const t of elTwins) t.ctx.clearRect(0, 0, t.cv.width, t.cv.height)
     }
   }
 
@@ -783,7 +703,7 @@ function startHome() {
     const t = now / 1000
     if (!RM && !document.hidden) {
       if (flowOn > 0.02) drawFlow(t)
-      else if (parts.length) fctx.clearRect(0, 0, W, H)
+      else if (parts.length) fctx?.clearRect(0, 0, W, H)
       if (strandsOn > 0.02) drawStrands(t)
       brushStep(dt)
     }
@@ -799,10 +719,23 @@ function startHome() {
     crowAnim?.revert?.()
     ink?.canvas.getContext("webgl2")?.getExtension("WEBGL_lose_context")?.loseContext()
     document.documentElement.classList.remove("brush")
+    cur.remove()
+    for (const t of elTwins) t.cv.remove()
+    if (note) note.hidden = true
   }
 }
 
+// the footer's motion switch restarts the page's motion in its new mode
+let stop = null
+const run = () => {
+  stop?.()
+  stop = startPage()
+}
 document.addEventListener("nav", () => {
-  if (getFullSlug(window) !== "index" || !document.querySelector(".home-stage")) return
-  window.addCleanup(startHome())
+  run()
+  window.addCleanup(() => {
+    stop?.()
+    stop = null
+  })
 })
+document.addEventListener("motionchange", run)

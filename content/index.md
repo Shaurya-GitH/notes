@@ -1,6 +1,6 @@
 ---
 title: Shaurya Mehta
-layout: index
+layout: portfolio
 socialTitle: Shaurya Mehta · AI Engineer
 description: Full-stack, applied AI engineer building AI agents and apps that scale and stay secure, with DevOps and security depth and the notes to show how it all works.
 # who this site belongs to, for search engines (schema.org Person on the home page)
@@ -15,57 +15,95 @@ person:
     - https://github.com/Shaurya-GitH
     - https://x.com/ShauryaCODE
     - https://leetcode.com/ShauryaLC
-# the home page's scroll story (HomeBeats); the note below is the reading panel
+# the home hub (PortfolioHome.tsx). Copy is the redesign's (copy v10); a section whose data is
+# empty does not render
 home:
   headline: I build AI agents and apps that scale and stay secure.
-  tagline: Agentic AI · Full stack · DevOps · Security
-  quote: I build agents, and the infrastructure that makes them reliable, measurable and fast.
-  label: I take systems apart to understand why they work.
-  # the handwritten note under the panel, shown when the ink cursor is on
+  lede: I'm a problem solver first. I follow a problem from the infrastructure all the way up to the product.
+  role: Software engineer at The Product Highway, Bangalore
+  chip:
+    before: Fix merged into
+    strong: Keycloak
+    after: ", Oct 2026"
+    href: https://github.com/keycloak/keycloak/pull/54078
+  # the handwritten note beside the hero, shown only while the ink cursor runs
   brush: every system has another side. paint to find it.
-  # the spiral of folders at the end of the page
-  outro:
-    tag: Keep exploring
-    headline: From the model to the cluster.
-    text: Agents, the stack under them and the pipelines that ship them. Pick a painting to read how each part works.
+  proof:
+    - initials: KC
+      label: Merged into Keycloak, the open-source identity server
+      title: Login no longer offers organizations you can't use
+      href: https://github.com/keycloak/keycloak/pull/54078
+      why: The organization picker listed disabled organizations, and choosing one reloaded the page with no message. I filtered them out and added a test that fails without the fix.
+      meta: "PR #54078 · merged Oct 2026 · repo has 37.9k stars (Nov 2026)"
+    - initials: LP
+      label: Merged into Loop, an open-source agent harness in Rust
+      title: No more 404s from batch-only models
+      href: https://github.com/soketlabs/loop/pull/64
+      # `:batch` renders as code, as in the design
+      why: "OpenRouter's `:batch` models (78 at the time) failed every prompt with a 404. The provider preset now hides them, and a test fails without the fix."
+      meta: "PR #64 · merged Nov 2026"
+  recommendation:
+    quote: He has a solid understanding of web services, security mechanisms, end-to-end protection, and the fundamental concepts of encryption and decryption.
+    name: Azad Singh Kalakoti
+    role: Project Lead at SBS · my architect there · Oct 2026
+    # the recommender's photo, only with his permission (empty: an empty circle)
+    photo:
+    href: https://www.linkedin.com/in/shaurya-mehta-0b916a349/details/recommendations/
+  awards:
+    heading: Two awards in my year at SBS
+    lede: One for a single client delivery, one for the year's work.
+    list:
+      - initials: SP
+        issuer: SBS · Sep 2025
+        title: Spot Award
+        cite: For contributing to the end-to-end client delivery of Wero's peer-to-peer payments management feature.
+        text: "Wero is the European Payments Initiative's wallet for sending money to people and paying shops. During the client delivery I worked on the whole peer-to-peer payments management feature end to end: I built the payment-cancellation step, tested the feature end to end with JMeter, and fixed every bug the testing found, hotfixes included."
+        photo: spot-photo
+        alt: The Spot Award kit from SBS, a black leather wallet, a pen and an SBS keyring in a gift box
+        href: https://www.linkedin.com/in/shaurya-mehta-0b916a349/details/honors/
+      - initials: KA
+        issuer: SBS · Apr 2026
+        title: Kalam Award
+        cite: "“In recognition of your dedication and perseverance.”"
+        text: Over the year I built the security and infrastructure foundations of an Open Banking platform for European payments (EPI and PSD2). I designed shared services that create and validate request signatures and wired them into every API, validated QWAC certificates at the API gateway, and ran security reviews against the EPI and PSD2 standards. On the infrastructure side I added Invicti security scanning to the pipelines for the consent apps and Keycloak extensions, stabilised the deployment pipelines, and built a stateful WireMock framework so integrations could be tested realistically.
+        photo: kalam-photo
+        alt: The Kalam Award, a glass trophy engraved with the SBS logo, “Kalam Award”, “Congratulations” and “In recognition of your dedication and perseverance”
+        href: https://www.linkedin.com/in/shaurya-mehta-0b916a349/details/honors/
+  branches:
+    heading: Pick a painting.
+    list:
+      - title: Journey
+        text: Invoicing software, then Open Banking APIs for European banks, a pre-seed marketplace, and voice agents for US shoppers.
+        go: Read the journey
+        to: journey
+        art: field
+      - title: Shipped
+        text: Two fixes merged into open-source projects, agents running on real traffic, and things I built to learn.
+        go: See what I've shipped
+        to: shipped
+        art: harbour
+      - title: How I work
+        text: How I work with coding agents, including the memory store and task list I built for them.
+        go: See how I work
+        to: how-i-work
+        art: studio
+      - title: Notes
+        text: "Rate limiting, caching, HSMs, Kubernetes: notes I wrote to understand why things work."
+        go: Browse the notes
+        to: notes
+        art: sky-alt
+  # LinkedIn and X posts: none chosen yet, so the section does not render. Each post:
+  # { network: LinkedIn | X, date: Month Year, text: first two sentences verbatim, href, art }
+  posts:
+    heading: What I've been writing.
+    lede: Recent posts from LinkedIn and X.
+    all: See all posts on LinkedIn
+    allHref:
+    list: []
+  contact:
+    heading: Hiring, or building an AI agent?
+    text: I work full time at The Product Highway. If you're hiring, or building something with AI agents, I'm always happy to talk.
+    # the address the "Email me" and "Copy email" buttons use; empty hides both until the owner
+    # confirms which email to show
+    email:
 ---
-
-> [!quote] My Engineering Philosophy
-> I believe an engineer is a problem solver who should be capable of addressing any type of challenge they encounter. My approach is centered on deconstructing the **"why"** and **"what"** of every system to understand it inside out. By identifying architectural **patterns**, I can solve complex problems more efficiently and adapt to new technologies quickly.
-
----
-
-## Who I Am
-
-I'm an engineer with 1.5 years of experience building AI and full-stack systems. I specialize in agentic applied AI: conversational voice AI, coding agents, multi-agent systems, research and workflow automation agents, evaluation pipelines, and the infrastructure that makes them reliable, measurable and fast. I also work across full-stack engineering, DevOps and security.
-
-I'm a Software Engineer at The Product Highway, and before that I worked at For Real and Sopra Banking Software. Some of what I've done:
-
-- **Cut voice-AI latency by about 45%**, saving about 1.75 s per spoken message for US users on real traffic, with Redis tool caching on top.
-- **Fine-tuned a model to predict tool calls**, served on GPU at 28 ms: exact tool selection rose from 0/50 to 18/50 and LLM calls per step fell 42%.
-- **Built a voice-and-text shopping assistant** into a live storefront, calling server tools and on-page actions from live page and cart context.
-- **Architected a marketplace's order lifecycle** in MedusaJS, from exchanges and partial cancellations to fulfilment, with sagas, idempotency and retries.
-- **Handled DevOps end to end**, designing CI/CD pipelines and deployments with GitLab CI, Docker, Helm, Kubernetes and AWS, and a Go CLI that automates a platform's whole DevOps flow.
-- **Owned Open Banking APIs end to end**, from design decisions through implementation to QA: 10+ Spring Boot endpoints for the Berlin Group AIS and PIS standards, reaching full QWAC/QSEAL regulatory compliance.
-- **Worked across the security stack**, from cryptography and HSM-managed keys to JWE encryption, JWT, OAuth 2.0 with mTLS, Keycloak and TLS.
-- **Worked forward-deployed with European banking clients**, taking on the bugs raised in client meetings, debugging them end to end, and shipping quick fixes and hotfixes at delivery time.
-
-I'm a problem solver and a passionate engineer. I like taking a system apart to understand why it works, learning new tools by building real things with them, and following a problem from the infrastructure all the way up to the product. The notes below are the working record: AI, system design, security, Kubernetes, Docker and more.
-
----
-
-## My Toolkit
-
-| Category                  | Technologies                                                                                                                                                                                                                                                                                                                                                                 |
-| :------------------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **AI and Agents**         | Agentic workflows, MCP servers, multi agent orchestration, agent memory, context engineering, guardrails, evals and LLM-as-judge, RAG, vector databases, LangChain, Claude Code, Codex, conversational voice AI (streaming STT and TTS pipelines, latency tuning), fine-tuning                                                                                               |
-| **Programming Languages** | Python, TypeScript, Java, Go, Kotlin, JavaScript, SQL, C++, C                                                                                                                                                                                                                                                                                                                |
-| **Backend**               | FastAPI, Spring Boot, Spring Security, Gin, NestJS, MedusaJS, RESTful APIs, gRPC, GraphQL, WebSockets, Kafka, BullMQ, saga pattern, Postgres, MongoDB, Redis                                                                                                                                                                                                                 |
-| **Frontend**              | React, Next.js, React Native (CLI and Expo), Electron, TypeScript, Zustand, Redux, TanStack Query, HTML5, CSS3, Tailwind CSS, Bootstrap, Radix UI, Vite, Reanimated, React Navigation, Jest, Vitest, Figma-to-code, Stripe, PayPal and Klarna payment integration, Mixpanel and Adjust analytics, Sentry, Firebase, WebRTC, OTA updates, in-browser voice (ONNX Runtime Web) |
-| **DevOps**                | Kubernetes (StatefulSets, Services, Networking), Docker, Helm, GitLab CI/CD, GitHub Actions, Terraform, AWS (EC2, Amplify, RDS, DynamoDB, VPC), Linux, Nginx, Database Replication, Grafana, InfluxDB                                                                                                                                                                        |
-| **Security**              | HSM, JWE, OAuth 2.0 + mTLS, JWT, Keycloak, TLS, cryptography, QWAC and QSEAL compliance                                                                                                                                                                                                                                                                                      |
-| **Soft Skills**           | Leadership, Abstract Thinking, Team Collaboration, Documentation, Management                                                                                                                                                                                                                                                                                                 |
-
----
-
-[**GitHub**](https://github.com/Shaurya-GitH) | [**LinkedIn**](https://www.linkedin.com/in/shaurya-mehta-0b916a349/) | [**X**](https://x.com/ShauryaCODE) | [**LeetCode**](https://leetcode.com/ShauryaLC)

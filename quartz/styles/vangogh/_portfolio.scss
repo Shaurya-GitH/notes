@@ -152,6 +152,7 @@ body:has(.pf-nav) {
   .pf-nav {
     position: absolute;
     top: 0;
+    margin: 0;
     left: 0;
     right: 0;
     z-index: 20;
@@ -255,7 +256,7 @@ body:has(.pf-nav) {
   }
 
   /* ---------- footer ---------- */
-  .pf-foot {
+  .page > #quartz-body .pf-foot {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -413,6 +414,435 @@ body:has(.pf-nav) {
     }
   }
 
+  /* ---------- shared blocks ---------- */
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 26px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 0;
+    h2,
+    h3 {
+      font-size: 24px;
+      line-height: 1.2;
+    }
+    p {
+      font-size: 16px;
+      color: var(--muted);
+    }
+  }
+  .logo {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: #0d2c52;
+    border: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font: 13px var(--mono);
+    color: var(--teal);
+    flex: none;
+  }
+  .quote {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font: italic 400 21px/1.45 var(--display);
+    color: var(--cream);
+  }
+  .person {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    b {
+      display: block;
+      font-weight: 600;
+      font-size: 15px;
+      color: var(--cream);
+    }
+    span {
+      font-size: 13px;
+      color: var(--muted);
+    }
+  }
+  .pphoto {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px dashed var(--teal);
+    background: rgba(111, 179, 189, 0.08);
+    flex: none;
+    object-fit: cover;
+  }
+  .sec {
+    padding: 104px var(--gutter) 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    h2 {
+      font-size: 46px;
+      line-height: 1.1;
+    }
+    .lede {
+      font-size: 19px;
+      color: var(--muted);
+      max-width: 680px;
+    }
+    @media (max-width: $phone) {
+      padding-top: 64px;
+      h2 {
+        font-size: 31px;
+      }
+      .lede {
+        font-size: 16px;
+      }
+    }
+  }
+  .grid {
+    display: grid;
+    gap: 20px;
+    padding: 36px var(--gutter) 0;
+    margin: 0;
+    list-style: none;
+    & > li {
+      display: flex;
+      margin: 0;
+    }
+    & > li > * {
+      flex: 1;
+    }
+    @media (max-width: $phone) {
+      grid-template-columns: 1fr;
+      padding-top: 24px;
+      gap: 14px;
+    }
+  }
+  .g3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .g4 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  @media (max-width: $phone) {
+    .g3,
+    .g4 {
+      grid-template-columns: 1fr;
+    }
+  }
+  // a twin canvas sits over its plate and under the element's content (stage.inline.ts)
+  [data-twin] > canvas.twin {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+  .brush-note {
+    font: 400 26px/1.1 var(--hand);
+    color: var(--teal);
+  }
+
+  /* ---------- home: hero ---------- */
+  .pf-home .hero {
+    position: relative;
+    height: 840px;
+    .hero-art {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+    img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .scrim {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        90deg,
+        rgba(4, 24, 51, 0.95) 0%,
+        rgba(4, 24, 51, 0.75) 38%,
+        rgba(4, 24, 51, 0) 70%
+      );
+    }
+    .copy {
+      position: absolute;
+      left: var(--gutter);
+      bottom: 96px;
+      width: 640px;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+    h1 {
+      font-size: 68px;
+      line-height: 1.04;
+    }
+    .tag {
+      font-size: 20px;
+      color: var(--muted);
+    }
+    .tag.lede {
+      color: var(--cream);
+    }
+    @media (max-width: $phone) {
+      height: 800px;
+      .hero-art img {
+        height: auto;
+      }
+      .scrim {
+        background: linear-gradient(
+          0deg,
+          rgba(4, 24, 51, 1) 0%,
+          rgba(4, 24, 51, 0.95) 40%,
+          rgba(4, 24, 51, 0) 54%
+        );
+      }
+      .copy {
+        left: var(--gutter);
+        right: var(--gutter);
+        bottom: 36px;
+        width: auto;
+        gap: 16px;
+      }
+      h1 {
+        font-size: 40px;
+      }
+      .tag {
+        font-size: 16px;
+      }
+    }
+  }
+  .chip {
+    display: inline-block;
+    width: fit-content;
+    padding: 8px 14px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: rgba(4, 24, 51, 0.6);
+    font-size: 17px;
+    color: var(--cream);
+    text-decoration: none;
+    b {
+      font-weight: 600;
+    }
+    @media (max-width: $phone) {
+      font-size: 14px;
+    }
+  }
+
+  /* ---------- home: proof strip ---------- */
+  .pf-home .proof {
+    padding: 0 var(--gutter);
+  }
+  .proofbar {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1.25fr;
+    gap: 20px;
+    transform: translateY(-48px);
+    position: relative;
+    z-index: 3;
+    margin-bottom: -48px;
+    .repo {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .title {
+      color: var(--cream);
+      text-decoration-color: rgba(236, 227, 200, 0.4);
+    }
+    .rec .link {
+      font-size: 15px;
+      width: fit-content;
+    }
+    @media (max-width: $phone) {
+      grid-template-columns: 1fr;
+      transform: none;
+      margin-bottom: 0;
+      padding-top: 20px;
+      gap: 12px;
+      .card {
+        padding: 20px;
+        gap: 10px;
+      }
+      .why {
+        display: none;
+      }
+      h2 {
+        font-size: 20px;
+      }
+    }
+  }
+
+  /* ---------- home: recognition ---------- */
+  .sec.first {
+    padding-top: 64px;
+  }
+  .awards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    padding: 36px var(--gutter) 0;
+    @media (max-width: $phone) {
+      grid-template-columns: 1fr;
+      padding-top: 24px;
+      gap: 16px;
+    }
+  }
+  .award {
+    padding: 0;
+    overflow: hidden;
+    gap: 0;
+    .frame {
+      padding: 14px;
+      height: 340px;
+      background-size: cover;
+    }
+    picture,
+    img {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+    img {
+      border-radius: 10px;
+      object-fit: cover;
+      object-position: center 42%;
+    }
+    .body {
+      padding: 28px 30px 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .issuer {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    h3 {
+      font-size: 30px;
+      line-height: 1.15;
+    }
+    .cite {
+      font-size: 18px;
+      color: var(--cream);
+      font-style: italic;
+    }
+    .desc {
+      font-size: 17px;
+      line-height: 1.7;
+      color: var(--ink);
+    }
+    .link {
+      font-size: 15px;
+      width: fit-content;
+    }
+    @media (max-width: $phone) {
+      .frame {
+        height: 220px;
+        padding: 10px;
+      }
+      .body {
+        padding: 20px;
+      }
+      h3 {
+        font-size: 24px;
+      }
+      .desc {
+        font-size: 16px;
+      }
+    }
+  }
+
+  /* ---------- home: branch cards (the whole card is one link) ---------- */
+  .branch {
+    padding: 0;
+    overflow: hidden;
+    gap: 0;
+    color: inherit;
+    text-decoration: none;
+    .art {
+      position: relative;
+      height: 230px;
+      background-size: cover;
+    }
+    .body {
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .go {
+      margin-top: 6px;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--cream);
+    }
+    .go span {
+      color: var(--gold);
+    }
+    &:hover h3 {
+      text-decoration: underline;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 4px;
+    }
+    @media (max-width: $phone) {
+      flex-direction: row;
+      .art {
+        width: 104px;
+        height: auto;
+        flex: none;
+      }
+      .body {
+        padding: 16px;
+        gap: 6px;
+      }
+      h3 {
+        font-size: 20px;
+      }
+      p {
+        font-size: 14px;
+      }
+    }
+  }
+
+  /* ---------- home: posts ---------- */
+  .post {
+    gap: 14px;
+    .src {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .net {
+      font: 12px var(--mono);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--label);
+    }
+    .thumb {
+      height: 150px;
+      border-radius: 12px;
+      background-size: cover;
+    }
+    p {
+      color: var(--ink);
+    }
+    @media (max-width: $phone) {
+      &.extra {
+        display: none;
+      }
+    }
+  }
+
   /* ---------- sunlit: the note pages' window light, scoped to plain sections ---------- */
   .sunlit {
     position: relative;
@@ -546,4 +976,71 @@ html[data-motion="reduce"] body:has(.pf-nav) .pf-foot {
   .off {
     display: inline;
   }
+}
+
+/* ---------- cursor: a painted brush (after Buttermax's reactive cursor) ----------
+   The brush paints a plate through to its twin in an inverted universe (stage.inline.ts). The
+   native cursor stays visible, as on the live site. */
+.pf-cursor {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 30;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 150ms;
+}
+.pf-cursor.on {
+  opacity: 1;
+}
+.pf-cursor > * {
+  position: absolute;
+  left: 0;
+  top: 0;
+  border-radius: 50%;
+}
+/* the star: a hot core in Starry Night's chrome yellow, outlined in night so it holds on the gold field */
+.pf-cursor .core {
+  width: 10px;
+  height: 10px;
+  margin: -5px 0 0 -5px;
+  background: radial-gradient(circle, #fff3c4 0 35%, #e8c06a 60%);
+  box-shadow:
+    0 0 0 1.5px #041833,
+    0 0 14px 3px color-mix(in srgb, #e8c06a 55%, transparent);
+  transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+/* its halo: the dashed swirl Van Gogh rings his stars with; it lags the core and opens over anything clickable */
+.pf-cursor .halo {
+  width: 30px;
+  height: 30px;
+  margin: -15px 0 0 -15px;
+}
+.pf-cursor .halo i {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px dashed #e8c06a;
+  outline: 1.5px solid color-mix(in srgb, #041833 70%, transparent);
+  outline-offset: -3.5px;
+  opacity: 0.75;
+  animation: halo-turn 9s linear infinite;
+  transition:
+    transform 320ms cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 200ms,
+    border-color 200ms;
+}
+@keyframes halo-turn {
+  to {
+    rotate: 360deg;
+  }
+}
+.pf-cursor.link .halo i {
+  transform: scale(1.9);
+  opacity: 1;
+  border-color: #fff3c4;
+  animation-duration: 3s;
+}
+.pf-cursor.link .core {
+  transform: scale(0.6);
 }

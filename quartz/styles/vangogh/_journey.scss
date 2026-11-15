@@ -3,7 +3,7 @@
 // the design's fixed sidebar, <main> and footer onto Quartz's grid, explorer and footer.
 // The home page is single-theme, "The Starry Night", whichever theme the reader saved.
 
-body[data-slug="index"] {
+body[data-slug="journey"] {
   // the design's tokens, plus Quartz's nine colours pinned to their dark values
   color-scheme: dark;
   --night: #041833;
@@ -416,77 +416,6 @@ body[data-slug="index"] {
     color: var(--sage);
   }
 
-  /* ---------- cursor: a painted brush (after Buttermax's reactive cursor) ----------
-     The brush paints through the plate on stage to its twin in an inverted universe. It lives inside the
-     stage, under the scrim, so reading sections stay dark and text is never covered. */
-  html.brush,
-  html.brush * {
-    cursor: none !important;
-  }
-  .cursor {
-    position: fixed;
-    left: 0;
-    top: 0;
-    z-index: 30;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 150ms;
-  }
-  .cursor.on {
-    opacity: 1;
-  }
-  .cursor > * {
-    position: absolute;
-    left: 0;
-    top: 0;
-    border-radius: 50%;
-  }
-  /* the star: a hot core in Starry Night's chrome yellow, outlined in night so it holds on the gold field */
-  .cursor .core {
-    width: 10px;
-    height: 10px;
-    margin: -5px 0 0 -5px;
-    background: radial-gradient(circle, var(--moon) 0 35%, var(--chrome) 60%);
-    box-shadow:
-      0 0 0 1.5px var(--night),
-      0 0 14px 3px color-mix(in srgb, var(--chrome) 55%, transparent);
-    transition: transform 220ms var(--ease-expo);
-  }
-  /* its halo: the dashed swirl Van Gogh rings his stars with; it lags the core and opens over anything clickable */
-  .cursor .halo {
-    width: 30px;
-    height: 30px;
-    margin: -15px 0 0 -15px;
-  }
-  .cursor .halo i {
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    border: 2px dashed var(--chrome);
-    outline: 1.5px solid color-mix(in srgb, var(--night) 70%, transparent);
-    outline-offset: -3.5px;
-    opacity: 0.75;
-    animation: halo-turn 9s linear infinite;
-    transition:
-      transform 320ms var(--ease-expo),
-      opacity 200ms,
-      border-color 200ms;
-  }
-  @keyframes halo-turn {
-    to {
-      rotate: 360deg;
-    }
-  }
-  .cursor.link .halo i {
-    transform: scale(1.9);
-    opacity: 1;
-    border-color: var(--moon);
-    animation-duration: 3s;
-  }
-  .cursor.link .core {
-    transform: scale(0.6);
-  }
-
   /* ---------- narrow (Quartz's phone breakpoint) ---------- */
   @media (max-width: 800px) {
     --side: 0px;
@@ -570,7 +499,7 @@ body[data-slug="index"] {
 }
 
 // ---------- the design's composition on Quartz's markup ----------
-body[data-slug="index"] {
+body[data-slug="journey"] {
   // the sunlit window light belongs to note pages
   &::before,
   &::after,

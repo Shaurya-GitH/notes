@@ -1,7 +1,6 @@
 import { QuartzComponent, QuartzComponentConstructor, QuartzComponentProps } from "./types"
 import { FullSlug, pathToRoot, resolveRelative } from "../util/path"
 import { QuartzPluginData } from "../plugins/vfile"
-import { JSX } from "preact"
 // @ts-ignore
 import motionScript from "./scripts/motion.inline"
 // @ts-ignore
@@ -48,19 +47,24 @@ export const paint = (fd: QuartzPluginData, name: string, pos = "50% 50%") => {
   return `background-image:${jpg}${set};background-position:${pos}`
 }
 
-// an image with a WebP source when there is one
+// an image with a WebP source when there is one, and a portrait crop for phones
 export const Picture = ({
   fd,
   name,
-  alt,
   portrait,
+  alt,
   ...img
 }: {
   fd: QuartzPluginData
   name: string
-  alt: string
   portrait?: string
-} & JSX.HTMLAttributes<HTMLImageElement>) => (
+  alt: string
+  width?: number
+  height?: number
+  loading?: "lazy" | "eager"
+  fetchpriority?: "high" | "low" | "auto"
+  decoding?: "async" | "sync" | "auto"
+}) => (
   <picture>
     {portrait && (
       <source media="(max-width: 800px)" srcset={asset(fd, portrait, "webp")} type="image/webp" />
