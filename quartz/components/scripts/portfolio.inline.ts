@@ -1,4 +1,5 @@
-// The portfolio footer's motion switch, the contact band's copy-email button and the skip link.
+// The portfolio footer's motion switch, the contact band's copy-email button, the skip link and
+// the phone menu's Escape.
 
 document.addEventListener("nav", () => {
   const html = document.documentElement
@@ -38,7 +39,17 @@ document.addEventListener("nav", () => {
     skip?.hash && document.querySelector<HTMLElement>(skip.hash)?.focus({ preventScroll: true })
   skip?.addEventListener("click", skipTo)
 
+  // the phone menu is a <details>: Escape closes it and returns focus to its button
+  const menu = document.querySelector<HTMLDetailsElement>(".pf-nav details.menu")
+  const escape = (e: KeyboardEvent) => {
+    if (e.key !== "Escape" || !menu?.open) return
+    menu.open = false
+    menu.querySelector("summary")?.focus()
+  }
+  document.addEventListener("keydown", escape)
+
   window.addCleanup(() => {
+    document.removeEventListener("keydown", escape)
     toggle?.removeEventListener("click", flip)
     copy?.removeEventListener("click", copyEmail)
     skip?.removeEventListener("click", skipTo)
