@@ -338,7 +338,8 @@ $phone: 800px;
     .scrim {
       position: absolute;
       inset: 0;
-      background: rgba(4, 24, 51, 0.8);
+      // 0.85, not the design's 0.8: the small mono label needs it to stay above 4.5:1 on tablets
+      background: rgba(4, 24, 51, 0.85);
     }
     .in {
       position: relative;
