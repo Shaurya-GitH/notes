@@ -1294,8 +1294,9 @@ body:has(.pf-nav) {
 }
 
 // motion off (the footer switch, or the system setting before the visitor chooses): every loop
-// stops (WCAG 2.2.2); the note pages' window light too
+// stops (WCAG 2.2.2); the note pages' window light too, and anchor jumps no longer glide
 html[data-motion="reduce"] {
+  scroll-behavior: auto;
   .pf-sun::before,
   .pf-sun::after,
   .pf-sun i,
