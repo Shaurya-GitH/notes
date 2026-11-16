@@ -4,6 +4,7 @@
 draft: true
 layout: case-study
 title: Shopping assistant
+socialTitle: "Shopping assistant · Shaurya Mehta"
 kind: At work
 period: Sep – Nov 2026
 outcome: A shopping assistant that answers from the store's own data

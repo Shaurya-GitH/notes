@@ -29,6 +29,7 @@ All fields are optional: only what is there renders. A page with only a title an
 draft: true # remove this line to publish; drafts never build
 layout: case-study
 title: Shopping assistant
+socialTitle: Shopping assistant · Shaurya Mehta # the browser tab and link preview
 kind: At work
 period: Sep – Nov 2026
 outcome: "A shopping assistant that answers from the store's own data" # the h1

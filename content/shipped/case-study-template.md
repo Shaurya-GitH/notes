@@ -5,6 +5,7 @@
 draft: true
 layout: case-study
 title: "[Project name]"
+socialTitle: "[Project name] · Shaurya Mehta" # the browser tab and link-preview title
 kind: "[At work / Open source / Side project]"
 period: "[Month Year]"
 # the page's h1: the outcome with a number, under 65 characters

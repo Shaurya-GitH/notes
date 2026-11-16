@@ -4,6 +4,7 @@
 draft: true
 layout: case-study
 title: "Echo: reply latency"
+socialTitle: "Echo: reply latency · Shaurya Mehta"
 kind: At work
 period: Sep – Oct 2026
 outcome: "Echo: voice replies 41–59% faster for US users"

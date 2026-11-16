@@ -74,7 +74,9 @@ async function processOgImage(
   const cfg = ctx.cfg.configuration
   const slug = fileData.slug!
   const titleSuffix = cfg.pageTitleSuffix ?? ""
+  // same title as the page's <title> (Head.tsx): a page's socialTitle wins
   const title =
+    (fileData.frontmatter?.socialTitle as string | undefined) ??
     (fileData.frontmatter?.title ?? i18n(cfg.locale).propertyDefaults.title) + titleSuffix
   const description =
     fileData.frontmatter?.socialDescription ??

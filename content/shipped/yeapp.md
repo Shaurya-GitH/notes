@@ -4,6 +4,7 @@
 draft: true
 layout: case-study
 title: YEAPP
+socialTitle: "YEAPP · Shaurya Mehta"
 kind: At work
 period: Jul – Sep 2026
 outcome: My parts of YEAPP, KRAFTON India's voice-first messenger

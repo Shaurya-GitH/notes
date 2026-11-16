@@ -4,6 +4,7 @@
 draft: true
 layout: case-study
 title: "Echo: tool-call model"
+socialTitle: "Echo: tool-call model · Shaurya Mehta"
 kind: At work
 period: Sep 2026
 outcome: "Echo: a 28 ms model that predicts a voice agent's tool calls"
