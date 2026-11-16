@@ -245,10 +245,6 @@ const PortfolioFooterView = ({ allFiles }: QuartzComponentProps) => {
   return (
     <footer class="pf-foot">
       <p>Designed and built by Shaurya Mehta with Quartz</p>
-      <button type="button" class="toggle" role="switch" aria-checked="true">
-        Motion: <span class="on">on</span>
-        <span class="off">off</span> <span class="sw" aria-hidden="true"></span>
-      </button>
       <ul>
         {links.map(([name, url]) => (
           <li>

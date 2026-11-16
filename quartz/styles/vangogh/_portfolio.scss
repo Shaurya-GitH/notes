@@ -321,38 +321,6 @@ body:has(.pf-nav) {
     a:hover {
       color: var(--cream);
     }
-    .toggle {
-      display: inline-flex;
-      gap: 10px;
-      align-items: center;
-      min-height: 24px;
-      padding: 0;
-      background: none;
-      border: 0;
-      font: inherit;
-      color: var(--cream);
-      cursor: pointer;
-    }
-    .sw {
-      width: 34px;
-      height: 20px;
-      border-radius: 999px;
-      background: var(--gold);
-      position: relative;
-    }
-    .sw::after {
-      content: "";
-      position: absolute;
-      right: 3px;
-      top: 3px;
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-      background: #041833;
-    }
-    .off {
-      display: none;
-    }
     @media (max-width: $phone) {
       flex-direction: column;
       align-items: flex-start;
@@ -1984,8 +1952,8 @@ body:has(.pf-nav) {
   }
 }
 
-// motion off (the footer switch, or the system setting before the visitor chooses): every loop
-// stops (WCAG 2.2.2); the note pages' window light too, and anchor jumps no longer glide
+// motion off (the system's reduced-motion setting): every loop
+// stops; the note pages' window light too, and anchor jumps no longer glide
 html[data-motion="reduce"] {
   scroll-behavior: auto;
   .reel iframe {
@@ -2000,7 +1968,7 @@ html[data-motion="reduce"] {
     animation: none;
   }
 }
-// without the script's stamp (no JS) the system setting decides; with it, the visitor's choice wins
+// without the script's stamp (no JS) the media query applies the same setting
 @media (prefers-reduced-motion: reduce) {
   html:not([data-motion]) {
     .reel iframe {
@@ -2011,22 +1979,6 @@ html[data-motion="reduce"] {
     .pf-sun i {
       animation: none;
     }
-  }
-}
-html[data-motion="reduce"] body:has(.pf-nav) .page > #quartz-body .pf-foot {
-  .sw {
-    background: rgba(236, 227, 200, 0.25);
-  }
-  .sw::after {
-    right: auto;
-    left: 3px;
-    background: var(--cream);
-  }
-  .on {
-    display: none;
-  }
-  .off {
-    display: inline;
   }
 }
 
