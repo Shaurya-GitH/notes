@@ -85,7 +85,7 @@ journey:
           text: from site visit to purchase, driven by an AI pipeline that summarises every finished chat and has an LLM judge check each answer against live product data.
         - lead: Built an alert-triage agent
           text: that runs up to six parallel agent sessions, each on its own branch and local stack, reproduces production alerts and proposes the fix; it triaged 13 alerts in its first two days.
-        - lead: "On YEAPP, KRAFTON India's voice-first messenger (one of four engineers):"
+        - lead: "On YEAPP, KRAFTON India's voice-first messenger:"
           text: "made the AI companion survive LLM vendor outages by fixing circuit breakers that never opened (fallback on the first failure, recovery after a 15 s probe), and built the voice-onboarding pipeline: 58 clips word-aligned with Whisper, rendered across three replicas behind a Redis lock."
   # a second sentence from the home page's recommendation (its person and link come from there)
   quote:

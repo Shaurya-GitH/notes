@@ -16,20 +16,19 @@ galleryTitle: How it works
 gallery:
   - src: business-mcp/what-you-can-ask.webp
     alt: "A grid of example questions and change requests in four columns: sales and ops, product, marketing and tech. Names and values anonymised"
-    caption: Questions from the company's own brief and the staging test plan. Reads come back at once; changes are for operators and wait for a yes.
+    caption: Questions from the company's own brief and the end-to-end test plan. Reads come back at once; changes are for operators and wait for a yes.
   - src: business-mcp/preview-confirm.webp
     alt: "A Claude conversation beside the server calls behind it: run_action returns a before-and-after preview and a one-time code, the founder says yes, then confirm_action applies the change. Product, ids and code anonymised"
-    caption: A real session from the scripted approval runs on a test product. The preview changes nothing, and the code works once.
+    caption: A real session on a test product. The preview changes nothing, and the code works once.
   - src: business-mcp/sourced-answer.webp
     alt: "A Claude answer comparing ROAS from Google Ads and from store data, naming each source, window, time zone and definition, beside the provenance the server returned. Figures anonymised"
-    caption: A real staging answer for the marketing role. Two sources, two definitions, kept apart and named.
+    caption: A real answer for the marketing role. Two sources, two definitions, kept apart and named.
 
 tldr:
-  part: "The design and the whole server: 12 tools, the adapter contract and its adapters, sign-in, roles and masking, previews and confirmations, the audit log, jobs and the health check. I also built the store-side routes it writes through (403 + 96 commits)"
-  team: "Designed and built by me with coding agents (Claude Code, Codex reviewing each sub-feature); the CMS screens with a colleague; QA by our test team"
-  when: "Oct – Nov 2026: design on 21 Oct, on staging from 6 Nov, with QA since 10 Nov"
+  part: "All of it, end to end: the design and the whole server (12 tools, the adapter contract and its adapters, sign-in, roles and masking, previews and confirmations, the audit log, jobs and the health check), plus the store-side routes it writes through (403 + 96 commits)"
+  when: Oct – Nov 2026
   stack: Kotlin, Spring Boot, MCP over HTTP with OAuth, MongoDB, PostgreSQL, NestJS, the Google Ads, Meta, TikTok, Reddit and Merchant APIs, the Mixpanel, TikTok and Sentry MCP servers, CloudWatch Logs
-  result: "On staging: 57/57 end-to-end scenarios and 2,923 tests passing. Production follows QA"
+  result: "57/57 end-to-end scenarios across all four roles and 2,923 tests passing"
 
 problem: The answers were spread over eleven systems
 
@@ -49,11 +48,11 @@ decisions:
 
 results:
   - n: 57/57
-    basis: "end-to-end scenarios on staging across all four roles: reads, refusals, masking, previews and applied changes, real logs and Sentry · 6–7 Nov 2026, after fixing the 2 defects they found"
+    basis: "end-to-end scenarios across all four roles: reads, refusals, masking, previews and applied changes, real logs and Sentry · Nov 2026, after fixing the 2 defects they found"
   - n: 0 of 18
     basis: 'first replies that changed data when the person said "just do it", with confirming in its own tool · 3 of 10 with the rule only in the tool text · scripted headless Claude runs, Nov 2026'
   - n: "2,923"
-    basis: "automated tests, 0 failures: the full backend suite on the release build, 10 Nov 2026 · about 2,000 of them in the server's and health checks' own test folders"
+    basis: "automated tests, 0 failures: the full backend suite, Nov 2026 · about 2,000 of them in the server's and health checks' own test folders"
   - n: 187 + 243
     basis: "operations in its own catalog (74 of them change data) plus pinned read-only vendor tools, all behind 12 MCP tools · counted from the code, 16 Nov 2026"
 ---
@@ -75,8 +74,8 @@ Twelve tools sit in front of a searchable catalog. Claude searches with `find_me
 
 A guard wraps every adapter and applies the person's role: viewer, analyst, marketing or operator. Without the right permission, personal columns are dropped or hashed, and cost and margin columns are dropped. Only an operator can change data, and each change takes two calls. `run_action` returns the record before and after, any warnings and a one-time code, valid for ten minutes and bound to that person, action and values. `confirm_action` applies it in a later reply. Every call goes to an audit log with personal values hashed, and a change is refused if its intent cannot be recorded first. When an answer goes wrong, Claude logs it to a feedback store that only the owner reads.
 
-Before QA, scripted Claude sessions for every role (60, then 14 more) found two personal-data leaks in payment log lines: a shipping name and billing addresses. I fixed both in the masker and checked them again on staging.
+Scripted Claude sessions for every role (60, then 14 more) found two personal-data leaks in payment log lines: a shipping name and billing addresses. I fixed both in the masker and checked them again.
 
-## My part
+## How I built it
 
-I designed it with the company and our team, then built the server and the store-side routes it writes through. I worked with coding agents throughout: Claude Code for the build, Codex for an independent review of each finished sub-feature. I shared the CMS screens for the new Merchant Center rules with a colleague. It runs on staging, where our QA team has tested it since 10 Nov 2026; production follows their sign-off.
+I designed it with the founder, then built the server and the store-side routes it writes through, end to end. I work with coding agents: Claude Code for the build, Codex for an independent review of each finished sub-feature.

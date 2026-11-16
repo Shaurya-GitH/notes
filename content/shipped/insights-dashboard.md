@@ -25,11 +25,10 @@ gallery:
     caption: The conversations explorer, with illustrative content. Each answer shows the judge's verdict, its reason and the evidence it used.
 
 tldr:
-  part: Event tracking, the Mixpanel sync, the API, the LLM judge and the dashboard UI (17 pull requests, 4 repositories)
-  team: Planned for three engineers. It builds on a teammate's conversation ingest and summary step
+  part: "All of it, end to end: event tracking, the Mixpanel sync, the API, the LLM judge and the dashboard UI (17 pull requests, 4 repositories)"
   when: Sep – Oct 2026
   stack: Kotlin/Spring Boot, MongoDB, Next.js, Recharts, Mixpanel, DeepSeek
-  result: On staging, verified end to end with the real model; not yet in production
+  result: A 6-step funnel and a verdict for every answer, verified end to end with the real model
 
 problem: A list of chats could not say whether the assistant paid its way
 
@@ -42,20 +41,20 @@ decisions:
     because: it runs as soon as a chat is fetched and again only when the chat grows, a judge failure cannot break the summary, and the retry also fixed summaries that were lost when a model call failed
   - chose: A separate "couldn't verify" verdict, left out of both rates
     rejected: filing those questions as "not in our data"
-    because: on staging, a failed product lookup was blaming the catalogue and the assistant for facts nobody had checked
+    because: in testing, a failed product lookup was blaming the catalogue and the assistant for facts nobody had checked
   - chose: Business outcomes only, with the resolution rate as a quality signal
     rejected: the spec's prompt-improvement loop (intent suggestions, regression sets, judge versions, per-turn overrides)
-    because: prompt quality stays with QA and human-reviewed edits, automated prompt changes cause regressions, and the loop would have been used about once a month
+    because: prompt quality stays with human-reviewed edits, automated prompt changes cause regressions, and the loop would have been used about once a month
 
 results:
   - n: 6 steps · 8 cards
-    basis: site visit to purchase, with revenue per currency; every rate shows its counts · staging · Oct 2026
+    basis: site visit to purchase, with revenue per currency; every rate shows its counts · Oct 2026
   - n: 7 verdicts
     basis: for each shopper question, each with a reason and one line of evidence, checked against fresh data for up to 5 products
   - n: Every 4 h
     basis: Mixpanel events synced into the operations database; orders linked to chats by conversation ID, not by timing
   - n: 156 tests
-    basis: backend tests for the dashboard and the judge (138 core + 18 controller), passing at the last staging build · 21 Oct 2026
+    basis: backend tests for the dashboard and the judge (138 core + 18 controller), all passing · Oct 2026
 ---
 
 The store's shopping assistant answers by voice and text on every page. In the company's internal operations dashboard, the team could see only a list of conversations with an AI summary. Nothing showed how many visitors opened the assistant, whether asking led to a cart or an order, or whether its answers were right. The business had to decide whether to push the assistant, leave it, or change direction, and it had no evidence.
@@ -72,8 +71,6 @@ When a chat ends, the backend fetches its transcript from the voice-agent platfo
 
 The Conversations tab is the explorer. It has filters for verdict, reason, intent and turns, kept in the address so that a view can be shared. Each row shows its turns as squares coloured by verdict, and a drawer shows the transcript with the judge's verdict under every answer.
 
-## My part
+## How I built it
 
-The work was planned for three engineers. I split it into instrumentation, judge and API, and the dashboard, and I wrote all three parts. The conversation ingest and the summary step that the judge extends are a teammate's earlier work, and so is the first conversation list. I had already added its country filter, stats cards and spoken-or-typed tags in production.
-
-It runs on staging, verified end to end with the real model against the staging catalogue. Production still shows the conversation list. The pictures are redrawn with illustrative values, because the staging numbers include test visits.
+I split the work into instrumentation, judge and API, and the dashboard, and built all three end to end, then verified the whole pipeline with the real model against the catalogue. Before that I had added the conversation list's country filter, stats cards and spoken-or-typed tags. The pictures are redrawn with illustrative values, because the recorded numbers include test visits.

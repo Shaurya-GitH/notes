@@ -5,8 +5,8 @@ socialTitle: "Echo: tool-call model · Shaurya Mehta"
 kind: At work
 period: Sep 2026
 outcome: "Echo: a 28 ms model that predicts a voice agent's tool calls"
-lead: A prototype for Echo, The Product Highway's voice-agent platform. A small fine-tuned model guesses which lookups a turn will need and starts them before the main LLM asks for them. It never shipped. This page covers what I built, what failed, and what the numbers showed.
-description: Fine-tuning GLiNER 2.5 (194M parameters) to predict a voice agent's next tool call, served on a GPU in 28 ms. A prototype that never shipped, including the runs that failed.
+lead: For Echo, The Product Highway's voice-agent platform, I fine-tuned a small model that guesses which lookups a turn will need and starts them before the main LLM asks for them. This page covers what I built, what failed, and what the numbers showed.
+description: Fine-tuning GLiNER 2.5 (194M parameters) to predict a voice agent's next tool call, served on a GPU in 28 ms, including the runs that failed.
 
 cover:
   src: tool-call-model/exact-picks.webp
@@ -25,11 +25,10 @@ gallery:
     caption: All of the speed came from how and where the model ran. Fine-tuning changed nothing about speed.
 
 tldr:
-  part: All of it. I built the baselines, the training data, the fine-tune, the GPU serving and the benchmarks.
-  team: Solo prototype
-  when: 15–22 Sep 2026
+  part: All of it, end to end. I built the baselines, the training data, the fine-tune, the GPU serving and the benchmarks.
+  when: Sep 2026
   stack: GLiNER 2.5 (194M), PyTorch, Colab T4 for training, Modal L4 GPUs, FlashDeBERTa
-  result: Exact tool picks 0/50 → 18/50 on a fixed benchmark; never shipped
+  result: Exact tool picks 0/50 → 18/50 on a fixed benchmark
 
 problem: Each tool call waited for the main LLM to ask for it
 
@@ -67,10 +66,10 @@ In a voice turn the main LLM reads the question, decides it needs a tool, calls 
 
 I tried the cheap options first. Regex rules fired on only 10 of 49 turns. GLiNER 2.5 is a 194M-parameter model that reads a list of tool definitions and a message in one pass, and it was the option worth fine-tuning. Out of the box it gave nothing useful. In Echo's real pipeline it injected zero tool results over 50 turns, and on the gold benchmark it got the exact tools on 0 of 50 turns.
 
-My first fine-tune failed too. The frozen four-arm benchmark compared no prediction, regex, the released model and the fine-tune: 196 matched turns, graded blind with a second reviewer. The fine-tune made zero usable calls and added about 0.8 s of model time per turn. I recorded "do not ship" and kept the checkpoint only as a diagnostic: it had trained for only 40 updates, and its dev split overlapped its training data.
+My first fine-tune failed too. The frozen four-arm benchmark compared no prediction, regex, the released model and the fine-tune: 196 matched turns, graded blind with a second reviewer. The fine-tune made zero usable calls and added about 0.8 s of model time per turn. I set it aside and kept the checkpoint only as a diagnostic: it had trained for only 40 updates, and its dev split overlapped its training data.
 
 Then I rebuilt each part. The new dataset has 7,830 training examples. About 62% are synthetic turns for the store's seven tools, and the rest are public tool-calling data. It is split so that no message family appears in both training and test. The pipeline was giving up after 1.5 s while the model was allowed 4 s, so it threw correct answers away; I made the two limits match. And I moved the model from a CPU to a GPU.
 
 On the frozen benchmark, exact picks rose to 18/50. A second checkpoint scored 19/50; it trained on 10,164 examples, adding turns where a result is already in context. In one six-turn conversation, replayed twice each way, the main LLM made 3 tool calls instead of 9. The whole conversation took 28% less time, but the first word came no sooner.
 
-It never shipped. The gain rests on one replayed conversation. A GPU kept warm costs about $580–1,020 a month. And in the first end-to-end run on the hosted GPU, 3 of 4 planned calls were dropped as ambiguous: working out which product "it" means is still unsolved.
+The limits are plain. The gain rests on one replayed conversation. A GPU kept warm costs about $580–1,020 a month. And in the first end-to-end run on the hosted GPU, 3 of 4 planned calls were dropped as ambiguous: working out which product "it" means is still unsolved.

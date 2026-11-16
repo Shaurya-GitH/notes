@@ -18,12 +18,11 @@ gallery:
     alt: "Diagram: before, the voice service sat in India while the user's browser, speech-to-text, the LLM and the store API were in the US; after, all of them are in the US, with the service in the store API's region."
     caption: Before the move, every line was an ocean crossing. Network figures are September probes from India; browser round trips are estimates.
   - src: echo-latency/cache.webp
-    alt: "Chart: median tool-call time. Staging API: cache hit 9 ms, miss 130 ms. Production API: hit 10 ms, miss 69 ms."
+    alt: "Chart: median tool-call time on two store APIs. Store API A: cache hit 9 ms, miss 130 ms. Store API B: hit 10 ms, miss 69 ms."
     caption: A cache hit answers in about 10 ms. A miss costs the same as an uncached call, so turning the cache on adds no visible overhead.
 
 tldr:
-  part: "All of it. I diagnosed the problem, moved the service, measured the change and wrote the tool cache (PR #9)."
-  team: Solo. Echo itself is the team's platform.
+  part: "All of it, end to end: I diagnosed the problem, moved the service, measured the change and wrote the tool cache (PR #9)."
   when: Sep – Oct 2026
   stack: Python, Redis, Postgres, AWS regions, OpenAI, Deepgram
   result: Reply start −41% to −59% by turn type (server medians)
@@ -46,11 +45,11 @@ decisions:
 
 results:
   - n: −41% to −59%
-    basis: server-side reply start by turn type, medians · 1,081 turns (16–23 Sep) vs 228 (29 Sep – 14 Oct 2026) · includes internal QA traffic; only 14 spoken turns after the move
+    basis: server-side reply start by turn type, medians · 1,081 turns (16–23 Sep) vs 228 (29 Sep – 14 Oct 2026) · includes internal test traffic; only 14 spoken turns after the move
   - n: ~1.8 s sooner
     basis: per typed message, weighted at the old tool mix · a descriptive estimate, not a controlled effect
   - n: −43%
-    basis: typed replies with tools on the same staging API only, 4.92 → 2.80 s · so the gain does not come from a change in which API the traffic used
+    basis: typed replies with tools on one store API only, 4.92 → 2.80 s · so the gain does not come from a change in which API the traffic used
   - n: ~10 ms vs 69–130 ms
     basis: a cache hit vs a live tool call, medians · 26% hit rate over 329 cacheable calls in the cache's first week
 
@@ -64,8 +63,8 @@ Echo is The Product Highway's voice-agent platform. One of its flows is the shop
 
 The session events showed why. The voice service ran in Mumbai, but the users, the LLM and embeddings, speech-to-text and the store's API were all in the US. So every step of a US user's turn went to India and back. Each LLM request spent about 400 ms on the network and each store API call about 225 ms, and a turn makes several of each. Only text-to-speech already ran near the user.
 
-On 28 September I moved the service, its Postgres and its Redis to Northern California. On 29 September I moved them to Ohio, the store API's own region. Then I measured the move on real traffic, not on a benchmark. I read 7,399 sessions through Echo's own API, rebuilt each turn from its server events and compared the wait before the reply's first audio, one turn type at a time. As more data came in I wrote three reports (29 Sep, 8 Oct, 15 Oct). My first headline figure did not survive that data, so I replaced it with the per-type medians and their sample sizes.
+I moved the service, its Postgres and its Redis to Northern California, and a day later to Ohio, the store API's own region. Then I measured the move on real traffic, not on a benchmark. I read 7,399 sessions through Echo's own API, rebuilt each turn from its server events and compared the wait before the reply's first audio, one turn type at a time. As more data came in I wrote three reports. My first headline figure did not survive that data, so I replaced it with the per-type medians and their sample sizes.
 
-Once the service sat next to the store's API, tool calls were the next cost worth cutting. Customers often ask about the same products and specs. So I added a shared tool cache to Echo (PR #9). A tool opts in with a time-to-live in the flow editor. Results go to Redis with a fixed expiry and a 1 MiB cap, and any Redis fault falls back to a live call. When several callers miss on the same request at once, one fetches and the others wait for its result. Credentials change the cache key but never appear in it. The test suite (240 tests, including real Redis shared across processes) passed, and the cache went live on all three of the store's flows on 6–7 October.
+Once the service sat next to the store's API, tool calls were the next cost worth cutting. Customers often ask about the same products and specs. So I added a shared tool cache to Echo (PR #9). A tool opts in with a time-to-live in the flow editor. Results go to Redis with a fixed expiry and a 1 MiB cap, and any Redis fault falls back to a live call. When several callers miss on the same request at once, one fetches and the others wait for its result. Credentials change the cache key but never appear in it. The test suite (240 tests, including real Redis shared across processes) passed, and I turned the cache on for all three of the store's flows.
 
-The caveats stay with the numbers. Most traffic after the move was internal QA testing. Only 14 spoken turns passed every check. And this compares two periods of real traffic; it is not a controlled test.
+The caveats stay with the numbers. Most traffic after the move was internal testing. Only 14 spoken turns passed every check. And this compares two periods of real traffic; it is not a controlled test.

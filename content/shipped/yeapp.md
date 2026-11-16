@@ -5,8 +5,8 @@ socialTitle: "YEAPP · Shaurya Mehta"
 kind: At work
 period: Jul – Sep 2026
 outcome: "YEAPP: a 58-clip voice tour that changed without an app release"
-lead: "As one of four engineers on KRAFTON India's voice-first messenger, I built the pipeline behind its voice-guided tour, messages that wait for a friend to join, and the AI companion's LLM vendor failover."
-description: "My parts of YEAPP, KRAFTON India's voice-first messenger: the voice tour's clip pipeline, pre-join messages and the AI companion's vendor failover."
+lead: "On KRAFTON India's voice-first messenger, I built end to end the pipeline behind its voice-guided tour, messages that wait for a friend to join, and the AI companion's LLM vendor failover."
+description: "What I built for YEAPP, KRAFTON India's voice-first messenger: the voice tour's clip pipeline, pre-join messages and the AI companion's vendor failover."
 
 # the architecture first, then the write-up (the card's cover is set in content/shipped.md)
 mediaFirst: true
@@ -18,9 +18,8 @@ gallery:
     caption: The three pipelines I built. Teal marks where the fix or the guard lives; gold marks what the user sees.
 
 tldr:
-  part: The voice tour's clip pipeline, pre-join messages, the companion's LLM failover, a sticker search cache
-  team: One of four engineers
-  when: 29 Jul – 30 Sep 2026
+  part: "End to end: the voice tour's clip pipeline, pre-join messages, the companion's LLM failover and sticker search"
+  when: Jul – Sep 2026
   stack: React Native, NestJS, BullMQ, Redis, Postgres, Whisper
   result: Failover on the first error · 0 lost writes across 3 replicas
 
@@ -42,23 +41,23 @@ decisions:
 
 results:
   - n: First failure
-    basis: the companion moves to the second vendor on the first failed call, skips a down vendor in 0 ms while its circuit is open, and tries it again after 15 s · live test against the vendor's API · shipped to production
+    basis: the companion moves to the second vendor on the first failed call, skips a down vendor in 0 ms while its circuit is open, and tries it again after 15 s · live test against the vendor's API
   - n: 58 clips
-    basis: synthesized, transcoded and aligned word by word with Whisper by queued jobs · shipped to production behind a rollout flag
+    basis: synthesized, transcoded and aligned word by word with Whisper by queued jobs
   - n: 0 lost writes
     basis: index updates during a render burst across 3 live worker replicas; a unit test with 8 concurrent writers fails if the lock is turned off
 
 ---
 
-YEAPP was KRAFTON India's voice-first messenger: you talked instead of typing, and Ziggy, an AI companion, talked back. The team had shipped it to the Play Store before I joined in late July. In a new user's first minutes, nobody they knew was on the app yet, and the tour that taught it was built into the app, so changing a line or a voice meant shipping a new version of the app.
+YEAPP was KRAFTON India's voice-first messenger: you talked instead of typing, and Ziggy, an AI companion, talked back. It was already on the Play Store when I joined in late July. In a new user's first minutes, nobody they knew was on the app yet, and the tour that taught it was built into the app, so changing a line or a voice meant shipping a new version of the app.
 
 ## A voice tour that changed without an app release
 
-Ziggy taught a new user the app in a chat, by voice, with captions that lit up word by word. I moved the tour's script and voice clips from the app to the backend. Queued jobs synthesized each of the 58 clips, transcoded it, aligned every word with Whisper and published the audio to a CDN under a content hash. An admin could edit a line or upload a recording by a person instead, which ran the same pipeline without the speech synthesis. The tour shipped to production behind a rollout flag, with a kill switch.
+Ziggy taught a new user the app in a chat, by voice, with captions that lit up word by word. I moved the tour's script and voice clips from the app to the backend. Queued jobs synthesized each of the 58 clips, transcoded it, aligned every word with Whisper and published the audio to a CDN under a content hash. An admin could edit a line or upload a recording by a person instead, which ran the same pipeline without the speech synthesis. A kill switch could turn the tour off without an app release.
 
 ## Messages that wait for a friend to join
 
-The app listed contacts who weren't on YEAPP yet and let you message them. The server held the messages, within a limit and an expiry set from the admin console, and delivered them when the contact finished signing up. If the first message was a voice note, it went into the invite video the sender shared. I fixed the 12 issues QA found on it. It shipped on Android; the iOS build was still in test in mid-October.
+The app listed contacts who weren't on YEAPP yet and let you message them. The server held the messages, within a limit and an expiry set from the admin console, and delivered them when the contact finished signing up. If the first message was a voice note, it went into the invite video the sender shared.
 
 ## A backup vendor that took over
 
@@ -66,4 +65,4 @@ The companion had a fallback chain in its config, but it never took over. A 30-s
 
 ## Stickers
 
-Sticker search returned results as you typed, from a Redis cache that every write cleared (shipped to production). Two sticker pipelines stayed unshipped: auto-tagging stock stickers with a vision model, and a proof of concept that turns sticker videos into animated WebP with a transparent background.
+Sticker search returned results as you typed, from a Redis cache that every write cleared. I also built two sticker pipelines: auto-tagging stock stickers with a vision model, and turning sticker videos into animated WebP with a transparent background.

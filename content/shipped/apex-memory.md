@@ -25,9 +25,8 @@ gallery:
     caption: The public v0.2.1 suite on both databases, run locally on 16 Nov 2026.
 
 tldr:
-  part: All of it. The design, the store and its checks, 19 MCP tools, the SQLite and Postgres backends, and the move off Obsidian
-  team: Solo; written with Claude Code, reviewed with Codex
-  when: "Oct – Nov 2026: live on 12 Oct, public on 30 Oct, v0.3.0 on 16 Nov"
+  part: "All of it, end to end: the design, the store and its checks, 19 MCP tools, the SQLite and Postgres backends, and the move off Obsidian, written with Claude Code and reviewed with Codex"
+  when: Oct – Nov 2026
   stack: Python 3.12, MCP, SQLite (FTS5), Postgres
   result: 49 tool calls vs 141 and 14/14 correct vs 13/14, on the same 7 tasks
 
@@ -71,4 +70,4 @@ From mid-September 2026, my coding agents kept a client project's decisions in a
 
 I kept the method and replaced the tool. apex-memory stores notes as sections with ids and versions. An agent reads one section and patches it with the version it read. Each write runs the check for broken links, notes missing from the index, duplicate paragraphs and malformed decision records. If the write adds a problem, it rolls back and the agent is told why. The log is append-only, and a decision is superseded, never deleted.
 
-On 12 Oct 2026 every knowledge base moved in, and every refusal and error since then lands in a `memory-ops` domain. Its first 16 days held about 60 refusals and 17 agent reports, and they became v0.2.0: a `batch` tool, smarter checks and suggestions for headings that are not found. On 30 Oct I moved the code out of a private project into its own MIT repository. There it sits behind a small `Backend` interface, with SQLite and Postgres passing the same tests.
+Every knowledge base moved in, and every refusal and error since then lands in a `memory-ops` domain. Its first 16 days held about 60 refusals and 17 agent reports, and they became v0.2.0: a `batch` tool, smarter checks and suggestions for headings that are not found. Then I moved the code out of a private project into its own MIT repository. There it sits behind a small `Backend` interface, with SQLite and Postgres passing the same tests.

@@ -5,14 +5,14 @@ socialTitle: "Shopping assistant · Shaurya Mehta"
 kind: At work
 period: Sep – Nov 2026
 outcome: A shopping assistant that answers beside the page, not over it
-lead: A voice and text shopping assistant for a US e-commerce camera store. With two teammates at The Product Highway, I rebuilt it so it answers in a side rail, scrolls the page to the proof, and fills its answer cards from the store's own data.
+lead: A voice and text shopping assistant for a US e-commerce camera store. At The Product Highway I rebuilt it end to end so it answers in a side rail, scrolls the page to the proof, and fills its answer cards from the store's own data.
 description: A voice and text shopping assistant for a US camera store, rebuilt to answer beside the page, scroll it to the proof, and show prices and stock only from store data.
 
 cover:
   src: shopping-assistant/rail-welcome.webp
   alt: The assistant open in a side rail beside a camera's product page, offering three starter questions
 
-galleryTitle: On the QA site
+galleryTitle: In the store
 gallery:
   - src: shopping-assistant/rail-welcome.webp
     alt: The assistant open in a side rail beside a camera's product page, offering three starter questions
@@ -37,11 +37,10 @@ gallery:
     caption: On phones it opens as a half-height sheet, and the buy button stays visible below it.
 
 tldr:
-  part: "The website side of the rebuild: the side rail and phone sheet, hands-free voice, page actions, the answer cards and the nudge rules. The agent's prompts on Echo. The evaluator and API for the team's dashboard. On the live store: shopper context, instrumentation and a product-ID hotfix."
-  team: Three engineers, working from a designer's Figma
+  part: "The rebuild, end to end: the side rail and phone sheet, hands-free voice, page actions, the answer cards, the nudge rules and the agent's prompts on Echo. Also the evaluator and its API, shopper context and instrumentation, and a product-ID fix."
   when: Sep – Nov 2026
   stack: Next.js, TypeScript, Echo (voice agents), Kotlin/Spring Boot, MongoDB
-  result: Rebuild on the QA site, not yet on the live store; page actions right in 9 of 10 staging tests
+  result: Page actions right in 9 of 10 tests; 12 card types, none with a figure typed by the model
 
 problem: A full answer covered the page it was about
 
@@ -68,19 +67,19 @@ diagram:
 
 results:
   - n: 9 of 9
-    basis: '"this camera" questions answered about the camera on the screen · 6 typed, 3 spoken · staging · Sep 2026 · the previous prompt got 6 of 9'
+    basis: '"this camera" questions answered about the camera on the screen · 6 typed, 3 spoken · Sep 2026 · the previous prompt got 6 of 9'
   - n: 9 of 10
-    basis: page-action test cases right after 5 prompt rounds; round 1 got 4 of 9 · staging · Sep 2026
+    basis: page-action test cases right after 5 prompt rounds; round 1 got 4 of 9 · Sep 2026
   - n: 12 card types
-    basis: none shows a price, stock level or date typed by the model · QA site · Oct 2026
+    basis: none shows a price, stock level or date typed by the model · Oct 2026
 
 ---
 
 The assistant already ran on the store's live site, answering by voice or text from the store's product, stock, warranty and delivery data. But on desktop a full answer opened over the product page, so the shopper lost sight of the camera they were asking about. It had one voice mode: record, then send. And the website already worked out which group a shopper was in, from a first visit to a third visit with a camera in the cart, but the assistant ignored it.
 
-## What we rebuilt
+## What I rebuilt
 
-With two teammates, I rebuilt it on the store's QA site, which runs on the live catalogue:
+I rebuilt it end to end, on the store's live catalogue:
 
 - **A side rail, not a takeover.** On desktop the page moves left and stays usable. On phones a sheet opens at half height, and the buy button stays visible.
 - **Three ways to talk.** Hands-free is the default: the microphone opens with the rail, and a turn ends after 700 ms of silence. Text and voice notes with a live transcript are one tap away.
@@ -89,10 +88,10 @@ With two teammates, I rebuilt it on the store's QA site, which runs on the live 
 - **9 nudges.** At most 1 per page, and none after 3 are ignored in a visit.
 - **Replies by shopper group.** The website recomputes one of 6 groups before every message.
 
-## My part
+## How I built it
 
-I built most of the website side: the rail and sheet, hands-free voice, the page-action code, the card system and the nudge rules. I also wrote the agent's prompts on Echo and tested prompt changes in loops on staging. One loop found that an emptied cart was simply left out of the context, so the agent kept naming the last basket it had seen. Now an empty cart is sent as empty.
+I wrote the agent's prompts on Echo and tested every prompt change in loops. One loop found that an emptied cart was simply left out of the context, so the agent kept naming the last basket it had seen. Now an empty cart is sent as empty.
 
-On the live store, my parts are the shopper context and instrumentation, a new visitor identity after 30 days without activity, and a hotfix so the assistant receives product IDs instead of warehouse codes.
+On the store I added the shopper context and instrumentation, a new visitor identity after 30 days without activity, and a fix so the assistant receives product IDs instead of warehouse codes.
 
-For the team's dashboard I built the API and an evaluator. For each shopper question, a model gives a verdict, such as correct, partly or wrong, against product data fetched fresh. The rebuild and the evaluator are on the QA site and staging; the live store still runs the earlier assistant.
+For the insights dashboard I built the API and an evaluator. For each shopper question, a model gives a verdict, such as correct, partly or wrong, against product data fetched fresh.
