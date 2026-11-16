@@ -84,7 +84,7 @@ journey:
         - lead: Traced a storefront's slow pages to a memory leak on its EC2 host
           text: "that crashed it four times in a week and dropped 66,186 connections from a full accept queue, reproduced it with heap snapshots and fixed it: memory now holds flat near 533 MB with no restarts, and product-page first-byte p95 fell from 1.8 s to about 1.3 s."
         - lead: "Deployed and monitored the store on AWS:"
-          text: deployed three services across two AWS accounts and regions through a bastion host, shipped service logs to CloudWatch (agent, log groups, IAM roles and a read-only user, with log rotation), fixed a CloudFront cache that served a stale sign-in page, and rebuilt the slow-page alert to watch what visitors feel, the largest paint on product pages.
+          text: deployed three services across two AWS accounts and regions through a bastion host, set up CloudWatch logging for the services (the agent, log groups, IAM policies and roles, and a read-only user), fixed a CloudFront cache that served a stale sign-in page, and rebuilt the slow-page alert to watch what visitors feel, the largest paint on product pages.
         - lead: "Built the business-insights funnel for the store's shopping assistant:"
           text: from site visit to purchase, driven by an AI pipeline that summarises every finished chat and has an LLM judge check each answer against live product data.
         - lead: Built an alert-triage agent wired into Slack

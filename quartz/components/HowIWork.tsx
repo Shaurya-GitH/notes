@@ -13,7 +13,7 @@ type WorkData = {
   stats?: { n: string; basis: string }[]
   loop?: Section & { starts?: Item[]; steps?: Item[]; rails?: Item[] }
   tools?: Section & { items?: Tool[] }
-  skills?: Section & { groups?: { title: string; text: string; names?: string[] }[] }
+  skills?: Section & { groups?: { title: string; text: string }[] }
   reach?: Section & { items?: Item[] }
   rules?: Section & { items?: Item[] }
 }
@@ -51,7 +51,7 @@ export default (() => {
           </ul>
         )}
 
-        {w.loop && (
+        {w.loop?.heading?.trim() && (
           <section class="sec" aria-labelledby="loop-h">
             <Head s={w.loop} id="loop-h" />
             <div class="flow">
@@ -90,7 +90,7 @@ export default (() => {
           </section>
         )}
 
-        {w.tools?.items && (
+        {w.tools?.items && w.tools.heading?.trim() && (
           <section class="sec" aria-labelledby="tools-h">
             <Head s={w.tools} id="tools-h" />
             <ul class="grid g3 tools">
@@ -110,7 +110,7 @@ export default (() => {
           </section>
         )}
 
-        {w.skills?.groups && (
+        {w.skills?.groups && w.skills.heading?.trim() && (
           <section class="sec" aria-labelledby="skills-h">
             <Head s={w.skills} id="skills-h" />
             <ul class="grid g4 skills">
@@ -119,13 +119,6 @@ export default (() => {
                   <div class="card">
                     <h3>{g.title}</h3>
                     <p>{g.text}</p>
-                    {g.names && g.names.length > 0 && (
-                      <ul class="names">
-                        {g.names.map((n) => (
-                          <li class="mono">{n}</li>
-                        ))}
-                      </ul>
-                    )}
                   </div>
                 </li>
               ))}
@@ -133,7 +126,7 @@ export default (() => {
           </section>
         )}
 
-        {w.reach?.items && (
+        {w.reach?.items && w.reach.heading?.trim() && (
           <section class="sec" aria-labelledby="reach-h">
             <Head s={w.reach} id="reach-h" />
             <ul class="reach">
@@ -147,7 +140,7 @@ export default (() => {
           </section>
         )}
 
-        {w.rules?.items && (
+        {w.rules?.items && w.rules.heading?.trim() && (
           <section class="sec" aria-labelledby="rules-h">
             <Head s={w.rules} id="rules-h" />
             <ol class="rules">

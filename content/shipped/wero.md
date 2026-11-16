@@ -38,8 +38,6 @@ results:
     basis: "services that call EPI's central service sign every request and check every response signature · enforcement tested end to end"
   - n: "2"
     basis: "new versions of the integration platform validated end to end in a private cloud, with the gaps they showed fixed"
-  - n: "5"
-    basis: "product releases my work shipped in, Aug 2025 – Jun 2026"
 
 links:
   - text: Read how the EPI mock works

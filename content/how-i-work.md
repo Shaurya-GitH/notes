@@ -94,7 +94,7 @@ work:
         basis: backend, services, website and CMS
       - k: Alerts
         title: Alerts that mean something
-        text: The slow-page alert used to average every browser span. I rebuilt it to watch what visitors feel, the largest paint on product pages. Service logs ship to CloudWatch, and an hourly memory log caught the leak that crashed the store.
+        text: The slow-page alert used to average every browser span. I rebuilt it to watch what visitors feel, the largest paint on product pages. I set up CloudWatch logging for the services, and an hourly memory log caught the leak that crashed the store.
         metric: 0 restarts after the leak fix
         basis: memory flat near 533 MB, against 1,146 MB before
 
@@ -104,26 +104,20 @@ work:
     groups:
       - title: Plan
         text: Attack a plan, or a whole set of plans, for gaps before anyone builds.
-        names: [plan-review, plan-review-technical, plan-review-functional, plan-set-review]
       - title: Backend
         text: Take a feature from agreed rules to tested branches, one sub-feature at a time, then check the branches fit together.
-        names: [feature-workflow, implementation-set-review]
       - title: Verify
         text: A verify skill for each repo starts it from any worktree on its own ports and databases. The end-to-end skills drive it like a user.
-        names: [api-e2e-test, admin-e2e-test, app-e2e-test, android-rig]
       - title: Review
         text: Hunt defects, check the change against its plan, then fix only what holds.
-        names: [sol-review, code-review-sweep, code-review-request, code-review-fix]
       - title: Frontend
         text: Distinctive interfaces, a design system and a review rubric.
-        names: [frontend-design, tph-design, ui-ux-pro-max]
       - title: Motion graphics
         text: Animated explainers and interface motion.
       - title: Image generation
         text: Images made to an art direction, like the paintings on this site.
       - title: Writing
         text: Docs in Simplified Technical English, explanations top down, and posts.
-        names: [ste100-writer, explaining-systems-top-down, writing-x-posts]
 
   reach:
     heading: What the agents can reach
