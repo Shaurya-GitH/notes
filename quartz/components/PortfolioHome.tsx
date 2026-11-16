@@ -22,7 +22,7 @@ type Award = Link & {
   alt: string
 }
 type Branch = { title: string; text: string; go: string; to: string; art: string }
-type Post = { network: "linkedin" | "x"; url: string; date?: string; about?: string }
+type Post = { network: "linkedin" | "x"; url: string; date?: string; about?: string; fit?: string }
 export type HomeData = {
   headline?: string
   lede?: string
@@ -229,6 +229,7 @@ export default (() => {
                         class="slide"
                         data-embed={embedSrc(p)}
                         data-title={`${net} post: ${p.about ?? p.date ?? ""}`}
+                        style={p.fit ? `--fit: ${p.fit}` : undefined}
                       >
                         <a class="card fallback" href={p.url} rel="noopener">
                           <span class="k">

@@ -95,7 +95,9 @@ home:
   # the posts slideshow: the owner's own LinkedIn and X posts, newest first, shown with the official
   # embeds (a link card stands in until an embed loads, or if it fails). Each post:
   # { network: linkedin | x, url: the post's own address, date: Month Year, about: a few words on
-  # what the post is about (the embed's accessible name and the link card's title) }
+  # what the post is about (the embed's accessible name and the link card's title), fit: a LinkedIn
+  # post's height as a CSS length, cqw being the slide's width, so the post sits centred in its card
+  # (measured headless: an image post is 608px; a video post grows with the width; X reports its own) }
   posts:
     heading: What I've been writing.
     lede: Recent posts from LinkedIn and X.
@@ -110,14 +112,17 @@ home:
         url: https://www.linkedin.com/feed/update/urn:li:activity:7516079159048302592/
         date: Oct 2026
         about: Why I rebuilt my coding agents' memory on SQLite
+        fit: 608px
       - network: linkedin
         url: https://www.linkedin.com/feed/update/urn:li:activity:7511099366246535168/
         date: Sep 2026
         about: Alfred OS, built at the Claude Community Opus Build Day
+        fit: max(461px, 247px + 56.25cqw)
       - network: linkedin
         url: https://www.linkedin.com/feed/update/urn:li:activity:7510358238475956224/
         date: Sep 2026
         about: A year on Open Banking at SBS
+        fit: 608px
   contact:
     heading: Building something with AI agents?
     text: I work full time at The Product Highway, and I'm always happy to talk about agents, voice AI and the infrastructure that keeps them fast and secure.

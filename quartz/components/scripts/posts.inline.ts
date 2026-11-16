@@ -62,8 +62,18 @@ document.addEventListener("nav", () => {
     const onMessage = (e: MessageEvent) => {
       if (e.source === frame.contentWindow) end(true)
     }
-    stops.push(() => end(false))
+    // X reports the tweet's height, so its frame can be sized to it and centred in the panel
+    const onResize = (e: MessageEvent) => {
+      const h = e.source === frame.contentWindow && e.data?.["twttr.embed"]?.params?.[0]?.height
+      if (h > 0 && e.data["twttr.embed"].method === "twttr.private.resize")
+        slide.style.setProperty("--fit", `${h}px`)
+    }
+    stops.push(() => {
+      end(false)
+      removeEventListener("message", onResize)
+    })
     if (isX) addEventListener("message", onMessage)
+    if (isX) addEventListener("message", onResize)
     else frame.addEventListener("load", () => end(true), { once: true })
     frame.addEventListener("error", () => end(false), { once: true })
     frame.src = src

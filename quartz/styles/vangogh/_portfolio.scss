@@ -868,6 +868,7 @@ body:has(.pf-nav) {
     }
     .slide {
       position: relative;
+      container-type: inline-size;
       flex: 0 0 calc((100% - 40px) / 3);
       height: var(--slide-h);
       margin: 0;
@@ -900,16 +901,27 @@ body:has(.pf-nav) {
       pointer-events: none;
       transition: opacity 0.3s ease-out;
     }
-    // every loaded post is the same card: a white panel of one height (light embeds, so short posts
-    // fill it with white rather than stopping early) and the post's link underneath
+    // every loaded post is the same card: a white panel of one height with the post centred in it,
+    // and the post's link underneath. The frame takes the post's height (--fit: X reports it; a
+    // LinkedIn post gives it in content/index.md), or the whole panel when it is not known.
     .embedded,
     .loaded {
+      &::before {
+        content: "";
+        position: absolute;
+        inset: 0 0 72px;
+        z-index: 1;
+        background: #fff;
+        border-radius: 18px 18px 0 0;
+      }
       iframe {
         opacity: 1;
         pointer-events: auto;
-        height: calc(100% - 72px);
+        z-index: 2;
+        bottom: 72px;
+        height: min(var(--fit, 100%), 100% - 72px);
+        margin: auto 0;
         background: #fff;
-        border-radius: 18px 18px 0 0;
       }
       .fallback {
         justify-content: flex-end;
