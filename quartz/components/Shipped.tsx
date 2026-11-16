@@ -88,13 +88,12 @@ export default (() => {
                       <p>{p.text}</p>
                       <p class="metric">{p.metric}</p>
                       <p class="basis">{p.basis}</p>
-                      {study ? (
+                      {study && (
                         <a class="link" href={href(fd, study.slug!)}>
                           Case study <span aria-hidden="true">→</span>
                         </a>
-                      ) : (
-                        <Ext to={p.link?.href}>{p.link?.text}</Ext>
                       )}
+                      <Ext to={p.link?.href}>{p.link?.text}</Ext>
                       <Ext to={p.demo?.href}>{p.demo?.text}</Ext>
                     </div>
                   </article>

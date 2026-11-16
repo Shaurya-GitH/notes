@@ -1205,6 +1205,12 @@ body:has(.pf-nav) {
       text-underline-offset: 4px;
       font-weight: 400;
     }
+    // inline code: the notes theme's light chip is invisible on the night sky
+    :not(pre) > code {
+      background: rgba(242, 234, 216, 0.1);
+      color: var(--cream);
+      border: 1px solid var(--line);
+    }
     @media (max-width: $phone) {
       font-size: 17px;
     }
