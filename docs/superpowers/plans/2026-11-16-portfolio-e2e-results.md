@@ -102,3 +102,47 @@ KB of possible image savings (AVIF/resizing).
   "Journey stops". Works, but noisy for keyboard and screen-reader users; one shared rail would fix
   it (a design change, so not made).
 - The Loop card's almond plate crops to mostly pale sky at 834 px.
+
+## Project pages and Shipped changes (2026-11-16, second run)
+
+Commits `7b51fe5..7d986e6` (project pages with media, Shipped reordered, draft pages). Run against
+`npx quartz build --serve --port 8123` with headless Chrome only (Playwright scripts and
+chrome-devtools Lighthouse). A temporary non-draft fixture page (`content/shipped/e2e-fixture.md`:
+every section, a 4-photo gallery from the shopping-assistant photos, an ffmpeg test-pattern mp4 with
+poster and WebVTT captions), a bare fixture (no cover, `gallery: []`, a video without poster or
+captions, a video with an empty `src`) and a temporary `caseStudy` on the YEAPP card were added for
+the run, then deleted and reverted; none was committed. Every fix was followed by `npx tsc
+--noEmit`, `npm test` (69/69) and `npx quartz build`. Scripts and screenshots are in the session
+scratchpad `e2e-project-shots/`.
+
+| Area                           | Checks  | Pass (final) | Failed first run, fixed |
+| ------------------------------ | ------- | ------------ | ----------------------- |
+| 1 Shipped, 3 widths            | 27      | 27           | –                       |
+| 2 Project page (fixture)       | 59      | 59           | og:image:type (found)   |
+| 3 Card → page link             | 30 + 27 | all          | –                       |
+| 4 Accessibility and Lighthouse | 16 + 3  | all          | –                       |
+| 5 Regressions and scroll perf  | 9 + 1   | all          | –                       |
+| 6 Confidentiality sweep        | 1       | 1            | –                       |
+
+| ID  | Result | Evidence                                                                                                                                                                                                                                                                                                                |
+| --- | ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| PS1 | Pass   | 1440, 834, 390: 13 cards in order (assistant, YEAPP, Echo latency, Echo GLiNER, Keycloak, Loop, checkout, memory leak, MCP server, For Real, 3 side projects); covers on the assistant, Keycloak and Loop cards load with alt text; no broken image, 4xx or console error; no horizontal overflow; no placeholder text. |
+| PS2 | Pass   | `?filter=open-source` → 2 cards, chip pressed; At work chip → 8 and `?filter=at-work`; All → 13 and the parameter removed. With every page a draft, no card links to `/shipped/…`.                                                                                                                                      |
+| PP1 | Pass   | Fixture at 1440 and 390: crumb, kicker, h1, lead, hero (loads), 5 TL;DR items, problem heading, body, Demo, Gallery, Decisions, Results, differently, Links, contact band. Gallery 2 columns at 1440, 1 at 390; 4 captioned tiles; thumbnails load once scrolled to.                                                    |
+| PP2 | Pass   | Lightbox: click and Enter open on the right picture ("1 of 4", "3 of 4"); ArrowRight/ArrowLeft step and wrap; prev/next buttons; Escape, the close button and a backdrop click close it and focus returns to the opening tile. Focus never reaches the page behind (see notes).                                         |
+| PP3 | Pass   | Video: `controls`, `preload=none`, no `autoplay`/`loop`, poster 200, captions track 200 (2 cues, showing). Still paused at 0 s after load, also with motion saved off and with reduced motion emulated. Playing, then switching motion off in the footer pauses it.                                                     |
+| PP4 | Pass   | SPA: card → page (poster rebased, 200); 3 rounds of play → crumb away → Back: the old video is paused, nothing plays, 1 dialog and 1 video after each return, ArrowRight steps exactly 1 (no duplicate listeners). SPA navigation with the lightbox open leaves no open dialog.                                         |
+| PP5 | Pass   | Bare fixture: no hero, no gallery or dialog, 1 video (the empty `src` one is dropped) with no track and no poster, no empty boxes, no broken images, no errors.                                                                                                                                                         |
+| PP6 | Pass   | `og:image` is `https://shauryamehta.me/shipped/<slug>-og-image.webp` (served, 200), not `[object Object]`. First run: `og:image:type` was `image/.webp` on every page; fixed in `7bc86bb`. Also found: project pages were titled "… · Notes" in the tab and preview image; fixed in `825c329`.                          |
+| PC1 | Pass   | With the fixture published and a card's `caseStudy` pointing at it, that card shows "Case study →" (200) and the page's cover; after deleting the fixture the link and cover are gone and `/shipped/e2e-fixture` is 404.                                                                                                |
+| PA1 | Pass   | Keyboard on Shipped and the fixture, 1440 and 390: every stop named, ringed and scrolled into view; alt text present and generic (no client or store names); one h1, no skipped heading levels; caption, basis and kicker contrast ≥ 6.46:1.                                                                            |
+| PA2 | Pass   | Lighthouse mobile: Shipped accessibility 100, best practices 100, SEO 100; fixture page accessibility 100, best practices 100, SEO 100.                                                                                                                                                                                 |
+| PR1 | Pass   | Home, Journey, How I work, `System-Design/Rate-limiting` at 1440 and 390: one h1, no console errors or 4xx, no overflow. `node scripts/perf/scroll.mjs`: Chrome ran with `--headless=new` (no window); 0 missed vsyncs on home, Shipped and the note; Journey 1 frame of 894 once, 0 on re-run.                         |
+| PX1 | Pass   | `grep -ri "porter\|grayporter" public/`: no hits at all (not even "reporter"); no such file names; none in `content/`, the media guide or the photos' metadata. The six assistant photos, checked by eye, show no store or assistant name.                                                                              |
+
+Notes for the owner:
+
+- The lightbox is a native modal `<dialog>`: Tab cycles its three buttons and, once per cycle, the
+  browser's own toolbar (as every native modal does); the page behind is never reachable.
+- A demo `<video>` has no accessible name of its own (its title is the figure's caption beside
+  it). Lighthouse does not flag it; `aria-label={v.title}` would add one if wanted.
