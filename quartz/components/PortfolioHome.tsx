@@ -162,22 +162,20 @@ export default (() => {
               <div class="awards">
                 {(h.awards.list ?? []).map((a) => (
                   <article class="card award">
-                    <div class="in">
-                      <div class="frame" style={paint(fd, "sunflowers")}>
-                        <Picture fd={fd} name={a.photo} alt={a.alt} loading="lazy" />
-                      </div>
-                      <div class="body">
-                        <div class="issuer">
-                          <div class="logo" aria-hidden="true">
-                            {a.initials}
-                          </div>
-                          <span class="k">{a.issuer}</span>
+                    <div class="frame" style={paint(fd, "sunflowers")}>
+                      <Picture fd={fd} name={a.photo} alt={a.alt} loading="lazy" />
+                    </div>
+                    <div class="body">
+                      <div class="issuer">
+                        <div class="logo" aria-hidden="true">
+                          {a.initials}
                         </div>
-                        <h3>{a.title}</h3>
-                        <p class="cite">{a.cite}</p>
-                        <p class="desc">{a.text}</p>
-                        <Ext to={a.href}>View on LinkedIn</Ext>
+                        <span class="k">{a.issuer}</span>
                       </div>
+                      <h3>{a.title}</h3>
+                      <p class="cite">{a.cite}</p>
+                      <p class="desc">{a.text}</p>
+                      <Ext to={a.href}>View on LinkedIn</Ext>
                     </div>
                   </article>
                 ))}
