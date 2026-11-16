@@ -1,47 +1,83 @@
 ---
-# Draft: needs the owner's review, plus media (app screenshots or a screen recording of the voice
-# tour and a pre-join message) and usage numbers if any. Media: quartz/static/shipped/yeapp/
-draft: true
 layout: case-study
 title: YEAPP
 socialTitle: "YEAPP · Shaurya Mehta"
 kind: At work
 period: Jul – Sep 2026
-outcome: My parts of YEAPP, KRAFTON India's voice-first messenger
-lead: "One of four engineers. I built the AI companion's vendor failover, the voice-onboarding pipeline and pre-join messages: write to a contact who isn't on the app yet, delivered when they sign up."
-description: "My parts of YEAPP, KRAFTON India's voice-first messenger: companion vendor failover, the voice-onboarding pipeline and pre-join messages."
+outcome: "YEAPP: a 58-clip voice tour that updates without a release"
+lead: "As one of four engineers on KRAFTON India's voice-first messenger, I built the pipeline behind its voice-guided tour, messages that wait for a friend to join, and the AI companion's LLM vendor failover."
+description: "My parts of YEAPP, KRAFTON India's voice-first messenger: the voice tour's clip pipeline, pre-join messages and the AI companion's vendor failover."
+
+cover:
+  src: yeapp/cover.webp
+  alt: Three phone screens of the YEAPP voice tour, with the companion Ziggy's spoken lines captioned word by word
+
+mediaFirst: true
+galleryTitle: Architecture and screens
+
+video:
+  - src: yeapp/tour.mp4
+    poster: yeapp/tour-poster.jpg
+    captions: yeapp/tour.vtt
+    title: The first part of the voice tour on an Android phone, with sound
+    duration: "1:17"
+
+gallery:
+  - src: yeapp/architecture.webp
+    alt: "Three pipelines: voice tour clips from an admin edit to the app, a held message from sender to delivery at sign-up, and the companion's vendor chain with circuit breakers"
+    caption: The three pipelines I built. Teal marks where the fix or the guard lives; gold marks what the user sees.
+  - src: yeapp/tour-screens.webp
+    alt: "Four screens of the voice tour: Ziggy's intro, the emoji drawer, a captioned voice note playing, and the closing messages"
+    caption: The tour on an Android phone. The captions light up word by word, timed by Whisper.
+
 tldr:
-  part: Companion failover, voice-onboarding pipeline, pre-join messages, sticker search cache
-  team: 4 engineers
+  part: The voice tour's clip pipeline, pre-join messages, the companion's LLM failover, a sticker search cache
+  team: One of four engineers
   when: 29 Jul – 30 Sep 2026
-  stack: React Native, Node.js, BullMQ, Redis, Postgres, Whisper
+  stack: React Native, NestJS, BullMQ, Redis, Postgres, Whisper
   result: Failover on the first error · 0 lost writes across 3 replicas
-problem: The companion's backup LLM vendor never took over
+
+problem: New users arrived to an empty, silent app
+
 decisions:
-  - chose: Keep per-request failures (an empty body, a schema reject) off the vendor's circuit breaker
-    rejected: counting every failure against the vendor
-    because: one bad response would take a healthy vendor out of rotation
-  - chose: Lock only the clip index write with a Redis mutex, so renders still fan out across replicas
+  - chose: Count only vendor outages against a vendor's circuit breaker; an empty reply or a rejected schema still moves to the next vendor but is not counted
+    rejected: counting every failed request
+    because: the breaker opens on one counted failure, so one user's bad request would cut a healthy vendor off for everyone
+  - chose: Lock only the clip index write with a Redis lock, so renders still run in parallel across replicas
     rejected: a queue concurrency of 1
-    because: BullMQ's concurrency is per instance, not per queue, so three replicas could still overwrite each other
-  - chose: Attach a sender's voice note to an invite video only once the server marks it ready
-    rejected: trusting the app's state
-    because: a mid-render race could attach one chat's private voice note to another chat's invite
+    because: "BullMQ's concurrency is per worker, not per queue, so three replicas could still overwrite the one index file, and running renders one at a time would stretch the first 58-clip render from about a minute to several"
+  - chose: Refuse a copy edit that no longer matches its recorded clip
+    rejected: saving the edit and fixing the audio later
+    because: the caption timings come from the audio, so the captions would drift out of sync and only a user watching would notice
+  - chose: Serve the invite video that carries a sender's voice note only once its render is ready
+    rejected: serving the last finished render, as the other invite videos do
+    because: a race during a render could attach one chat's private voice note to another chat's invite
+
 results:
-  - n: Failover on the first error
-    basis: live test against the vendor API · 0 ms skip while open, a probe after 15 s, then recovery · on production
+  - n: First failure
+    basis: the companion moves to the second vendor on the first failed call, skips a down vendor in 0 ms while its circuit is open, and tries it again after 15 s · live test against the vendor's API · on production
   - n: 58 clips
-    basis: synthesized, transcoded and word-aligned with Whisper for karaoke captions · runs in production behind a flag
+    basis: synthesized, transcoded and aligned word by word with Whisper by queued jobs · on production behind a rollout flag
   - n: 0 lost writes
-    basis: 3 worker replicas, live; 8 concurrent writers in a unit test with a negative control
+    basis: index updates during a render burst across 3 live worker replicas; a unit test with 8 concurrent writers fails if the lock is turned off
+
+differently: I would store the clip index as one entry per clip instead of one JSON file. Every render rewrites that one file, which is the only reason the renders needed a lock.
 ---
 
-The companion had a fallback chain on paper. In practice a 30-second breaker at the router ended the walk before the second vendor was tried, and the vendor adapters returned an error value instead of throwing, so their circuits never opened. I fixed both, added a second vendor in case the first ran out of credit, and verified it live.
+YEAPP is KRAFTON India's voice-first messenger: you talk instead of typing, and Ziggy, an AI companion, talks back. The team had shipped it to the Play Store before I joined in late July. In a new user's first minutes, nobody they knew was on the app yet, and the tour that taught it was built into the app, so changing a line or a voice meant shipping a new version of the app.
 
 ## A voice tour that changes without an app release
 
-The AI companion teaches new users the app in a chat. I moved its script and voice clips from the app bundle to the backend: queued jobs synthesize each clip, transcode it, align every word with Whisper for captions, and publish it to a CDN.
+Ziggy teaches a new user the app in a chat, by voice, with captions that light up word by word. I moved the tour's script and voice clips from the app to the backend. Queued jobs synthesize each of the 58 clips, transcode it, align every word with Whisper and publish the audio to a CDN under a content hash. An admin can edit a line or upload a recording by a person instead, which runs the same pipeline without the speech synthesis. The tour runs in production behind a rollout flag, with a kill switch.
 
 ## Messages that wait for a friend to join
 
-A user can message a contact who isn't on the app yet. The message is held and delivered when the contact signs up, and the sender's first voice note is rendered into the invite video. It is live on Android.
+The app lists contacts who aren't on YEAPP yet and lets you message them. The server holds the messages, within a limit and an expiry set from the admin console, and delivers them when the contact finishes signing up. If the first message is a voice note, it goes into the invite video the sender shares. I fixed the 12 issues QA found on it. It is live on Android; the iOS build was still in test in mid-October.
+
+## A backup vendor that takes over
+
+The companion had a fallback chain in its config, but it never took over. A 30-second breaker around the whole chain gave up before the second vendor was tried, and the vendor adapters returned an error value instead of throwing, so their circuits never opened. I fixed both, set up a second vendor in case the first ran out of credit, and tested the failure path live.
+
+## Stickers
+
+Sticker search returns results as you type, from a Redis cache that every write clears (in production). Two sticker pipelines stayed unshipped: auto-tagging stock stickers with a vision model, and a proof of concept that turns sticker videos into animated WebP with a transparent background.
