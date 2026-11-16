@@ -50,7 +50,7 @@ const embedSrc = ({ network, url }: Post) => {
   const id = url.match(network === "x" ? /status\/(\d+)/ : /activity:(\d+)/)?.[1]
   if (!id) return undefined
   return network === "x"
-    ? `https://platform.twitter.com/embed/Tweet.html?id=${id}&theme=dark&dnt=true`
+    ? `https://platform.twitter.com/embed/Tweet.html?id=${id}&theme=light&dnt=true`
     : `https://www.linkedin.com/embed/feed/update/urn:li:activity:${id}?collapsed=1`
 }
 

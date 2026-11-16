@@ -847,9 +847,9 @@ body:has(.pf-nav) {
   /* ---------- home: the posts slideshow (posts.inline.ts) ---------- */
   // a full-bleed scroll-snap row whose slides line up with the page gutter: three in view on wide
   // screens, two on tablets, one on phones. Every slide is the same fixed height, so an embed
-  // arriving never moves the page; LinkedIn's collapsed post and X's tweet both fit it unscrolled.
+  // arriving never moves the page; at three to a row LinkedIn's collapsed post and X's tweet fit it.
   .reel {
-    --slide-h: 648px;
+    --slide-h: 690px;
     padding-top: 36px;
     .slides {
       display: flex;
@@ -900,25 +900,20 @@ body:has(.pf-nav) {
       pointer-events: none;
       transition: opacity 0.3s ease-out;
     }
+    // every loaded post is the same card: a white panel of one height (light embeds, so short posts
+    // fill it with white rather than stopping early) and the post's link underneath
     .embedded,
     .loaded {
       iframe {
         opacity: 1;
         pointer-events: auto;
-      }
-    }
-    .embedded {
-      .fallback {
-        visibility: hidden;
-      }
-    }
-    // LinkedIn can load an error document: leave the original link below the frame.
-    .loaded {
-      iframe {
-        height: calc(100% - 80px);
+        height: calc(100% - 72px);
+        background: #fff;
+        border-radius: 18px 18px 0 0;
       }
       .fallback {
         justify-content: flex-end;
+        padding-bottom: 22px;
       }
       .fallback .k,
       .fallback .about {

@@ -2,8 +2,9 @@
 // the arrow keys step through; nothing moves on its own. The official LinkedIn and X embeds are
 // third-party frames, so none is requested until the section nears the viewport, and then only for
 // the slides in view. Each slide keeps its link card until its embed loads, and for good if the
-// embed has not loaded within 8 s (that card is also the page without JavaScript). LinkedIn keeps
-// a link below its frame because its load event cannot tell a post from an error page.
+// embed has not loaded within 8 s (that card is also the page without JavaScript). Every loaded post
+// keeps its link below the frame, and LinkedIn needs it: its load event cannot tell a post from an
+// error page.
 
 const NEAR = "400px 0px"
 const TIMEOUT = 8000
