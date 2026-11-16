@@ -1274,12 +1274,19 @@ body:has(.pf-nav) {
     top: calc(-1 * var(--fall));
     bottom: 0;
     opacity: 0.9;
-    background: radial-gradient(var(--petal), var(--ambient-shade), transparent 70%) var(--at) /
-      var(--tile);
-    filter: blur(1.5px);
     -webkit-mask: linear-gradient(to left, #000 0%, #000 30%, transparent 62%);
     mask: linear-gradient(to left, #000 0%, #000 30%, transparent 62%);
     animation: petal 38s linear infinite;
+    // the blur sits on a still child: on the animated sheet itself the GPU re-blurred four
+    // page-wide sheets every frame and scrolling dropped to 60 fps; here it rasters once
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(var(--petal), var(--ambient-shade), transparent 70%) var(--at) /
+        var(--tile);
+      filter: blur(1.5px);
+    }
   }
   i:nth-child(1) {
     --petal: 9px 5px at 50% 50%;
