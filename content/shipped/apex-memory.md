@@ -27,7 +27,7 @@ gallery:
 tldr:
   part: All of it. The design, the store and its checks, 19 MCP tools, the SQLite and Postgres backends, and the move off Obsidian
   team: Solo; written with Claude Code, reviewed with Codex
-  when: "Oct – Nov 2026: live on 12 Oct, public on 30 Oct, v0.2.1 on 1 Nov"
+  when: "Oct – Nov 2026: live on 12 Oct, public on 30 Oct, v0.3.0 on 16 Nov"
   stack: Python 3.12, MCP, SQLite (FTS5), Postgres
   result: 49 tool calls vs 141 and 14/14 correct vs 13/14, on the same 7 tasks
 

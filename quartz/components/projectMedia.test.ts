@@ -71,8 +71,16 @@ test("project media rendering", async (t) => {
   assert.match(card, /art framed/)
   assert.match(card, /project\/card.webp/)
 
-  await t.test("mediaFirst places YEAPP's demo and gallery before its cover", () => {
-    const { data } = matter(readFileSync("content/shipped/yeapp.md", "utf8"))
+  await t.test("mediaFirst places the demo and gallery before the cover", () => {
+    // its own sample page, so content edits never break it
+    const data = {
+      title: "Sample",
+      outcome: "A sample project",
+      mediaFirst: true,
+      cover: { src: "sample/cover.webp", alt: "Cover" },
+      video: [{ src: "sample/demo.mp4", title: "Demo" }],
+      gallery: [{ src: "sample/one.webp", alt: "One" }],
+    }
     const head = draw(CaseStudyHead, data)
     const rest = draw(CaseStudyRest, data)
     assert.ok(head.indexOf("</h1>") < head.indexOf('id="demo-h"'))

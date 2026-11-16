@@ -35,6 +35,9 @@ shipped:
       metric: Failover on the first error · 58 clips word-aligned · 0 lost writes across 3 replicas
       basis: live failure and replica tests, Aug – Sep 2026
       caseStudy: shipped/yeapp
+      cover:
+        src: yeapp/architecture.webp
+        alt: "YEAPP's three pipelines: the voice tour clips, held messages and the companion's vendor failover"
     - kind: At work
       art: sky
       artefact: Latency chart

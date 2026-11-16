@@ -105,5 +105,5 @@ home:
     text: I work full time at The Product Highway, and I'm always happy to talk about agents, voice AI and the infrastructure that keeps them fast and secure.
     # the address the "Email me" and "Copy email" buttons use; empty hides both until the owner
     # confirms which email to show
-    email:
+    email: mehta.shaurya123@gmail.com
 ---
