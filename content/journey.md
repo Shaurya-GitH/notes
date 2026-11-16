@@ -73,14 +73,16 @@ journey:
       dates: Jul 2026 – now
       role: Software Engineer · Bengaluru
       items:
+        - lead: "Built an MCP server that lets a founder run the business from Claude in plain English:"
+          text: "sales, margins, stock, purchase orders, the catalogue, ads, analytics, errors and logs, from 11 systems behind one adapter contract, with role-based access, personal-data masking, and changes applied only after a preview and the person's yes."
         - lead: Cut Echo's voice-agent reply time by 41–59%
           text: "for US users (server-side medians by turn type), about 1.8 s sooner per typed message: I traced the delay to a service running in Mumbai while the users, models and APIs were in the US, moved it, and added a shared Redis tool cache that answers in about 10 ms instead of 69–130 ms."
         - lead: Fine-tuned GLiNER 2.5 (194M parameters) to predict a voice agent's next tool call,
           text: served on a GPU in 28 ms. On a fixed benchmark, exact tool picks rose from 0/50 to 18/50, and in a replayed conversation the main LLM needed 3 tool calls instead of 9.
         - lead: Traced a storefront's slow pages to a server memory leak
           text: "that crashed it four times in a week, reproduced it with heap snapshots and fixed it: product-page first-byte p95 fell from 1.8 s to about 1.3 s."
-        - lead: "Built an MCP server that lets a business owner ask Claude about the business in plain English:"
-          text: sales, ads, catalogue and site health from 10+ sources behind one adapter contract, role-based access with PII masking, and changes only after a previewed confirmation.
+        - lead: "Built the business-insights funnel for the store's shopping assistant:"
+          text: from site visit to purchase, driven by an AI pipeline that summarises every finished chat and has an LLM judge check each answer against live product data.
         - lead: Built an alert-triage agent
           text: that runs up to six parallel agent sessions, each on its own branch and local stack, reproduces production alerts and proposes the fix; it triaged 13 alerts in its first two days.
         - lead: "On YEAPP, KRAFTON India's voice-first messenger (one of four engineers):"

@@ -17,6 +17,14 @@ shipped:
     - Side projects
   projects:
     - kind: At work
+      art: harbour
+      artefact: Architecture diagram
+      title: "A business MCP server: run the company from Claude"
+      text: An MCP server that lets a US e-commerce founder ask Claude about sales, margins, stock, ads and site health, and change products, prices and purchase orders in plain English. Every number names its source; every change waits for a preview and a yes.
+      metric: 187 operations + 243 vendor tools behind 12 MCP tools · 57/57 staging scenarios
+      basis: counted from the code and a staging end-to-end run, Nov 2026 · on staging with QA
+      caseStudy: shipped/business-mcp
+    - kind: At work
       art: field
       artefact: Answer card and page actions
       title: A shopping assistant that answers from the store's own data
@@ -27,6 +35,14 @@ shipped:
       cover:
         src: shopping-assistant/rail-welcome.webp
         alt: The assistant open in a side rail beside a product page, offering three starter questions
+    - kind: At work
+      art: market
+      artefact: Funnel and LLM judge
+      title: Business insights for a shopping assistant, driven by an AI pipeline
+      text: The funnel from site visit to purchase for a US store's voice and text shopping assistant, with breakdowns by device, entry point, input type and country. When a chat ends, an LLM pipeline summarises it and an LLM judge checks every answer against live product data.
+      metric: 6-step funnel · 7 verdicts per question · events synced every 4 h
+      basis: on staging, tested end to end with the real model, Oct 2026
+      caseStudy: shipped/insights-dashboard
     - kind: At work
       art: almond-alt
       artefact: Pipeline diagram
@@ -87,13 +103,6 @@ shipped:
       text: Traced slow product pages to a server memory leak that crashed the site four times in a week.
       metric: Product-page first-byte p95 1.8 s → ~1.3 s
       basis: real visitors, 1 week before vs 3 days after
-    - kind: At work
-      art: studio
-      artefact: Architecture sketch
-      title: Ask the business in plain English
-      text: An MCP server that lets a business owner query sales, ads, catalogue and site health from Claude, safely.
-      metric: 10+ sources behind one contract · 57/57 scenarios pass
-      basis: staging, Nov 2026 · in QA
     - kind: At work
       art: field-alt
       artefact: Architecture sketch
