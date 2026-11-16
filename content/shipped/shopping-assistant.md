@@ -61,6 +61,8 @@ decisions:
 
 diagram:
   src: static/shipped/shopping-assistant/architecture.svg
+  width: 600
+  height: 660
   alt: "Diagram: the website sends the question and page context to the Echo agent; the agent calls the store APIs every turn and replies with words, a card and a page action; cards fetch their figures from the store APIs; after a chat, the evaluator checks each answer against fresh store data"
   text: The model chooses what to show and the store supplies every figure. The agent replies with words, a card type with product IDs, and at most one page action. The website draws the card from the store's data and reports whether the action worked.
 

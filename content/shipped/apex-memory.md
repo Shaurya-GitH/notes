@@ -21,7 +21,7 @@ gallery:
     alt: "Terminal output of brief for a demo domain: check status, the index catalog, preferences, decisions, open status items and the latest log entry"
     caption: One call gives an agent its starting context, so it reads one section next instead of whole pages.
   - src: apex-memory/tests.webp
-    alt: "Terminal output: 173 tests pass on SQLite with 86 Postgres tests skipped, then 173 pass on SQLite and Postgres 17 with 2 skipped"
+    alt: "Terminal output: 87 tests pass on SQLite with 86 Postgres tests skipped, then 171 pass on SQLite and Postgres 17 with 2 skipped"
     caption: The public v0.2.1 suite on both databases, run locally on 16 Nov 2026.
 
 tldr:

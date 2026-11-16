@@ -27,7 +27,7 @@ type CaseStudyData = {
   tldr?: { part?: string; team?: string; when?: string; stack?: string; result?: string }
   problem?: string
   decisions?: { chose: string; rejected: string; because: string }[]
-  diagram?: { src: string; alt: string; text: string }
+  diagram?: { src: string; alt: string; text: string; width?: number; height?: number }
   results?: { n: string; basis: string }[]
   differently?: string
   links?: { text: string; href: string }[]
@@ -153,6 +153,11 @@ export const CaseStudyHead = (() => {
           <h1>{c.outcome ?? c.title}</h1>
           {c.lead && <p class="lead">{c.lead}</p>}
         </div>
+        {c.mediaFirst && (
+          <div class="article">
+            <Media fileData={fileData} c={c} />
+          </div>
+        )}
         {typeof c.cover?.src === "string" && c.cover.src.trim().length > 0 && (
           <figure class="hero-media">
             <img
@@ -162,11 +167,6 @@ export const CaseStudyHead = (() => {
               height={900}
             />
           </figure>
-        )}
-        {c.mediaFirst && (
-          <div class="article">
-            <Media fileData={fileData} c={c} />
-          </div>
         )}
         {tldr.length > 0 && (
           <dl class="tldr">
@@ -210,7 +210,13 @@ export const CaseStudyRest = (() => {
           {c.diagram && (
             <figure class="side">
               <figcaption>{c.diagram.text}</figcaption>
-              <img src={src(c.diagram.src)} alt={c.diagram.alt} loading="lazy" />
+              <img
+                src={src(c.diagram.src)}
+                alt={c.diagram.alt}
+                width={c.diagram.width}
+                height={c.diagram.height}
+                loading="lazy"
+              />
             </figure>
           )}
           {c.results && c.results.length > 0 && (

@@ -1,10 +1,12 @@
 import assert from "node:assert/strict"
 import test from "node:test"
+import { readFileSync } from "node:fs"
+import matter from "gray-matter"
 import { build } from "esbuild"
 import { render } from "preact-render-to-string"
 import { h } from "preact"
 
-test("partial project media is omitted without hiding valid media or leaving empty sections", async () => {
+test("project media rendering", async (t) => {
   // Quartz imports inline browser scripts as text when building server components.
   const bundle = await build({
     stdin: {
@@ -68,4 +70,29 @@ test("partial project media is omitted without hiding valid media or leaving emp
   })
   assert.match(card, /art framed/)
   assert.match(card, /project\/card.webp/)
+
+  await t.test("mediaFirst places YEAPP's demo and gallery before its cover", () => {
+    const { data } = matter(readFileSync("content/shipped/yeapp.md", "utf8"))
+    const head = draw(CaseStudyHead, data)
+    const rest = draw(CaseStudyRest, data)
+    assert.ok(head.indexOf("</h1>") < head.indexOf('id="demo-h"'))
+    assert.ok(head.indexOf('id="demo-h"') < head.indexOf('id="gallery-h"'))
+    assert.ok(head.indexOf('id="gallery-h"') < head.indexOf('class="hero-media"'))
+    assert.doesNotMatch(rest, /id="demo-h"|id="gallery-h"/)
+    const normal = { ...data, mediaFirst: false }
+    assert.match(draw(CaseStudyHead, normal), /class="hero-media"/)
+    assert.doesNotMatch(draw(CaseStudyHead, normal), /id="demo-h"|id="gallery-h"/)
+    assert.match(draw(CaseStudyRest, normal), /id="demo-h"/)
+    assert.match(draw(CaseStudyRest, normal), /id="gallery-h"/)
+  })
+
+  await t.test("shopping diagram reserves its intrinsic dimensions before loading", () => {
+    const { data } = matter(readFileSync("content/shipped/shopping-assistant.md", "utf8"))
+    const html = draw(CaseStudyRest, data)
+    const img = html.match(/<img[^>]*src="[^"]*shopping-assistant\/architecture\.svg"[^>]*>/)?.[0]
+    assert.ok(img, "shopping architecture diagram renders")
+    assert.match(img, /width="600"/)
+    assert.match(img, /height="660"/)
+    assert.match(img, /loading="lazy"/)
+  })
 })
