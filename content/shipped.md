@@ -112,6 +112,7 @@ shipped:
       text: Built with two teammates at the Claude Community Opus Build Day, Bangalore. I built the hold-to-talk voice input, background tasks with live progress and spoken confirmations.
       metric: Team of 3 · Sep 2026
       basis: "my part: 2 merged PRs"
+      caseStudy: shipped/alfred-os
       link:
         text: Read the pull requests
         href: https://github.com/sainitishmitta04/Alfred-OS/pulls?q=is%3Apr+author%3AShaurya-GitH
