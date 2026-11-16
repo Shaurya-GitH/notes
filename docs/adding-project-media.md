@@ -63,7 +63,7 @@ mediaFirst: true
 # optional: the gallery's heading (default "Gallery"), e.g. Architecture
 galleryTitle: Architecture
 
-tldr: { part: …, team: …, when: …, stack: …, result: … }
+tldr: { part: …, when: …, stack: …, result: … } # shown as What I built · When · Stack · Result
 problem: A claim naming the problem # heading over the Markdown body below
 decisions:
   - { chose: …, rejected: …, because: … }

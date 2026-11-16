@@ -13,9 +13,8 @@ outcome: "[Outcome with a number, e.g. Voice replies about 1.75 s sooner]"
 lead: "[One sentence: who it was for, what changed for them, and the mechanism.]"
 description: "[One sentence for search results and link previews.]"
 tldr:
-  part: "[What I personally designed or built]"
-  team: "[Solo, or team of N]"
-  when: "[N weeks, Month Year]"
+  part: "[What I built, end to end]"
+  when: "[Month – Month Year]"
   stack: "[3–5 technologies, plain names]"
   result: "[Number, unit, basis]"
 # the heading over the markdown below, which is the problem section

@@ -36,7 +36,7 @@ type CaseStudyData = {
 }
 
 const TLDR: [keyof NonNullable<CaseStudyData["tldr"]>, string][] = [
-  ["part", "My part"],
+  ["part", "What I built"],
   ["team", "Team"],
   ["when", "When"],
   ["stack", "Stack"],
