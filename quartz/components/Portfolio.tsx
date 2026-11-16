@@ -30,7 +30,6 @@ const WEBP = new Set([
   "studio",
   "sunflowers",
   "eye",
-  "eye-portrait",
   "field-portrait",
   "kalam-photo",
   "spot-photo",

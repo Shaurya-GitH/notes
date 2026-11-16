@@ -1,5 +1,5 @@
 import { QuartzComponent, QuartzComponentConstructor, QuartzComponentProps } from "./types"
-import { ContactBand, Ext, Picture, Sun, href, paint } from "./Portfolio"
+import { ContactBand, Ext, Picture, Sun, asset, href, paint } from "./Portfolio"
 // @ts-ignore
 import stageScript from "./scripts/stage.inline"
 // @ts-ignore
@@ -79,17 +79,22 @@ export default (() => {
     return (
       <div class="pf pf-home">
         <section class="hero" aria-labelledby="hero-h">
-          <div class="hero-art" data-twin="eye" data-pos="50% 50%">
+          <div class="hero-art" data-twin="eye" data-pos="62% 50%">
             <Picture
               fd={fd}
               name="eye"
-              portrait="eye-portrait"
               alt="A Van Gogh-style painting of a woman's eye, its iris swirling like a starry night"
               fetchpriority="high"
               decoding="async"
               width={1376}
               height={768}
             />
+            {/* the iris turns, as on Journey: a masked copy of the painting, registered over it */}
+            <div
+              class="iris"
+              aria-hidden="true"
+              style={`background-image: url(${asset(fd, "eye", "webp")})`}
+            ></div>
           </div>
           <div class="scrim"></div>
           <div class="copy">

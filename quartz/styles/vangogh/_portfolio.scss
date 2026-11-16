@@ -559,12 +559,36 @@ body:has(.pf-nav) {
       position: absolute;
       inset: 0;
       overflow: hidden;
+      container-type: size;
     }
+    // the plate's crop; data-pos on .hero-art repeats it for the twin canvas
     img {
       display: block;
       width: 100%;
       height: 100%;
       object-fit: cover;
+      object-position: 62% 50%;
+    }
+    // the turning iris: the 1376x768 plate laid out as object-fit: cover at 62% 50% (rw x rh), and a
+    // disc over the iris (centre 56.5% 62% of the plate, 19% of its width wide, as on Journey)
+    .iris {
+      --rw: max(100cqw, 100cqh * 1376 / 768);
+      --rh: calc(var(--rw) * 768 / 1376);
+      --d: calc(var(--rw) * 0.19);
+      position: absolute;
+      left: calc((100cqw - var(--rw)) * 0.62 + var(--rw) * 0.565 - var(--d) / 2);
+      top: calc((100cqh - var(--rh)) * 0.5 + var(--rh) * 0.62 - var(--d) / 2);
+      width: var(--d);
+      height: var(--d);
+      border-radius: 50%;
+      background-repeat: no-repeat;
+      background-size: var(--rw) var(--rh);
+      background-position: calc(var(--d) / 2 - var(--rw) * 0.565)
+        calc(var(--d) / 2 - var(--rh) * 0.62);
+      -webkit-mask: radial-gradient(circle, #000 48%, transparent 70%);
+      mask: radial-gradient(circle, #000 48%, transparent 70%);
+      animation: hero-iris-turn 90s linear infinite;
+      pointer-events: none;
     }
     .scrim {
       position: absolute;
@@ -605,9 +629,6 @@ body:has(.pf-nav) {
       .hero-art {
         position: relative;
         height: var(--art-h);
-      }
-      .hero-art img {
-        object-position: 50% 45%;
       }
       .scrim {
         bottom: auto;
@@ -2008,6 +2029,11 @@ body:has(.pf-nav) {
   }
 }
 
+@keyframes hero-iris-turn {
+  to {
+    transform: rotate(360deg);
+  }
+}
 // motion off (the system's reduced-motion setting): every loop
 // stops; the note pages' window light too, and anchor jumps no longer glide
 html[data-motion="reduce"] {
@@ -2018,6 +2044,7 @@ html[data-motion="reduce"] {
   .pf-sun::before,
   .pf-sun::after,
   .pf-sun i,
+  .hero .iris,
   body::before,
   body::after,
   #quartz-root::before {
@@ -2032,7 +2059,8 @@ html[data-motion="reduce"] {
     }
     .pf-sun::before,
     .pf-sun::after,
-    .pf-sun i {
+    .pf-sun i,
+    .hero .iris {
       animation: none;
     }
   }
