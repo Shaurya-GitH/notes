@@ -61,6 +61,9 @@ shipped:
       link:
         text: Read the pull request
         href: https://github.com/keycloak/keycloak/pull/54078
+      cover:
+        src: keycloak/pr-54078-diff.webp
+        alt: "Keycloak pull request 54078, merged: the diff adds a filter that keeps only enabled organizations"
     - kind: Open source
       art: almond
       artefact: Diff and test
@@ -71,6 +74,9 @@ shipped:
       link:
         text: Read the pull request
         href: https://github.com/soketlabs/loop/pull/64
+      cover:
+        src: loop/pr-64.webp
+        alt: "Loop pull request 64, merged: its description of why OpenRouter batch-only models failed and how the preset now hides them"
     - kind: At work
       art: market
       artefact: Audit table
