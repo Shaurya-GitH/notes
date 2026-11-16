@@ -53,7 +53,6 @@ results:
   - n: ~10 ms vs 69–130 ms
     basis: a cache hit vs a live tool call, medians · 26% hit rate over 329 cacheable calls in the cache's first week
 
-
 links:
   - text: Read the tool-call model case study
     href: shipped/tool-call-model

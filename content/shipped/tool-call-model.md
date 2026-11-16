@@ -56,7 +56,6 @@ results:
   - n: 0 results
     basis: injected by the model as released in Echo's real pipeline over 50 turns · the first fine-tune also made none
 
-
 links:
   - text: Read the reply-latency case study
     href: shipped/echo-latency

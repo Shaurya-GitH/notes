@@ -72,7 +72,6 @@ results:
     basis: page-action test cases right after 5 prompt rounds; round 1 got 4 of 9 · Sep 2026
   - n: 12 card types
     basis: none shows a price, stock level or date typed by the model · Oct 2026
-
 ---
 
 The assistant already ran on the store's live site, answering by voice or text from the store's product, stock, warranty and delivery data. But on desktop a full answer opened over the product page, so the shopper lost sight of the camera they were asking about. It had one voice mode: record, then send. And the website already worked out which group a shopper was in, from a first visit to a third visit with a camera in the cart, but the assistant ignored it.

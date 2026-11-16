@@ -54,7 +54,6 @@ results:
   - n: 153 pages
     basis: "in 10 domains: knowledge bases for my side projects and client work, plus the store's own failure log · list_domains, 16 Nov 2026"
 
-
 links:
   - text: Read the code on GitHub
     href: https://github.com/Shaurya-GitH/apex-memory
