@@ -287,6 +287,8 @@ body:has(.pf-nav) {
     padding: 48px var(--gutter) 40px;
     border-top: 1px solid var(--line);
     background: var(--bg);
+    // the margin above is painted navy too: on Journey the fixed stage's painting showed through it
+    box-shadow: 0 -80px var(--bg);
     font: 13px/1.5 var(--mono);
     color: var(--muted);
     opacity: 1;
@@ -357,6 +359,7 @@ body:has(.pf-nav) {
       gap: 12px;
       padding: 28px var(--gutter);
       margin-top: 56px;
+      box-shadow: 0 -56px var(--bg);
     }
   }
 
