@@ -1,13 +1,12 @@
 // The home page's posts slideshow: a native scroll-snap row (swipe, trackpad) that the buttons and
-// the arrow keys step through; nothing moves on its own. The official LinkedIn and X embeds are
-// third-party frames, so none is requested until the section nears the viewport, and then only for
-// the slides in view. Each slide keeps its link card until its embed loads, and for good if the
-// embed has not loaded within 8 s (that card is also the page without JavaScript). Every loaded post
-// keeps its link below the frame, and LinkedIn needs it: its load event cannot tell a post from an
-// error page.
+// the arrow keys step through; nothing moves on its own. Every post's official LinkedIn or X embed
+// starts loading once the page itself has loaded, so the posts are ready before anyone scrolls to
+// them. Until a post is drawn its card shows a skeleton of one; it keeps that card's link card for
+// good if the embed has not drawn within 12 s (that card is also the page without JavaScript). Every
+// loaded post keeps its link below the frame, and LinkedIn needs it: its load event cannot tell a
+// post from an error page.
 
-const NEAR = "400px 0px"
-const TIMEOUT = 8000
+const TIMEOUT = 12000
 
 document.addEventListener("nav", () => {
   const reel = document.querySelector<HTMLElement>(".pf-home .reel")
@@ -18,7 +17,6 @@ document.addEventListener("nav", () => {
   const next = reel.querySelector<HTMLButtonElement>(".next")!
   const count = reel.querySelector<HTMLElement>(".count")!
   const stops: (() => void)[] = []
-  let near = false
   let at = 0
   let raf = 0
 
@@ -32,7 +30,8 @@ document.addEventListener("nav", () => {
     )
   }
 
-  // X signals a render by message. LinkedIn only signals load, so its link must stay available.
+  // X signals by message once the tweet is drawn; LinkedIn only signals load, so its link must stay
+  // available. The skeleton shows from the request until then (.loading).
   const embed = (slide: HTMLElement) => {
     const src = slide.dataset.embed
     if (!src || slide.querySelector("iframe") || slide.classList.contains("failed")) return
@@ -40,7 +39,7 @@ document.addEventListener("nav", () => {
     const isX = src.startsWith("https://platform.twitter.com/")
     frame.inert = true
     frame.title = slide.dataset.title ?? ""
-    frame.loading = "lazy"
+    frame.loading = "eager"
     frame.referrerPolicy = "strict-origin-when-cross-origin"
     frame.allow = "fullscreen"
     let done = false
@@ -48,8 +47,8 @@ document.addEventListener("nav", () => {
       if (done) return
       done = true
       clearTimeout(timer)
-      removeEventListener("message", onMessage)
       if (!frame.isConnected) return
+      slide.classList.remove("loading")
       if (ok) {
         frame.inert = false
         slide.classList.add(isX ? "embedded" : "loaded")
@@ -59,23 +58,25 @@ document.addEventListener("nav", () => {
       }
     }
     const timer = window.setTimeout(() => end(false), TIMEOUT)
+    // X: "results" means the tweet's data arrived (X draws it only once its frame is in view, so
+    // this stops the failure timer); "rendered" means it is drawn; "resize" gives its height, so
+    // its frame can be sized to it and centred in the panel
     const onMessage = (e: MessageEvent) => {
-      if (e.source === frame.contentWindow) end(true)
-    }
-    // X reports the tweet's height, so its frame can be sized to it and centred in the panel
-    const onResize = (e: MessageEvent) => {
-      const h = e.source === frame.contentWindow && e.data?.["twttr.embed"]?.params?.[0]?.height
-      if (h > 0 && e.data["twttr.embed"].method === "twttr.private.resize")
-        slide.style.setProperty("--fit", `${h}px`)
+      const msg = e.source === frame.contentWindow && e.data?.["twttr.embed"]
+      if (!msg) return
+      const h = msg.params?.[0]?.height
+      if (msg.method === "twttr.private.resize" && h > 0) slide.style.setProperty("--fit", `${h}px`)
+      if (msg.method === "twttr.private.results") clearTimeout(timer)
+      if (msg.method === "twttr.private.rendered") end(true)
     }
     stops.push(() => {
       end(false)
-      removeEventListener("message", onResize)
+      removeEventListener("message", onMessage)
     })
     if (isX) addEventListener("message", onMessage)
-    if (isX) addEventListener("message", onResize)
     else frame.addEventListener("load", () => end(true), { once: true })
     frame.addEventListener("error", () => end(false), { once: true })
+    slide.classList.add("loading")
     frame.src = src
     slide.append(frame)
   }
@@ -89,7 +90,6 @@ document.addEventListener("nav", () => {
     if (count.textContent !== text) count.textContent = text
     prev.setAttribute("aria-disabled", String(at <= 0))
     next.setAttribute("aria-disabled", String(last >= slides.length))
-    if (near) slides.slice(at, last).forEach(embed)
   }
   const onScroll = () => {
     raf ||= requestAnimationFrame(sync)
@@ -114,16 +114,10 @@ document.addEventListener("nav", () => {
       document.querySelector(".pf-cursor")?.classList.remove("on")
   }
 
-  const io = new IntersectionObserver(
-    (entries) => {
-      if (!entries.some((e) => e.isIntersecting)) return
-      near = true
-      io.disconnect()
-      sync()
-    },
-    { rootMargin: NEAR },
-  )
-  io.observe(reel)
+  // every post starts once the page has loaded, so the hero's painting comes first
+  const start = () => slides.forEach(embed)
+  if (document.readyState === "complete") start()
+  else addEventListener("load", start, { once: true })
 
   track.addEventListener("scroll", onScroll, { passive: true })
   window.addEventListener("resize", onScroll)
@@ -135,7 +129,7 @@ document.addEventListener("nav", () => {
   sync()
 
   window.addCleanup(() => {
-    io.disconnect()
+    removeEventListener("load", start)
     cancelAnimationFrame(raf)
     stops.forEach((stop) => stop())
     track.removeEventListener("scroll", onScroll)

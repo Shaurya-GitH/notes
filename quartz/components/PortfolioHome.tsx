@@ -247,6 +247,21 @@ export default (() => {
                             <span aria-hidden="true"> ↗</span>
                           </span>
                         </a>
+                        {/* a post's outline, shown while its embed loads (posts.inline.ts) */}
+                        <div class="skel" aria-hidden="true">
+                          <div class="head">
+                            <i class="av"></i>
+                            <span class="lines">
+                              <i style="width: 46%"></i>
+                              <i style="width: 28%"></i>
+                            </span>
+                          </div>
+                          <i></i>
+                          <i style="width: 92%"></i>
+                          <i style="width: 64%"></i>
+                          <i class="media"></i>
+                          <i style="width: 40%"></i>
+                        </div>
                       </li>
                     )
                   })}

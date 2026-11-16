@@ -938,9 +938,11 @@ body:has(.pf-nav) {
       pointer-events: none;
       transition: opacity 0.3s ease-out;
     }
-    // every loaded post is the same card: a white panel of one height with the post centred in it,
-    // and the post's link underneath. The frame takes the post's height (--fit: X reports it; a
-    // LinkedIn post gives it in content/index.md), or the whole panel when it is not known.
+    // every post is the same card: a white panel of one height with the post centred in it, and the
+    // post's link underneath. The frame takes the post's height (--fit: X reports it; a LinkedIn post
+    // gives it in content/index.md), or the whole panel when it is not known. While the embed loads
+    // (.loading) the panel shows the skeleton, which fades out as the post fades in.
+    .loading,
     .embedded,
     .loaded {
       // the square frame stays inside the card's rounded corners
@@ -954,10 +956,11 @@ body:has(.pf-nav) {
         background: #fff;
         border-radius: 18px 18px 0 0;
       }
+      .skel {
+        display: flex;
+      }
       iframe {
-        opacity: 1;
-        pointer-events: auto;
-        z-index: 2;
+        z-index: 3;
         bottom: 72px;
         height: min(var(--fit, 100%), 100% - 72px);
         margin: auto 0;
@@ -972,6 +975,66 @@ body:has(.pf-nav) {
       .fallback .k,
       .fallback .about {
         display: none;
+      }
+    }
+    .embedded,
+    .loaded {
+      iframe {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .skel {
+        opacity: 0;
+      }
+    }
+    .skel {
+      position: absolute;
+      inset: 0 0 72px;
+      z-index: 2;
+      display: none;
+      flex-direction: column;
+      gap: 12px;
+      padding: 24px 22px;
+      pointer-events: none;
+      transition: opacity 0.3s ease-out;
+      i {
+        display: block;
+        height: 12px;
+        border-radius: 6px;
+        background: linear-gradient(90deg, #eceef1 0%, #f7f8fa 40%, #eceef1 80%) 0 0 / 200% 100%;
+        animation: skel-shimmer 1.4s linear infinite;
+        html[data-motion="reduce"] & {
+          animation: none;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          html:not([data-motion]) & {
+            animation: none;
+          }
+        }
+      }
+      .head {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 6px;
+      }
+      .av {
+        flex: none;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+      }
+      .lines {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .media {
+        flex: 1;
+        min-height: 0;
+        margin: 6px 0;
+        border-radius: 10px;
       }
     }
     // the controls work only with the script, so they hold their space until it runs
@@ -2038,6 +2101,14 @@ body:has(.pf-nav) {
   }
 }
 
+@keyframes skel-shimmer {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: -100% 0;
+  }
+}
 @keyframes hero-iris-turn {
   to {
     transform: rotate(360deg);
