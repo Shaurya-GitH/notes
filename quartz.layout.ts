@@ -52,6 +52,7 @@ export const defaultContentPageLayout: PageLayout = {
     onSlug("shipped")(Component.Shipped()),
     onCaseStudy(Component.CaseStudyHead()),
     onSlug("how-i-work")(Component.PageHead()),
+    onSlug("how-i-work")(Component.HowIWork()),
     offPortfolio(Component.Breadcrumbs()),
     offPortfolio(Component.ArticleTitle()),
     offPortfolio(Component.ContentMeta()),

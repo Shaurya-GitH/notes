@@ -752,14 +752,35 @@ body:has(.pf-nav) {
       gap: 16px;
     }
   }
+  // the award photos are portrait (9:16): a wide card puts the photo beside the text, a narrow one
+  // stacks it in a square; both crops keep the whole award in view
   .award {
     padding: 0;
     overflow: hidden;
     gap: 0;
+    container-type: inline-size;
     .frame {
       padding: 14px;
-      height: 340px;
+      aspect-ratio: 1;
       background-size: cover;
+    }
+    @container (min-width: 620px) {
+      .in {
+        display: grid;
+        grid-template-columns: minmax(0, 0.75fr) minmax(0, 1fr);
+        height: 100%;
+      }
+      // the painted frame runs the card's full height, the photo sits in its middle
+      .frame {
+        aspect-ratio: auto;
+        display: flex;
+        align-items: center;
+      }
+      .frame picture,
+      .frame img {
+        height: auto;
+        aspect-ratio: 3 / 4;
+      }
     }
     picture,
     img {
@@ -770,7 +791,7 @@ body:has(.pf-nav) {
     img {
       border-radius: 10px;
       object-fit: cover;
-      object-position: center 42%;
+      object-position: center 57%;
     }
     .body {
       padding: 28px 30px 30px;
@@ -803,7 +824,6 @@ body:has(.pf-nav) {
     }
     @media (max-width: $phone) {
       .frame {
-        height: 220px;
         padding: 10px;
       }
       .body {
@@ -1515,6 +1535,361 @@ body:has(.pf-nav) {
         right: calc(50% - 52px);
       }
     }
+  }
+
+  /* ---------- How I work (HowIWork.tsx) ---------- */
+  .pf-work {
+    padding-bottom: 104px;
+    @media (max-width: $phone) {
+      padding-bottom: 64px;
+    }
+    .sec {
+      padding-top: 88px;
+      @media (max-width: $phone) {
+        padding-top: 56px;
+      }
+    }
+    h3 {
+      font: 500 22px/1.2 var(--display);
+      color: var(--cream);
+      margin: 0;
+    }
+    // the proof numbers, straight under the page head
+    .stats-row {
+      list-style: none;
+      margin: 0 var(--gutter);
+      padding: 0;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--bg2);
+      li {
+        margin: 0;
+        padding: 22px 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        border-right: 1px solid var(--line);
+      }
+      li:last-child {
+        border-right: none;
+      }
+      .n {
+        font: 500 48px/1 var(--display);
+        color: var(--gold);
+      }
+      .basis {
+        font-size: 15px;
+        line-height: 1.45;
+        color: var(--muted);
+      }
+      @media (max-width: $phone) {
+        grid-template-columns: 1fr 1fr;
+        li {
+          padding: 16px;
+          border-right: none;
+          border-bottom: 1px solid var(--line);
+        }
+        li:nth-child(odd) {
+          border-right: 1px solid var(--line);
+        }
+        li:nth-last-child(-n + 2) {
+          border-bottom: none;
+        }
+        .n {
+          font-size: 36px;
+        }
+        .basis {
+          font-size: 13px;
+        }
+      }
+    }
+    // the loop: two ways in, six steps, three rails under every step
+    .flow {
+      margin-top: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+      ul,
+      ol {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      li {
+        margin: 0;
+      }
+    }
+    .starts {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      position: relative;
+      .card {
+        gap: 8px;
+      }
+      // where both ways in meet the steps
+      &::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        bottom: -28px;
+        height: 28px;
+        border-left: 1px dashed var(--gold);
+      }
+      @media (max-width: $phone) {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+    }
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 0;
+      counter-reset: step;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(232, 192, 106, 0.06), transparent 60%), var(--bg2);
+      li {
+        position: relative;
+        padding: 22px 20px 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        border-right: 1px solid var(--line);
+      }
+      li:last-child {
+        border-right: none;
+      }
+      // an arrow on each divider
+      li:not(:last-child)::after {
+        content: "→";
+        position: absolute;
+        right: -10px;
+        top: 20px;
+        width: 20px;
+        text-align: center;
+        font: 14px/20px var(--mono);
+        color: var(--gold);
+        background: var(--bg2);
+        z-index: 1;
+      }
+      li:last-child h3 {
+        color: var(--gold);
+      }
+      .i {
+        font-size: 12px;
+        color: var(--teal);
+      }
+      p {
+        font-size: 15px;
+        line-height: 1.5;
+        color: var(--muted);
+        margin: 0;
+      }
+      @media (max-width: 1100px) {
+        grid-template-columns: repeat(3, 1fr);
+        li:nth-child(3) {
+          border-right: none;
+        }
+        li:nth-child(-n + 3) {
+          border-bottom: 1px solid var(--line);
+        }
+        li:nth-child(3)::after {
+          display: none;
+        }
+      }
+      @media (max-width: $phone) {
+        grid-template-columns: 1fr;
+        li {
+          border-right: none;
+          border-bottom: 1px solid var(--line);
+          padding: 16px 18px;
+        }
+        li:last-child {
+          border-bottom: none;
+        }
+        li:not(:last-child)::after {
+          content: "↓";
+          right: auto;
+          left: 18px;
+          top: auto;
+          bottom: -10px;
+          display: block;
+        }
+      }
+    }
+    .rails {
+      display: grid;
+      gap: 8px;
+      li {
+        padding: 12px 18px;
+        border-radius: 10px;
+        border: 1px solid var(--line);
+        border-left: 3px solid var(--teal);
+        background: rgba(111, 179, 189, 0.06);
+        font-size: 16px;
+        color: var(--muted);
+      }
+      b {
+        font: 600 14px var(--mono);
+        color: var(--cream);
+        margin-right: 6px;
+      }
+    }
+    // grids sit inside a .sec, which already holds the gutter
+    .sec .grid {
+      padding: 22px 0 0;
+    }
+    // the tools I built; the wide card spans the row
+    .tools {
+      .wide {
+        grid-column: 1 / -1;
+      }
+      .wide .card {
+        display: grid;
+        grid-template-columns: 1fr 1.6fr;
+        column-gap: 40px;
+        row-gap: 10px;
+        align-content: start;
+        & > .k,
+        & > h3 {
+          grid-column: 1;
+        }
+        & > p:not(.k):not(.metric):not(.basis) {
+          grid-column: 2;
+          grid-row: 1 / span 4;
+          margin: 0;
+          color: var(--ink);
+          font-size: 17px;
+          line-height: 1.65;
+        }
+        & > h3 {
+          font-size: 30px;
+        }
+        @media (max-width: $phone) {
+          display: flex;
+          & > h3 {
+            font-size: 24px;
+          }
+        }
+      }
+      .metric {
+        font: 13px/1.5 var(--mono);
+        color: var(--cream);
+        margin-top: auto;
+      }
+      .basis {
+        font: 12px/1.5 var(--mono);
+        color: var(--muted);
+      }
+      .link {
+        font-size: 15px;
+        width: fit-content;
+      }
+    }
+    .skills {
+      .card {
+        padding: 22px;
+        gap: 10px;
+      }
+      h3 {
+        font-size: 20px;
+      }
+      .names {
+        list-style: none;
+        margin: auto 0 0;
+        padding: 6px 0 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        li {
+          margin: 0;
+          padding: 3px 8px;
+          border-radius: 6px;
+          border: 1px solid var(--line);
+          font-size: 12px;
+          color: var(--teal);
+        }
+      }
+      @media (max-width: 1100px) and (min-width: 801px) {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    .reach {
+      list-style: none;
+      margin: 22px 0 0;
+      padding: 0;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--line);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      overflow: hidden;
+      li {
+        margin: 0;
+        padding: 18px 20px;
+        background: var(--bg);
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      b {
+        font: 600 15px var(--mono);
+        color: var(--cream);
+      }
+      span {
+        font-size: 15px;
+        line-height: 1.5;
+        color: var(--muted);
+      }
+      @media (max-width: 1100px) {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      @media (max-width: $phone) {
+        grid-template-columns: 1fr;
+      }
+    }
+    .rules {
+      list-style: none;
+      margin: 22px 0 0;
+      padding: 0;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      counter-reset: rule;
+      li {
+        margin: 0;
+        padding-top: 16px;
+        border-top: 2px solid var(--gold);
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        counter-increment: rule;
+      }
+      li::before {
+        content: "0" counter(rule);
+        font: 12px var(--mono);
+        color: var(--gold);
+      }
+      p {
+        font-size: 16px;
+        color: var(--muted);
+        margin: 0;
+      }
+      @media (max-width: 1100px) {
+        grid-template-columns: 1fr 1fr;
+      }
+      @media (max-width: $phone) {
+        grid-template-columns: 1fr;
+      }
+    }
+  }
+  // How I work has no markdown body: drop the empty article column
+  &:has(.pf-work) .center > article {
+    display: none;
   }
 
   /* ---------- sunlit: the note pages' window light, scoped to plain sections ---------- */

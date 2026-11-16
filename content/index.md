@@ -19,7 +19,7 @@ person:
 # empty does not render
 home:
   headline: I build AI agents and apps that scale and stay secure.
-  lede: I'm a problem solver first. I follow a problem from the infrastructure all the way up to the product.
+  lede: I'm a problem solver first. I follow a problem from the servers on AWS all the way up to the product.
   role: Software engineer at The Product Highway, Bangalore
   chip:
     before: Fix merged into

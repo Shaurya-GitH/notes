@@ -32,22 +32,24 @@ journey:
       art: city
       dates: Jul 2025 – Jun 2026
       aka: formerly Sopra Banking Software
-      role: Open Banking platform team · Noida · 1 year
+      role: Backend and DevOps, Open Banking platform · Noida · 1 year
       items:
-        - lead: "Owned the Open Banking APIs end to end for European banking clients:"
-          text: 10+ endpoints across the Berlin Group account (AIS) and payment (PIS) standards and the Wero wallet, from sprint planning to production.
+        - lead: "Spent the year building Wero, now live at SBS's client banks with hundreds of thousands of customers:"
+          text: peer-to-peer payments, wallet and activity APIs, signed requests to the EPI network from all four Wero services, a stateful mock of EPI's central service for performance tests, and a release deployed and validated at a European bank, mTLS and OAuth included.
+        - lead: "Built the PSD2 and FDX compliance APIs:"
+          text: Berlin Group account (AIS) and payment (PIS) endpoints on shared certificate, header and consent validation that every endpoint reuses, and strong customer authentication that each bank configures as single or multi-step.
         - lead: "Built the security layer:"
-          text: shared services that sign and validate requests across every API, including all four Wero services that call the EPI network, QWAC certificate validation at the gateway, and security reviews against the EPI and PSD2 standards.
-        - lead: "Extended our Keycloak extensions:"
+          text: shared services that sign and validate requests across every API, QWAC certificate validation at the gateway, and security reviews against the EPI and PSD2 standards.
+        - lead: "Extended Keycloak, the identity server under all three projects:"
           text: decrypting a bank's JWE tokens so the consent app could read user claims without holding the key, and letting each bank choose which identity attributes are saved with a consent, with no code change.
         - lead: "Debugged Keycloak itself:"
           text: traced a sign-in error, when two users signed in from the same browser, to how Keycloak links authentication sessions, and set out the fix options for the client.
-        - lead: "Took Wero to a bank:"
-          text: built wallet-activity APIs and a 9-endpoint mock of the EPI central service for performance tests, then deployed and validated a release at a European bank, mTLS and OAuth included.
+        - lead: "Ran the pipelines:"
+          text: moved three deployment pipelines (Keycloak and the two consent apps) to a new GitLab runner and cloud identity, extended two of them to deploy to a private-cloud cluster, built CI for the EPI mock, added Invicti security scanning, and set up an NGINX proxy for secure connectivity to EPI.
+        - lead: "Validated Wero on new platform versions in a private cloud:"
+          text: set up the forward proxy and WireMock test environments, ran the product end to end, and fixed the gaps the tests found.
         - lead: "Built the full-stack demo SBS showed at corporate summits in Dubai:"
           text: 50+ API endpoints and 20+ financial features.
-        - lead: "Hardened the pipelines:"
-          text: Invicti security scanning for the consent apps and Keycloak extensions, stabilised deployments on GitLab runners, and an NGINX proxy for secure connectivity to EPI.
     - id: for-real
       rail: For Real
       company: For Real
@@ -79,12 +81,14 @@ journey:
           text: "for US users (server-side medians by turn type), about 1.8 s sooner per typed message: I traced the delay to a service running in Mumbai while the users, models and APIs were in the US, moved it, and added a shared Redis tool cache that answers in about 10 ms instead of 69–130 ms."
         - lead: Fine-tuned GLiNER 2.5 (194M parameters) to predict a voice agent's next tool call,
           text: served on a GPU in 28 ms. On a fixed benchmark, exact tool picks rose from 0/50 to 18/50, and in a replayed conversation the main LLM needed 3 tool calls instead of 9.
-        - lead: Traced a storefront's slow pages to a server memory leak
-          text: "that crashed it four times in a week, reproduced it with heap snapshots and fixed it: product-page first-byte p95 fell from 1.8 s to about 1.3 s."
+        - lead: Traced a storefront's slow pages to a memory leak on its EC2 host
+          text: "that crashed it four times in a week and dropped 66,186 connections from a full accept queue, reproduced it with heap snapshots and fixed it: memory now holds flat near 533 MB with no restarts, and product-page first-byte p95 fell from 1.8 s to about 1.3 s."
+        - lead: "Deployed and monitored the store on AWS:"
+          text: deployed three services across two AWS accounts and regions through a bastion host, shipped service logs to CloudWatch (agent, log groups, IAM roles and a read-only user, with log rotation), fixed a CloudFront cache that served a stale sign-in page, and rebuilt the slow-page alert to watch what visitors feel, the largest paint on product pages.
         - lead: "Built the business-insights funnel for the store's shopping assistant:"
           text: from site visit to purchase, driven by an AI pipeline that summarises every finished chat and has an LLM judge check each answer against live product data.
-        - lead: Built an alert-triage agent
-          text: that runs up to six parallel agent sessions, each on its own branch and local stack, reproduces production alerts and proposes the fix; it triaged 13 alerts in its first two days.
+        - lead: Built an alert-triage agent wired into Slack
+          text: "that picks up Sentry alerts, runs up to six parallel agent sessions, each on its own branch and local stack, reproduces each alert on real systems and replies in its Slack thread with the cause and the fix; it worked through 18 alerts in its first week."
         - lead: "On YEAPP, KRAFTON India's voice-first messenger:"
           text: "made the AI companion survive LLM vendor outages by fixing circuit breakers that never opened (fallback on the first failure, recovery after a 15 s probe), and built the voice-onboarding pipeline: 58 clips word-aligned with Whisper, rendered across three replicas behind a Redis lock."
   # a second sentence from the home page's recommendation (its person and link come from there)

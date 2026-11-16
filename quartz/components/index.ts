@@ -27,6 +27,7 @@ import NotesIndex from "./NotesIndex"
 import PortfolioHome from "./PortfolioHome"
 import Journey from "./Journey"
 import Shipped from "./Shipped"
+import HowIWork from "./HowIWork"
 import { CaseStudyHead, CaseStudyRest } from "./CaseStudy"
 import Comments from "./Comments"
 import Flex from "./Flex"
@@ -65,6 +66,7 @@ export {
   PortfolioHome,
   Journey,
   Shipped,
+  HowIWork,
   CaseStudyHead,
   CaseStudyRest,
   Comments,
