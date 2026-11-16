@@ -2,7 +2,7 @@
 title: Shipped
 layout: portfolio
 socialTitle: Shipped · Shaurya Mehta
-description: Fixes merged into open-source projects, features running on real traffic, and things I built to learn.
+description: AI agents running on real traffic, Open Banking APIs live at European banks, fixes merged into open source, and things I built to learn.
 # the Shipped page (Shipped.tsx). Copy is the redesign's (copy v10). Each project's `kind` is one of
 # the filters; `link` renders only with an href; `caseStudy` (a page slug) adds "Case study →" once
 # that page builds (not a draft); `demo` ({text, href}) adds a second link to a demo hosted elsewhere; `cover` ({src, alt}, from quartz/static/shipped/) puts a real photo
@@ -10,7 +10,7 @@ description: Fixes merged into open-source projects, features running on real tr
 # How to add media: docs/adding-project-media.md
 shipped:
   headline: Shipped
-  text: Fixes merged into open-source projects, features running on real traffic, and things I built to learn. Cards with a case study say so.
+  text: AI agents running on real traffic, Open Banking APIs live at European banks, fixes merged into open source, and things I built to learn. Cards with a case study say so.
   filters:
     - Open source
     - At work

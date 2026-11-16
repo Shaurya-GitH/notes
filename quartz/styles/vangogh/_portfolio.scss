@@ -1171,16 +1171,16 @@ body:has(.pf-nav) {
       margin: 0;
       color: var(--ink);
     }
+    // one column on a phone: "What I built" and the stack are sentences, too long to pair
     @media (max-width: $phone) {
       grid-auto-flow: row;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr;
       div {
         border-right: none;
         border-bottom: 1px solid var(--line);
         padding: 14px 16px;
       }
       div:last-child {
-        grid-column: 1 / -1;
         border-bottom: none;
       }
     }
@@ -1750,24 +1750,20 @@ body:has(.pf-nav) {
     }
     // the tools I built; the wide card spans the row
     // six tracks: a card takes two, the wide one all six, and a short last row shares the width
+    // above phone width only: on a phone the spans would add columns to the one-column grid
     .tools {
-      grid-template-columns: repeat(6, 1fr);
-      & > li {
-        grid-column: span 2;
-      }
-      & > li.wide,
-      & > li:last-child:nth-child(3n + 2) {
-        grid-column: 1 / -1;
-      }
-      & > li:last-child:nth-child(3n),
-      & > li:nth-last-child(2):nth-child(3n + 2) {
-        grid-column: span 3;
-      }
-      @media (max-width: $phone) {
-        grid-template-columns: 1fr;
-        & > li,
-        & > li:nth-child(n) {
-          grid-column: auto;
+      @media (min-width: $phone + 1) {
+        grid-template-columns: repeat(6, 1fr);
+        & > li {
+          grid-column: span 2;
+        }
+        & > li.wide,
+        & > li:last-child:nth-child(3n + 2) {
+          grid-column: 1 / -1;
+        }
+        & > li:last-child:nth-child(3n),
+        & > li:nth-last-child(2):nth-child(3n + 2) {
+          grid-column: span 3;
         }
       }
       .wide .card {
