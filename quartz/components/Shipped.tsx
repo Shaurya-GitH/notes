@@ -20,6 +20,8 @@ type Project = {
   metric: string
   basis: string
   link?: { text: string; href?: string }
+  // a demo hosted elsewhere (e.g. a LinkedIn post); shown next to the main link
+  demo?: { text: string; href?: string }
   caseStudy?: string
   cover?: Picture
 }
@@ -93,6 +95,7 @@ export default (() => {
                       ) : (
                         <Ext to={p.link?.href}>{p.link?.text}</Ext>
                       )}
+                      <Ext to={p.demo?.href}>{p.demo?.text}</Ext>
                     </div>
                   </article>
                 </li>

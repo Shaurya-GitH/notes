@@ -5,7 +5,7 @@ socialTitle: Shipped · Shaurya Mehta
 description: Fixes merged into open-source projects, features running on real traffic, and things I built to learn.
 # the Shipped page (Shipped.tsx). Copy is the redesign's (copy v10). Each project's `kind` is one of
 # the filters; `link` renders only with an href; `caseStudy` (a page slug) adds "Case study →" once
-# that page builds (not a draft); `cover` ({src, alt}, from quartz/static/shipped/) puts a real photo
+# that page builds (not a draft); `demo` ({text, href}) adds a second link to a demo hosted elsewhere; `cover` ({src, alt}, from quartz/static/shipped/) puts a real photo
 # in the card's painted frame, else a built case study's cover is used, else the painting shows.
 # How to add media: docs/adding-project-media.md
 shipped:
@@ -115,6 +115,9 @@ shipped:
       link:
         text: Read the pull requests
         href: https://github.com/sainitishmitta04/Alfred-OS/pulls?q=is%3Apr+author%3AShaurya-GitH
+      demo:
+        text: Watch the demo on LinkedIn
+        href: https://www.linkedin.com/feed/update/urn:li:activity:7511099366246535168/
     - kind: Side projects
       art: city
       artefact: UI frame
