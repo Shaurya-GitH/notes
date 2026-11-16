@@ -123,6 +123,17 @@ shipped:
         text: Watch the demo on LinkedIn
         href: https://www.linkedin.com/feed/update/urn:li:activity:7511099366246535168/
     - kind: Side projects
+      art: studio
+      artefact: Architecture diagram
+      title: "apex-memory: one checked memory for every coding agent"
+      text: An open-source MCP memory store that Claude Code and Codex share. Every write is version-checked and rolls back if it breaks a link or the index.
+      metric: 49 vs 141 tool calls · 14/14 vs 13/14 correct
+      basis: same 7 tasks, store vs Obsidian, 12 Oct 2026
+      caseStudy: shipped/apex-memory
+      link:
+        text: Read the code
+        href: https://github.com/Shaurya-GitH/apex-memory
+    - kind: Side projects
       art: city
       artefact: UI frame
       title: "WeSplit: settle a group with 70% fewer payments"
