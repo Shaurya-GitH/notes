@@ -54,7 +54,6 @@ results:
   - n: ~10 ms vs 69–130 ms
     basis: a cache hit vs a live tool call, medians · 26% hit rate over 329 cacheable calls in the cache's first week
 
-differently: I would add absolute timestamps and a connection ID to the session events before the move, not after. A resumed connection resets Echo's clock for that connection, so I had to drop 458 post-move sessions from the comparison, and production gave only 8 usable user turns.
 
 links:
   - text: Read the tool-call model case study

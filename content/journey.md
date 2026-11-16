@@ -77,8 +77,6 @@ journey:
           text: "for US users (server-side medians by turn type), about 1.8 s sooner per typed message: I traced the delay to a service running in Mumbai while the users, models and APIs were in the US, moved it, and added a shared Redis tool cache that answers in about 10 ms instead of 69–130 ms."
         - lead: Fine-tuned GLiNER 2.5 (194M parameters) to predict a voice agent's next tool call,
           text: served on a GPU in 28 ms. On a fixed benchmark, exact tool picks rose from 0/50 to 18/50, and in a replayed conversation the main LLM needed 3 tool calls instead of 9.
-        - lead: Fixed four live buy-now-pay-later checkout bugs in two days
-          text: "that were blocking customers' orders on a US e-commerce store, then audited every payment integration on a sandbox running production code: 51 findings, about 30 real bugs."
         - lead: Traced a storefront's slow pages to a server memory leak
           text: "that crashed it four times in a week, reproduced it with heap snapshots and fixed it: product-page first-byte p95 fell from 1.8 s to about 1.3 s."
         - lead: "Built an MCP server that lets a business owner ask Claude about the business in plain English:"

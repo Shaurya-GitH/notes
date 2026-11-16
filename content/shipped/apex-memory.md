@@ -55,7 +55,6 @@ results:
   - n: 153 pages
     basis: "in 10 domains: knowledge bases for my side projects and client work, plus the store's own failure log · list_domains, 16 Nov 2026"
 
-differently: I measured that agents use the store, not that it makes their work better. A review of 25 days of use (31 Oct) found agents carried knowledge across sessions, but search put the right note first only about half the time. I would replay real past tasks with and without the store from the first week, and track search hits from day one.
 
 links:
   - text: Read the code on GitHub

@@ -74,7 +74,6 @@ results:
   - n: 12 card types
     basis: none shows a price, stock level or date typed by the model · QA site · Oct 2026
 
-differently: I would hand-label about 50 conversations and compare them with the evaluator's verdicts before building dashboard views on top of it. That check was planned and not done, so I can't quote an answer-accuracy figure.
 ---
 
 The assistant already ran on the store's live site, answering by voice or text from the store's product, stock, warranty and delivery data. But on desktop a full answer opened over the product page, so the shopper lost sight of the camera they were asking about. It had one voice mode: record, then send. And the website already worked out which group a shopper was in, from a first visit to a third visit with a camera in the cart, but the assistant ignored it.

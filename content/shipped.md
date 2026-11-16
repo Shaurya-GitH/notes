@@ -81,13 +81,6 @@ shipped:
         src: loop/pr-64.webp
         alt: "Loop pull request 64, merged: its description of why OpenRouter batch-only models failed and how the preset now hides them"
     - kind: At work
-      art: market
-      artefact: Audit table
-      title: Checkout bugs fixed in two days
-      text: Fixed four live buy-now-pay-later bugs that were blocking orders on a US store, then audited every payment integration.
-      metric: 4 live bugs in 2 days · 51 findings, ~30 real bugs
-      basis: production logs · sandbox running production code
-    - kind: At work
       art: city
       artefact: Heap snapshot
       title: A storefront memory leak, found and fixed

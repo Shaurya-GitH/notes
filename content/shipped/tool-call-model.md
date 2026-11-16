@@ -57,7 +57,6 @@ results:
   - n: 0 results
     basis: injected by the model as released in Echo's real pipeline over 50 turns · the first fine-tune also made none
 
-differently: I would measure on the serving hardware from the first day. The early timings came from a laptop CPU at about 2.3 s per request, so the first pipeline benchmark measured the setup, not the model. On an L4 the same requests took 28 ms.
 
 links:
   - text: Read the reply-latency case study

@@ -48,7 +48,6 @@ results:
   - n: 0 lost writes
     basis: index updates during a render burst across 3 live worker replicas; a unit test with 8 concurrent writers fails if the lock is turned off
 
-differently: I would store the clip index as one entry per clip instead of one JSON file. Every render rewrites that one file, which is the only reason the renders needed a lock.
 ---
 
 YEAPP was KRAFTON India's voice-first messenger: you talked instead of typing, and Ziggy, an AI companion, talked back. The team had shipped it to the Play Store before I joined in late July. In a new user's first minutes, nobody they knew was on the app yet, and the tour that taught it was built into the app, so changing a line or a voice meant shipping a new version of the app.
