@@ -6,7 +6,7 @@ import { build } from "esbuild"
 const x = "https://platform.twitter.com/embed/Tweet.html?id=1"
 const li = "https://www.linkedin.com/embed/feed/update/urn:li:activity:2?collapsed=1"
 
-async function slideshow(sources = [x, li, li], width = 400) {
+async function slideshow(sources = [x, li, li], width = 400, readyState = "interactive") {
   // A minimal DOM for the reel; geometry is supplied for each viewport and list size.
   class El extends EventTarget {
     children: El[] = []
@@ -14,8 +14,11 @@ async function slideshow(sources = [x, li, li], width = 400) {
     classes = new Set<string>()
     classList = {
       add: (c: string) => this.classes.add(c),
+      remove: (c: string) => this.classes.delete(c),
       contains: (c: string) => this.classes.has(c),
     }
+    vars: Record<string, string> = {}
+    style = { setProperty: (k: string, v: string) => (this.vars[k] = v) }
     dataset: Record<string, string> = {}
     attrs: Record<string, string> = {}
     textContent = ""
@@ -67,8 +70,8 @@ async function slideshow(sources = [x, li, li], width = 400) {
     querySelector: (s: string) =>
       ({ ".slides": track, ".prev": prev, ".next": next, ".count": count })[s] ?? null,
   })
-  let near: (entries: { isIntersecting: boolean }[]) => void = () => {}
   const timers = new Map<number, () => void>()
+  let timerId = 0
   let rafs: (() => void)[] = []
   let probes = 0
   const cleanups: (() => void)[] = []
@@ -76,12 +79,13 @@ async function slideshow(sources = [x, li, li], width = 400) {
   const context = {
     document: Object.assign(new EventTarget(), {
       documentElement: { dataset: { motion: "on" } },
+      readyState,
       querySelector: (s: string) => (s === ".pf-home .reel" ? reel : null),
       createElement: () => new Frame(),
     }),
     window: Object.assign(win, {
       addCleanup: (fn: () => void) => cleanups.push(fn),
-      setTimeout: (fn: () => void) => (timers.set(timers.size + 1, fn), timers.size),
+      setTimeout: (fn: () => void) => (timers.set(++timerId, fn), timerId),
     }),
     addEventListener: win.addEventListener.bind(win),
     removeEventListener: win.removeEventListener.bind(win),
@@ -92,13 +96,6 @@ async function slideshow(sources = [x, li, li], width = 400) {
     fetch: () => {
       probes++
       return Promise.resolve({ type: "opaque", status: 0, ok: false })
-    },
-    IntersectionObserver: class {
-      constructor(cb: typeof near) {
-        near = cb
-      }
-      observe() {}
-      disconnect() {}
     },
     MessageEvent: Event,
     Promise,
@@ -123,48 +120,66 @@ async function slideshow(sources = [x, li, li], width = 400) {
     win,
     timers,
     cleanups,
-    near: () => near([{ isIntersecting: true }]),
+    // the page's load event: every embed starts then
+    pageLoad: () => win.dispatchEvent(new Event("load")),
+    // a message from an X frame, as X's embed sends it
+    xSays: (frame: Frame, method: string, height?: number) =>
+      win.dispatchEvent(
+        Object.assign(new Event("message"), {
+          source: frame.contentWindow,
+          data: { "twttr.embed": { method, params: [{ height }] } },
+        }),
+      ),
     flush: () => rafs.splice(0).forEach((fn) => fn()),
     probes: () => probes,
   }
 }
 
-test("posts slideshow: no embed before the section is near, then only slides in view; failures keep the card", async () => {
-  const { frames, slides, track, next, count, win, timers, cleanups, near, flush } =
+test("posts slideshow: every post loads with the page, behind a skeleton; failures keep the card", async () => {
+  const { frames, slides, track, next, count, timers, cleanups, pageLoad, xSays, flush } =
     await slideshow()
 
-  assert.deepEqual(frames(), [0, 0, 0], "nothing third-party before the section is near")
+  assert.deepEqual(frames(), [0, 0, 0], "nothing third-party before the page itself has loaded")
   assert.equal(count.textContent, "1 / 3")
-  near()
-  assert.deepEqual(frames(), [1, 0, 0], "only the slide in view embeds")
+  pageLoad()
+  assert.deepEqual(frames(), [1, 1, 1], "every post starts, in view or not")
+  assert.ok(
+    slides.every((s) => s.classList.contains("loading")),
+    "each card shows its skeleton",
+  )
 
-  // X: the frame's own message is the sign it rendered
+  // X: its first messages are not a drawn tweet; "results" (data arrived) stops the failure timer,
+  // "resize" sizes the frame, and "rendered" reveals it
   const xFrame = slides[0].querySelector("iframe")!
-  win.dispatchEvent(Object.assign(new Event("message"), { source: xFrame.contentWindow }))
+  xSays(xFrame, "twttr.private.initialized")
+  assert.ok(slides[0].classList.contains("loading"), "not revealed before the tweet is drawn")
+  xSays(xFrame, "twttr.private.results")
+  assert.equal(timers.size, 2, "X's timer stops once its data has arrived")
+  xSays(xFrame, "twttr.private.resize", 586)
+  assert.equal(slides[0].vars["--fit"], "586px")
+  xSays(xFrame, "twttr.private.rendered")
   assert.ok(slides[0].classList.contains("embedded"))
+  assert.equal(slides[0].classList.contains("loading"), false)
 
-  // next: one step; the scroll it causes embeds the new slide
+  // next: one step through the posts
   next.dispatchEvent(new Event("click"))
   assert.equal(track.scrolledTo, 414)
   track.scrollLeft = 414
   track.dispatchEvent(new Event("scroll"))
   flush()
   assert.equal(count.textContent, "2 / 3")
-  assert.deepEqual(frames(), [1, 1, 0])
 
   // A frame error removes the frame and keeps the card.
   slides[1].querySelector("iframe")!.dispatchEvent(new Event("error"))
-  assert.deepEqual(frames(), [1, 0, 0])
-  assert.ok(slides[1].classList.contains("failed"))
-
-  // a hung embed falls back when its timer fires
-  track.scrollLeft = 828
-  track.dispatchEvent(new Event("scroll"))
-  flush()
   assert.deepEqual(frames(), [1, 0, 1])
+  assert.ok(slides[1].classList.contains("failed"))
+  assert.equal(slides[1].classList.contains("loading"), false)
+
+  // a hung embed falls back when its timer fires; the drawn X post is not touched
   ;[...timers.values()].forEach((fn) => fn())
   assert.ok(slides[2].classList.contains("failed"))
   assert.deepEqual(frames(), [1, 0, 0])
+  assert.ok(slides[0].classList.contains("embedded"))
 
   // leaving the page removes the listeners: a click no longer steps
   cleanups.forEach((fn) => fn())
@@ -173,15 +188,22 @@ test("posts slideshow: no embed before the section is near, then only slides in 
   assert.equal(track.scrolledTo, -1)
 })
 
+test("arriving on an already loaded page (in-site navigation) starts the posts at once", async () => {
+  const { frames, cleanups } = await slideshow([x, li], 400, "complete")
+  assert.deepEqual(frames(), [1, 1])
+  cleanups.forEach((fn) => fn())
+})
+
 test("LinkedIn load keeps the fallback link available without an opaque probe", async () => {
-  const { slides, near, probes, timers, cleanups } = await slideshow([li])
-  near()
+  const { slides, pageLoad, probes, timers, cleanups } = await slideshow([li])
+  pageLoad()
   const frame = slides[0].querySelector("iframe")!
   // A cross-origin error page emits the same load event as a successful post.
   frame.dispatchEvent(new Event("load"))
   await new Promise((r) => setImmediate(r))
   assert.equal(probes(), 0, "no extra request that cannot reveal HTTP errors")
   assert.ok(slides[0].classList.contains("loaded"))
+  assert.equal(slides[0].classList.contains("loading"), false)
   assert.equal(frame.inert, false)
   assert.equal(slides[0].classList.contains("embedded"), false, "do not hide LinkedIn's link")
   assert.equal(timers.size, 0)
@@ -189,13 +211,13 @@ test("LinkedIn load keeps the fallback link available without an opaque probe", 
 })
 
 test("pending frames stay inert until they render; a late load cannot undo timeout", async () => {
-  const { slides, near, win, timers, cleanups } = await slideshow([x, li], 814)
-  near()
+  const { slides, pageLoad, xSays, timers, cleanups } = await slideshow([x, li], 814)
+  pageLoad()
   const xFrame = slides[0].querySelector("iframe")!
   const liFrame = slides[1].querySelector("iframe")!
   assert.equal(xFrame.inert, true)
   assert.equal(liFrame.inert, true)
-  win.dispatchEvent(Object.assign(new Event("message"), { source: xFrame.contentWindow }))
+  xSays(xFrame, "twttr.private.rendered")
   assert.equal(xFrame.inert, false)
   ;[...timers.values()].forEach((fn) => fn())
   liFrame.dispatchEvent(new Event("load"))
@@ -209,14 +231,14 @@ test("pending frames stay inert until they render; a late load cannot undo timeo
 test("short desktop lists load every slide and keep indices nonnegative", async (t) => {
   for (const sources of [[x], [x, li]]) {
     await t.test(`${sources.length} post(s)`, async () => {
-      const { frames, track, prev, next, count, near, flush, cleanups } = await slideshow(
+      const { frames, track, prev, next, count, pageLoad, flush, cleanups } = await slideshow(
         sources,
         1228,
       )
       assert.equal(count.textContent, sources.length === 1 ? "1 / 1" : "1–2 / 2")
       assert.equal(prev.attrs["aria-disabled"], "true")
       assert.equal(next.attrs["aria-disabled"], "true")
-      near()
+      pageLoad()
       assert.deepEqual(
         frames(),
         sources.map(() => 1),
