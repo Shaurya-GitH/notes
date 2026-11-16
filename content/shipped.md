@@ -113,6 +113,9 @@ shipped:
       metric: Team of 3 · Sep 2026
       basis: "my part: 2 merged PRs"
       caseStudy: shipped/alfred-os
+      cover:
+        src: alfred-os/architecture.webp
+        alt: "Alfred-OS architecture: the app, the orchestrator, the agents, and the Mac and the web"
       link:
         text: Read the pull requests
         href: https://github.com/sainitishmitta04/Alfred-OS/pulls?q=is%3Apr+author%3AShaurya-GitH

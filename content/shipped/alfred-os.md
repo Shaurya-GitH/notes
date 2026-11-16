@@ -8,9 +8,9 @@ outcome: "Alfred-OS: say it, and your Mac does it"
 lead: A voice-driven macOS agent, built in one day by a team of three at the Claude Community Opus Build Day in Bangalore. I built the voice input, the background tasks and the spoken confirmations.
 description: A voice-driven macOS agent built in a day by a team of three; my part was the voice input, background tasks and confirmations.
 
-cover:
-  src: alfred-os/demo-poster.jpg
-  alt: Alfred-OS running four tasks at once, each in its own card
+# show it, then explain it: the demo, then the architecture, then the write-up
+mediaFirst: true
+galleryTitle: Architecture
 
 video:
   - src: alfred-os/demo.mp4
@@ -21,7 +21,7 @@ video:
 gallery:
   - src: alfred-os/architecture.webp
     alt: "Alfred-OS architecture: the app, the orchestrator, the agents, and the Mac and the web"
-    caption: One sentence in, finished tasks out. My part is the app column and the task API.
+    caption: One sentence in, finished tasks out. My part is the app column (hotkey, overlay, speech-to-text, approval card, tasks window) and the task API.
 
 tldr:
   part: Hold-to-talk voice input and speech-to-text, background tasks with live progress, spoken confirmations, and moving the browser agent onto Claude (2 merged PRs)

@@ -1057,6 +1057,10 @@ body:has(.pf-nav) {
       padding-top: 32px;
     }
   }
+  // a media-first page: its demo and gallery sit above the TL;DR
+  .article + .tldr {
+    margin-top: 48px;
+  }
   .tldr {
     display: grid;
     grid-auto-flow: column;
@@ -1288,6 +1292,10 @@ body:has(.pf-nav) {
       li {
         margin: 0;
         max-width: none;
+      }
+      // one picture (a diagram) gets the full width
+      li:only-child {
+        grid-column: 1 / -1;
       }
       figure {
         margin: 0;

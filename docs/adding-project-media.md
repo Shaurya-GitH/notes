@@ -58,6 +58,11 @@ video:
     title: Asking about a product by voice
     duration: "0:48"
 
+# optional: show the demo and gallery straight after the title, before the TL;DR and write-up
+mediaFirst: true
+# optional: the gallery's heading (default "Gallery"), e.g. Architecture
+galleryTitle: Architecture
+
 tldr: { part: …, team: …, when: …, stack: …, result: … }
 problem: A claim naming the problem # heading over the Markdown body below
 decisions:

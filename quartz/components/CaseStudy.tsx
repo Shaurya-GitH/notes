@@ -31,6 +31,8 @@ type CaseStudyData = {
   results?: { n: string; basis: string }[]
   differently?: string
   links?: { text: string; href: string }[]
+  mediaFirst?: boolean
+  galleryTitle?: string
 }
 
 const TLDR: [keyof NonNullable<CaseStudyData["tldr"]>, string][] = [
@@ -40,6 +42,101 @@ const TLDR: [keyof NonNullable<CaseStudyData["tldr"]>, string][] = [
   ["stack", "Stack"],
   ["result", "Result"],
 ]
+
+// the demo videos and the gallery: after the write-up, or straight after the title when the page
+// sets `mediaFirst: true` (show it, then explain it)
+const Media = ({
+  fileData,
+  c,
+}: {
+  fileData: QuartzComponentProps["fileData"]
+  c: CaseStudyData
+}) => {
+  const videos = (c.video ?? []).filter(
+    (v) => typeof v?.src === "string" && v.src.trim().length > 0,
+  )
+  const gallery = (c.gallery ?? []).filter(
+    (g) => typeof g?.src === "string" && g.src.trim().length > 0,
+  )
+  return (
+    <>
+      {videos.length > 0 && (
+        <section aria-labelledby="demo-h">
+          <h2 id="demo-h">Demo</h2>
+          {videos.map((v) => (
+            // never autoplays or loops; turning motion off pauses it (gallery.inline.ts)
+            <figure class="video">
+              <video
+                controls
+                preload="none"
+                playsinline
+                aria-label={v.title}
+                poster={v.poster && shippedMedia(fileData, v.poster)}
+                width={1920}
+                height={1080}
+              >
+                <source src={shippedMedia(fileData, v.src)} type="video/mp4" />
+                {v.captions && (
+                  <track
+                    kind="captions"
+                    src={shippedMedia(fileData, v.captions)}
+                    srclang="en"
+                    label="English"
+                    default
+                  />
+                )}
+              </video>
+              <figcaption>
+                {v.title}
+                {v.duration && <span class="mono"> · {v.duration}</span>}
+              </figcaption>
+            </figure>
+          ))}
+        </section>
+      )}
+      {gallery.length > 0 && (
+        <section aria-labelledby="gallery-h">
+          <h2 id="gallery-h">{c.galleryTitle ?? "Gallery"}</h2>
+          <ul class="gallery">
+            {gallery.map((g, i) => (
+              <li>
+                <figure>
+                  <button type="button" class="shot" data-i={i} aria-haspopup="dialog">
+                    <img
+                      src={shippedMedia(fileData, g.src)}
+                      alt={g.alt}
+                      width={1200}
+                      height={800}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </button>
+                  {g.caption && <figcaption>{g.caption}</figcaption>}
+                </figure>
+              </li>
+            ))}
+          </ul>
+          <dialog class="lightbox" aria-label="Gallery">
+            <button type="button" class="close" aria-label="Close">
+              ✕
+            </button>
+            <figure>
+              <img alt="" />
+              <figcaption></figcaption>
+            </figure>
+            <p class="count mono" aria-live="polite"></p>
+            <button type="button" class="prev" aria-label="Previous image">
+              ←
+            </button>
+            <button type="button" class="next" aria-label="Next image">
+              →
+            </button>
+          </dialog>
+        </section>
+      )}
+    </>
+  )
+}
 
 export const CaseStudyHead = (() => {
   const CaseStudyHead: QuartzComponent = ({ fileData }: QuartzComponentProps) => {
@@ -66,6 +163,11 @@ export const CaseStudyHead = (() => {
             />
           </figure>
         )}
+        {c.mediaFirst && (
+          <div class="article">
+            <Media fileData={fileData} c={c} />
+          </div>
+        )}
         {tldr.length > 0 && (
           <dl class="tldr">
             {tldr.map(([key, label]) => (
@@ -86,91 +188,12 @@ export const CaseStudyHead = (() => {
 export const CaseStudyRest = (() => {
   const CaseStudyRest: QuartzComponent = ({ fileData, allFiles }: QuartzComponentProps) => {
     const c = (fileData.frontmatter ?? {}) as CaseStudyData
-    const videos = (c.video ?? []).filter(
-      (v) => typeof v?.src === "string" && v.src.trim().length > 0,
-    )
-    const gallery = (c.gallery ?? []).filter(
-      (g) => typeof g?.src === "string" && g.src.trim().length > 0,
-    )
     // the diagram: a URL, or a path from the site root (static/portfolio/...)
     const src = (s: string) => (/^https?:/.test(s) ? s : `${pathToRoot(fileData.slug!)}/${s}`)
     return (
       <div class="pf pf-case">
         <div class="article">
-          {videos.length > 0 && (
-            <section aria-labelledby="demo-h">
-              <h2 id="demo-h">Demo</h2>
-              {videos.map((v) => (
-                // never autoplays or loops; turning motion off pauses it (gallery.inline.ts)
-                <figure class="video">
-                  <video
-                    controls
-                    preload="none"
-                    playsinline
-                    aria-label={v.title}
-                    poster={v.poster && shippedMedia(fileData, v.poster)}
-                    width={1920}
-                    height={1080}
-                  >
-                    <source src={shippedMedia(fileData, v.src)} type="video/mp4" />
-                    {v.captions && (
-                      <track
-                        kind="captions"
-                        src={shippedMedia(fileData, v.captions)}
-                        srclang="en"
-                        label="English"
-                        default
-                      />
-                    )}
-                  </video>
-                  <figcaption>
-                    {v.title}
-                    {v.duration && <span class="mono"> · {v.duration}</span>}
-                  </figcaption>
-                </figure>
-              ))}
-            </section>
-          )}
-          {gallery.length > 0 && (
-            <section aria-labelledby="gallery-h">
-              <h2 id="gallery-h">Gallery</h2>
-              <ul class="gallery">
-                {gallery.map((g, i) => (
-                  <li>
-                    <figure>
-                      <button type="button" class="shot" data-i={i} aria-haspopup="dialog">
-                        <img
-                          src={shippedMedia(fileData, g.src)}
-                          alt={g.alt}
-                          width={1200}
-                          height={800}
-                          loading="lazy"
-                          decoding="async"
-                        />
-                      </button>
-                      {g.caption && <figcaption>{g.caption}</figcaption>}
-                    </figure>
-                  </li>
-                ))}
-              </ul>
-              <dialog class="lightbox" aria-label="Gallery">
-                <button type="button" class="close" aria-label="Close">
-                  ✕
-                </button>
-                <figure>
-                  <img alt="" />
-                  <figcaption></figcaption>
-                </figure>
-                <p class="count mono" aria-live="polite"></p>
-                <button type="button" class="prev" aria-label="Previous image">
-                  ←
-                </button>
-                <button type="button" class="next" aria-label="Next image">
-                  →
-                </button>
-              </dialog>
-            </section>
-          )}
+          {!c.mediaFirst && <Media fileData={fileData} c={c} />}
           {c.decisions && c.decisions.length > 0 && (
             <section aria-labelledby="decisions-h">
               <h2 id="decisions-h">Decisions</h2>
