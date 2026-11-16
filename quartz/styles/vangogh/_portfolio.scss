@@ -1559,7 +1559,7 @@ body:has(.pf-nav) {
         }
       }
     }
-    // the loop: two ways in, six steps, three rails under every step
+    // the loop: two ways in, eight agent steps, the way back round, three rails under every step
     .flow {
       margin-top: 22px;
       display: flex;
@@ -1599,7 +1599,7 @@ body:has(.pf-nav) {
     }
     .steps {
       display: grid;
-      grid-template-columns: repeat(6, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: 0;
       counter-reset: step;
       border: 1px solid var(--line);
@@ -1642,26 +1642,46 @@ body:has(.pf-nav) {
         color: var(--muted);
         margin: 0;
       }
+      // four to a row: the first row has a floor, the row ends have no arrow
+      li:nth-child(4n) {
+        border-right: none;
+      }
+      li:nth-child(-n + 4) {
+        border-bottom: 1px solid var(--line);
+      }
+      li:nth-child(4n)::after {
+        display: none;
+      }
+      .who {
+        color: var(--muted);
+      }
       @media (max-width: 1100px) {
-        grid-template-columns: repeat(3, 1fr);
-        li:nth-child(3) {
-          border-right: none;
-        }
-        li:nth-child(-n + 3) {
+        grid-template-columns: repeat(2, 1fr);
+        li:nth-child(n) {
+          border-right: 1px solid var(--line);
           border-bottom: 1px solid var(--line);
         }
-        li:nth-child(3)::after {
+        li:nth-child(2n) {
+          border-right: none;
+        }
+        li:nth-last-child(-n + 2) {
+          border-bottom: none;
+        }
+        li:nth-child(4n)::after {
+          display: block;
+        }
+        li:nth-child(2n)::after {
           display: none;
         }
       }
       @media (max-width: $phone) {
         grid-template-columns: 1fr;
-        li {
+        li:nth-child(n) {
           border-right: none;
           border-bottom: 1px solid var(--line);
           padding: 16px 18px;
         }
-        li:last-child {
+        li:nth-child(n):last-child {
           border-bottom: none;
         }
         li:not(:last-child)::after {
@@ -1672,6 +1692,20 @@ body:has(.pf-nav) {
           bottom: -10px;
           display: block;
         }
+      }
+    }
+    // the refinement loop: goes back round until the goal is met
+    .again {
+      margin: -14px 0 0;
+      padding: 12px 18px;
+      border: 1px dashed var(--gold);
+      border-radius: 10px;
+      font: 600 14px var(--mono);
+      color: var(--gold);
+      text-align: center;
+      span {
+        font-size: 18px;
+        margin-right: 6px;
       }
     }
     .rails {

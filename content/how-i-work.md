@@ -3,7 +3,7 @@ title: How I work
 layout: portfolio
 nav: solid
 socialTitle: How I work · Shaurya Mehta
-description: I work with a fleet of coding agents, and I built the system they run in. An alert or an idea goes in. A tested fix comes out, with the evidence. Agents never ship; I do.
+description: I work with a fleet of coding agents, and I built the system they run in. An alert or an idea goes in. The agents review, push back on and test each other until the goal is met. Agents never ship; I do.
 
 work:
   stats:
@@ -17,8 +17,8 @@ work:
       basis: knowledge bases in the one memory store every agent shares
 
   loop:
-    heading: One loop for every bug and every feature
-    text: Two ways in, one way through. Every step runs in its own session, and every session can see the business and remember what came before.
+    heading: A team of agents that checks its own work
+    text: Every bug and every feature runs as a multi-agent workflow. A lead agent hands each job to a fresh agent, so no agent marks its own work. The setup tests what it built, and goes around again until the goal is met.
     starts:
       - k: A bug
         title: An alert lands in Slack
@@ -27,18 +27,31 @@ work:
         title: An idea or a ticket
         text: Desktop and phone designs in Figma first, then the rules agreed in writing before any code.
     steps:
-      - title: Plan
-        text: Three reviews attack the plan before code exists. Is it sound, does it do the job, does it fit the other plans?
-      - title: Build
-        text: Each sub-feature in its own git worktree, so parallel sessions never collide.
-      - title: Verify
-        text: Each repo has its own verify skill. It starts the code on its own ports and databases and drives it.
-      - title: Review
-        text: A second model, Codex, reviews the whole sub-feature. It checks every finding against the code and fixes only what holds.
-      - title: End to end
-        text: A real browser, emulator or API call, with before-and-after evidence. Fix, rerun, until it passes.
-      - title: I ship
+      - k: 3 reviewer agents
+        title: Plan
+        text: They attack the plan before code exists. Is it sound, does it do the job, does it fit the other plans?
+      - k: Implementer agents
+        title: Build
+        text: One per sub-feature, each in its own git worktree, so parallel agents never collide.
+      - k: A second model
+        title: Review
+        text: Codex reviews the whole change for defects and for drift from the plan.
+      - k: A fresh skeptic
+        title: Push back
+        text: Checks every finding against the code. What does not hold is rejected, with the evidence.
+      - k: Fixer agent
+        title: Fix
+        text: Fixes only what holds, with the smallest change and a test for it.
+      - k: Verify skills
+        title: Validate
+        text: Start the code on its own ports and databases, then drive it like a user in a real browser or API.
+      - k: Refinement loop
+        title: Refine
+        text: A check fails? Fix, rerun, check again. If it still cannot pass, it tells me why.
+      - k: Me
+        title: I ship
         text: Agents stop at "fix ready". I read the evidence, then I push.
+    again: Fix, validate, refine, again and again until the goal is met
     rails:
       - title: apex-memory
         text: every step reads the decisions and writes down what it learned

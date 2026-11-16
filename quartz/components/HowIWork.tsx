@@ -11,7 +11,7 @@ type Tool = Item & { metric?: string; basis?: string; link?: Link; wide?: boolea
 type Section = { heading?: string; text?: string }
 type WorkData = {
   stats?: { n: string; basis: string }[]
-  loop?: Section & { starts?: Item[]; steps?: Item[]; rails?: Item[] }
+  loop?: Section & { starts?: Item[]; steps?: Item[]; again?: string; rails?: Item[] }
   tools?: Section & { items?: Tool[] }
   skills?: Section & { groups?: { title: string; text: string }[] }
   reach?: Section & { items?: Item[] }
@@ -70,12 +70,20 @@ export default (() => {
                 <ol class="steps">
                   {w.loop.steps.map((s, i) => (
                     <li>
-                      <span class="i mono">{String(i + 1).padStart(2, "0")}</span>
+                      <span class="i mono">
+                        {String(i + 1).padStart(2, "0")}
+                        {s.k && <span class="who"> · {s.k}</span>}
+                      </span>
                       <h3>{s.title}</h3>
                       <p>{s.text}</p>
                     </li>
                   ))}
                 </ol>
+              )}
+              {w.loop.again && (
+                <p class="again">
+                  <span aria-hidden="true">↺</span> {w.loop.again}
+                </p>
               )}
               {w.loop.rails && (
                 <ul class="rails" aria-label="Under every step">
