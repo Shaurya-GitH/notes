@@ -589,6 +589,15 @@ body:has(.pf-nav) {
       mask: radial-gradient(circle, #000 48%, transparent 70%);
       animation: hero-iris-turn 90s linear infinite;
       pointer-events: none;
+      // motion off stops it here: the global motion-off rules lose to this scoped selector
+      html[data-motion="reduce"] & {
+        animation: none;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        html:not([data-motion]) & {
+          animation: none;
+        }
+      }
     }
     .scrim {
       position: absolute;
@@ -2044,7 +2053,6 @@ html[data-motion="reduce"] {
   .pf-sun::before,
   .pf-sun::after,
   .pf-sun i,
-  .hero .iris,
   body::before,
   body::after,
   #quartz-root::before {
@@ -2059,8 +2067,7 @@ html[data-motion="reduce"] {
     }
     .pf-sun::before,
     .pf-sun::after,
-    .pf-sun i,
-    .hero .iris {
+    .pf-sun i {
       animation: none;
     }
   }
