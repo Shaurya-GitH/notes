@@ -906,6 +906,9 @@ body:has(.pf-nav) {
     // LinkedIn post gives it in content/index.md), or the whole panel when it is not known.
     .embedded,
     .loaded {
+      // the square frame stays inside the card's rounded corners
+      overflow: hidden;
+      border-radius: 18px;
       &::before {
         content: "";
         position: absolute;
@@ -922,6 +925,8 @@ body:has(.pf-nav) {
         height: min(var(--fit, 100%), 100% - 72px);
         margin: auto 0;
         background: #fff;
+        // each embed draws its own grey rounded card edge; the white panel is the card here
+        clip-path: inset(2px round 14px);
       }
       .fallback {
         justify-content: flex-end;
