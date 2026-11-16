@@ -40,7 +40,7 @@ shipped:
       artefact: Funnel and LLM judge
       title: Business insights for a shopping assistant, driven by an AI pipeline
       text: The funnel from site visit to purchase for a US store's voice and text shopping assistant, with breakdowns by device, entry point, input type and country. When a chat ends, an LLM pipeline summarises it and an LLM judge checks every answer against live product data.
-      metric: 6-step funnel · 7 verdicts per question · events synced every 4 h
+      metric: 6-step funnel · one of 7 verdicts per question · events synced every 4 h
       basis: on staging, tested end to end with the real model, Oct 2026
       caseStudy: shipped/insights-dashboard
     - kind: At work
