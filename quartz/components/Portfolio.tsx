@@ -174,7 +174,7 @@ export const Closing = (() => {
 
 type Contact = { heading?: string; text?: string; email?: string }
 
-// "Hiring, or building an AI agent?": the home page's contact section (with its line) and the
+// The contact heading (home.contact.heading): the home page's contact section (with its line) and the
 // closing band of Shipped and case studies (heading only). The email actions show only once the
 // owner has set `home.contact.email` in content/index.md.
 export const ContactBand = ({
