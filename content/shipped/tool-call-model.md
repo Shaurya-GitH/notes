@@ -1,40 +1,77 @@
 ---
-# Draft: needs the owner's review, plus media (the benchmark table, an architecture sketch of the
-# prefetch stage). Prototype, not shipped: keep it said. Media: quartz/static/shipped/tool-call-model/
-draft: true
 layout: case-study
 title: "Echo: tool-call model"
 socialTitle: "Echo: tool-call model · Shaurya Mehta"
 kind: At work
 period: Sep 2026
 outcome: "Echo: a 28 ms model that predicts a voice agent's tool calls"
-lead: A prototype for Echo. A small model guesses which tools a turn needs and starts them before the main LLM asks, so their results are ready sooner. A wrong guess costs one wasted API call, never a wrong answer.
-description: Fine-tuning GLiNER 2.5 to predict a voice agent's next tool call, served on a GPU in 28 ms; a prototype, not shipped.
+lead: A prototype for Echo, The Product Highway's voice-agent platform. A small fine-tuned model guesses which lookups a turn will need and starts them before the main LLM asks for them. It never shipped. This page covers what I built, what failed, and what the numbers showed.
+description: Fine-tuning GLiNER 2.5 (194M parameters) to predict a voice agent's next tool call, served on a GPU in 28 ms. A prototype that never shipped, including the runs that failed.
+
+cover:
+  src: tool-call-model/exact-picks.webp
+  alt: "Chart: exact tool picks on a frozen 50-turn benchmark. GLiNER 2.5 as released 0 of 50; gpt-4.1 with a compact prompt 17; fine-tuned v1 18; fine-tuned v2 19."
+
+galleryTitle: Architecture and results
+gallery:
+  - src: tool-call-model/pipeline.webp
+    alt: "Diagram: transcript, then GLiNER 2.5, then a gate, then a prefetch call, then the main LLM; if the gate fails, nothing is fired and the LLM calls the tool itself."
+    caption: The prediction only ever adds information. If it is unsure, the turn runs exactly as before.
+  - src: tool-call-model/replay.webp
+    alt: "Chart: time per turn with prediction off and on over six turns of one conversation; four tool turns are 1.4 to 2.7 s faster, the greeting 0.09 s slower."
+    caption: Most of the time saved is on the four turns where a prediction landed. Turn 2 changed with no tool involved, so it is model variance.
+  - src: tool-call-model/latency.webp
+    alt: "Chart: one prediction took about 2,300 ms on a laptop CPU, about 300 ms on a laptop GPU, 61 ms on an L4 GPU and 28 ms on an L4 with fused attention; a small LLM over an API took 1,118 ms."
+    caption: All of the speed came from how and where the model ran. Fine-tuning changed nothing about speed.
+
 tldr:
-  part: The dataset, fine-tune, GPU serving and the benchmark
-  when: Sep 2026
-  stack: GLiNER 2.5 (194M), Modal L4 GPUs, FlashDeBERTa
-  result: Exact tool picks 0/50 → 18/50 on a fixed benchmark
+  part: All of it. I built the baselines, the training data, the fine-tune, the GPU serving and the benchmarks.
+  team: Solo prototype
+  when: 15–22 Sep 2026
+  stack: GLiNER 2.5 (194M), PyTorch, Colab T4 for training, Modal L4 GPUs, FlashDeBERTa
+  result: Exact tool picks 0/50 → 18/50 on a fixed benchmark; never shipped
+
 problem: Each tool call waited for the main LLM to ask for it
+
 decisions:
-  - chose: Fine-tune a small model (GLiNER 2.5, 194M parameters) on synthetic turns
-    rejected: asking a large LLM for the prediction
-    because: gpt-4.1 on a compact prompt scored 17/50, no better, and would put another LLM call in the hot path
-  - chose: Grade on a frozen 50-turn gold set, blind, with an LLM judge and a second-reviewer check
-    rejected: judging live calls by eye
-    because: the first fine-tune looked fine and failed its benchmark, with no usable prefetch calls and turns about 0.8 s slower
-  - chose: Patch in fused attention (FlashDeBERTa)
-    rejected: stock PyTorch serving
-    because: it took a request from 61 ms to 28 ms on the same GPU
+  - chose: Fine-tune a 194M-parameter encoder (GLiNER 2.5) that reads every tool definition and the message in one pass
+    rejected: asking a small LLM to predict the call
+    because: "the best small LLM I tested over an API (qwen3.8-flash) took 1,118 ms at the median, gpt-4.1 scored 17/50 and was no better, and a local 4B model never produced a tool call at all"
+  - chose: Score against a frozen 50-turn gold set, counting only the tools needed on the first step
+    rejected: scoring against the main LLM's own tool calls
+    because: "the LLM repeats its own choice on only 34 of 50 turns, and a one-shot guess cannot make a second-step call whose product ID does not exist yet"
+  - chose: Serve on an NVIDIA L4 with fused attention (FlashDeBERTa), one request at a time, adding replicas to scale
+    rejected: batching requests on one GPU
+    because: "batching made this model slower on both Apple and NVIDIA GPUs, while fused attention took one request from 61 ms to 28 ms with all 50 picks unchanged"
+  - chose: Keep the full tool definitions in every input, trimmed to 200 characters each
+    rejected: caching the tool definitions as a fixed prefix
+    because: "the model's attention runs in both directions, so the definitions change with every message. When I masked them to make them cacheable, the model picked the same tool for every message, even a goodbye"
+
 results:
   - n: 28 ms
-    basis: per request on a Mumbai L4 · 47–68 ms on live inputs · same 50 requests
+    basis: per request on an NVIDIA L4 with fused attention · the same 50 requests · 47–68 ms on live inputs
   - n: 0/50 → 18/50
-    basis: exact tool picks, fixed 50-turn gold set · precision 0.74, recall 0.49
+    basis: exact tool picks on a frozen 50-turn gold set · precision 0.74, recall 0.49 · a later checkpoint scored 19/50
   - n: 3 tool calls, not 9
-    basis: the main LLM, one replayed six-turn conversation · turn time −28%, time to first word unchanged
+    basis: made by the main LLM over one replayed six-turn conversation, two runs each way · turn time −28%, time to the first word unchanged
+  - n: 0 results
+    basis: injected by the model as released in Echo's real pipeline over 50 turns · the first fine-tune also made none
+
+differently: I would measure on the serving hardware from the first day. The early timings came from a laptop CPU at about 2.3 s per request, so the first pipeline benchmark measured the setup, not the model. On an L4 the same requests took 28 ms.
+
+links:
+  - text: Read the reply-latency case study
+    href: shipped/echo-latency
 ---
 
-In a voice turn the main LLM reads the request, decides it needs a tool, calls it, waits, and only then answers. Starting likely tools early hides that wait. I tried regex rules and a zero-shot model first, then fine-tuned GLiNER 2.5.
+In a voice turn the main LLM reads the question, decides it needs a tool, calls it, waits for the result and only then answers. A shopping question often takes two or three of these round trips, and each one delays the whole answer. A small model could guess the lookups first and start them while the rest of the turn is being prepared. Then the results would already be in the LLM's prompt. A wrong guess would cost one wasted API call, never a wrong answer, because the LLM still calls tools itself when it needs them.
 
-One L4 handles about 12 requests a second, roughly 50–100 concurrent voice calls. It is a prototype: it hasn't shipped.
+I tried the cheap options first. Regex rules fired on only 10 of 49 turns. GLiNER 2.5 is a 194M-parameter model that reads a list of tool definitions and a message in one pass, and it was the option worth fine-tuning. Out of the box it gave nothing useful. In Echo's real pipeline it injected zero tool results over 50 turns, and on the gold benchmark it got the exact tools on 0 of 50 turns.
+
+My first fine-tune failed too. The frozen four-arm benchmark compared no prediction, regex, the released model and the fine-tune: 196 matched turns, graded blind with a second reviewer. The fine-tune made zero usable calls and added about 0.8 s of model time per turn. I recorded "do not ship" and kept the checkpoint only as a diagnostic: it had trained for only 40 updates, and its dev split overlapped its training data.
+
+Then I rebuilt each part. The new dataset has 7,830 training examples. About 62% are synthetic turns for the store's seven tools, and the rest are public tool-calling data. It is split so that no message family appears in both training and test. The pipeline was giving up after 1.5 s while the model was allowed 4 s, so it threw correct answers away; I made the two limits match. And I moved the model from a CPU to a GPU.
+
+On the frozen benchmark, exact picks rose to 18/50. A second checkpoint scored 19/50; it trained on 10,164 examples, adding turns where a result is already in context. In one six-turn conversation, replayed twice each way, the main LLM made 3 tool calls instead of 9. The whole conversation took 28% less time, but the first word came no sooner.
+
+It never shipped. The gain rests on one replayed conversation. A GPU kept warm costs about $580–1,020 a month. And in the first end-to-end run on the hosted GPU, 3 of 4 planned calls were dropped as ambiguous: working out which product "it" means is still unsolved.
