@@ -92,14 +92,32 @@ home:
         go: Browse the notes
         to: notes
         art: sky-alt
-  # LinkedIn and X posts: none chosen yet, so the section does not render. Each post:
-  # { network: LinkedIn | X, date: Month Year, text: first two sentences verbatim, href, art }
+  # the posts slideshow: the owner's own LinkedIn and X posts, newest first, shown with the official
+  # embeds (a link card stands in until an embed loads, or if it fails). Each post:
+  # { network: linkedin | x, url: the post's own address, date: Month Year, about: a few words on
+  # what the post is about (the embed's accessible name and the link card's title) }
   posts:
     heading: What I've been writing.
     lede: Recent posts from LinkedIn and X.
     all: See all posts on LinkedIn
-    allHref:
-    list: []
+    allHref: https://www.linkedin.com/in/shaurya-mehta-0b916a349/recent-activity/all/
+    list:
+      - network: x
+        url: https://x.com/ShauryaCODE/status/2120892918827499909
+        date: Nov 2026
+        about: A kanban board in my T3 Code fork
+      - network: linkedin
+        url: https://www.linkedin.com/feed/update/urn:li:activity:7516079159048302592/
+        date: Oct 2026
+        about: Why I rebuilt my coding agents' memory on SQLite
+      - network: linkedin
+        url: https://www.linkedin.com/feed/update/urn:li:activity:7511099366246535168/
+        date: Sep 2026
+        about: Alfred OS, built in half a day at the Claude Community Opus Build Day
+      - network: linkedin
+        url: https://www.linkedin.com/feed/update/urn:li:activity:7510358238475956224/
+        date: Sep 2026
+        about: My final year of college, spent on Open Banking at SBS
   contact:
     heading: Building something with AI agents?
     text: I work full time at The Product Highway, and I'm always happy to talk about agents, voice AI and the infrastructure that keeps them fast and secure.

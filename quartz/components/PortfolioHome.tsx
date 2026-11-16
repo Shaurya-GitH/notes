@@ -2,10 +2,13 @@ import { QuartzComponent, QuartzComponentConstructor, QuartzComponentProps } fro
 import { ContactBand, Ext, Picture, Sun, href, paint } from "./Portfolio"
 // @ts-ignore
 import stageScript from "./scripts/stage.inline"
+// @ts-ignore
+import postsScript from "./scripts/posts.inline"
+import { concatenateResources } from "../util/resources"
 
 // The home hub (design: build_final10.py, home()): hero, proof strip, recognition, the four branch
-// cards, posts and contact. Its copy is content/index.md's front matter (`home:`); a section whose
-// data is empty does not render. Styles: styles/vangogh/_portfolio.scss.
+// cards, the posts slideshow and contact. Its copy is content/index.md's front matter (`home:`); a
+// section whose data is empty does not render. Styles: styles/vangogh/_portfolio.scss.
 
 type Link = { href?: string }
 type Proof = Link & { initials: string; label: string; title: string; why: string; meta: string }
@@ -19,7 +22,7 @@ type Award = Link & {
   alt: string
 }
 type Branch = { title: string; text: string; go: string; to: string; art: string }
-type Post = Link & { network: string; date: string; text: string; art: string }
+type Post = { network: "linkedin" | "x"; url: string; date?: string; about?: string }
 export type HomeData = {
   headline?: string
   lede?: string
@@ -39,6 +42,17 @@ const code = (text: string) =>
 
 // plates that have a red/violet twin take the ink (D11); the others are left as they are
 const TWINS = new Set(["eye", "sky", "field", "almond"])
+
+// a post's official embed: LinkedIn's collapsed post (fits the slide without scrolling) and X's
+// dark tweet frame with Do Not Track on; a URL it cannot read keeps the link card only
+const NET = { linkedin: "LinkedIn", x: "X" }
+const embedSrc = ({ network, url }: Post) => {
+  const id = url.match(network === "x" ? /status\/(\d+)/ : /activity:(\d+)/)?.[1]
+  if (!id) return undefined
+  return network === "x"
+    ? `https://platform.twitter.com/embed/Tweet.html?id=${id}&theme=dark&dnt=true`
+    : `https://www.linkedin.com/embed/feed/update/urn:li:activity:${id}?collapsed=1`
+}
 
 export const Recommendation = ({
   r,
@@ -206,18 +220,40 @@ export default (() => {
                   {h.posts.lede} <Ext to={h.posts.allHref}>{h.posts.all}</Ext>
                 </p>
               </div>
-              <div class="grid g3">
-                {posts.map((p, i) => (
-                  <article class={i ? "card post extra" : "card post"}>
-                    <div class="src">
-                      <span class="net">{p.network}</span>
-                      <span class="mono">{p.date}</span>
-                    </div>
-                    <p>{p.text}</p>
-                    <div class="thumb" style={paint(fd, p.art)}></div>
-                    <Ext to={p.href}>View on {p.network}</Ext>
-                  </article>
-                ))}
+              <div class="reel">
+                <ul class="slides" tabindex={0} aria-label="Posts (arrow keys move between them)">
+                  {posts.map((p) => {
+                    const net = NET[p.network]
+                    return (
+                      <li
+                        class="slide"
+                        data-embed={embedSrc(p)}
+                        data-title={`${net} post: ${p.about ?? p.date ?? ""}`}
+                      >
+                        <a class="card fallback" href={p.url} rel="noopener">
+                          <span class="k">
+                            {net}
+                            {p.date && ` · ${p.date}`}
+                          </span>
+                          {p.about && <span class="about">{p.about}</span>}
+                          <span class="link">
+                            Read the post on {net}
+                            <span aria-hidden="true"> ↗</span>
+                          </span>
+                        </a>
+                      </li>
+                    )
+                  })}
+                </ul>
+                <div class="ctl">
+                  <button class="step prev" type="button" aria-label="Previous post">
+                    <span aria-hidden="true">←</span>
+                  </button>
+                  <p class="count mono" aria-live="polite"></p>
+                  <button class="step next" type="button" aria-label="Next post">
+                    <span aria-hidden="true">→</span>
+                  </button>
+                </div>
               </div>
             </section>
           )}
@@ -227,6 +263,6 @@ export default (() => {
       </div>
     )
   }
-  PortfolioHome.afterDOMLoaded = stageScript
+  PortfolioHome.afterDOMLoaded = concatenateResources(stageScript, postsScript)
   return PortfolioHome
 }) satisfies QuartzComponentConstructor

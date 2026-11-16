@@ -870,31 +870,115 @@ body:has(.pf-nav) {
     }
   }
 
-  /* ---------- home: posts ---------- */
-  .post {
-    gap: 14px;
-    .src {
+  /* ---------- home: the posts slideshow (posts.inline.ts) ---------- */
+  // a full-bleed scroll-snap row whose slides line up with the page gutter: three in view on wide
+  // screens, two on tablets, one on phones. Every slide is the same fixed height, so an embed
+  // arriving never moves the page; LinkedIn's collapsed post and X's tweet both fit it unscrolled.
+  .reel {
+    --slide-h: 648px;
+    padding-top: 36px;
+    .slides {
       display: flex;
+      gap: 20px;
+      margin: 0;
+      padding: 0 var(--gutter);
+      list-style: none;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-padding-inline: var(--gutter);
+      overscroll-behavior-x: contain;
+      scrollbar-width: none;
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
+    .slide {
+      position: relative;
+      flex: 0 0 calc((100% - 40px) / 3);
+      height: var(--slide-h);
+      margin: 0;
+      scroll-snap-align: start;
+      // a fling moves one post, like a slideshow, not the whole row
+      scroll-snap-stop: always;
+    }
+    .fallback {
+      height: 100%;
       justify-content: space-between;
-      align-items: center;
-    }
-    .net {
-      font: 12px var(--mono);
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--label);
-    }
-    .thumb {
-      height: 150px;
-      border-radius: 12px;
-      background-size: cover;
-    }
-    p {
       color: var(--ink);
+      text-decoration: none;
+    }
+    .about {
+      font: 500 28px/1.2 var(--display);
+      color: var(--cream);
+    }
+    .fallback .link {
+      align-self: flex-start;
+    }
+    // the embeds are light documents: a light frame keeps their unpainted area see-through
+    iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+      color-scheme: light;
+      opacity: 0;
+      transition: opacity 0.3s ease-out;
+    }
+    .embedded {
+      iframe {
+        opacity: 1;
+      }
+      .fallback {
+        visibility: hidden;
+      }
+    }
+    // the controls work only with the script, so they hold their space until it runs
+    .ctl {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 14px;
+      padding: 18px var(--gutter) 0;
+      visibility: hidden;
+    }
+    &.live .ctl {
+      visibility: visible;
+    }
+    .count {
+      min-width: 6ch;
+      text-align: center;
+    }
+    .step {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 1px solid rgba(236, 227, 200, 0.45);
+      background: transparent;
+      color: var(--cream);
+      font: 20px/1 var(--serif);
+      cursor: pointer;
+      &:hover:not([aria-disabled="true"]) {
+        border-color: var(--gold);
+        color: var(--gold);
+      }
+      &[aria-disabled="true"] {
+        opacity: 0.4;
+        cursor: default;
+      }
+    }
+    @media (max-width: 1100px) {
+      .slide {
+        flex-basis: calc((100% - 20px) / 2);
+      }
     }
     @media (max-width: $phone) {
-      &.extra {
-        display: none;
+      padding-top: 24px;
+      .slides {
+        gap: 14px;
+      }
+      .slide {
+        flex-basis: 100%;
       }
     }
   }
@@ -1525,6 +1609,9 @@ body:has(.pf-nav) {
 // stops (WCAG 2.2.2); the note pages' window light too, and anchor jumps no longer glide
 html[data-motion="reduce"] {
   scroll-behavior: auto;
+  .reel iframe {
+    transition: none;
+  }
   .pf-sun::before,
   .pf-sun::after,
   .pf-sun i,
@@ -1537,6 +1624,9 @@ html[data-motion="reduce"] {
 // without the script's stamp (no JS) the system setting decides; with it, the visitor's choice wins
 @media (prefers-reduced-motion: reduce) {
   html:not([data-motion]) {
+    .reel iframe {
+      transition: none;
+    }
     .pf-sun::before,
     .pf-sun::after,
     .pf-sun i {
