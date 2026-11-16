@@ -5,7 +5,9 @@ socialTitle: Shipped · Shaurya Mehta
 description: Fixes merged into open-source projects, features running on real traffic, and things I built to learn.
 # the Shipped page (Shipped.tsx). Copy is the redesign's (copy v10). Each project's `kind` is one of
 # the filters; `link` renders only with an href; `caseStudy` (a page slug) adds "Case study →" once
-# that page exists
+# that page builds (not a draft); `cover` ({src, alt}, from quartz/static/shipped/) puts a real photo
+# in the card's painted frame, else a built case study's cover is used, else the painting shows.
+# How to add media: docs/adding-project-media.md
 shipped:
   headline: Shipped
   text: Fixes merged into open-source projects, features running on real traffic, and things I built to learn. Cards with a case study say so.
@@ -14,6 +16,34 @@ shipped:
     - At work
     - Side projects
   projects:
+    - kind: At work
+      art: field
+      artefact: Answer card and page actions
+      title: A shopping assistant that answers from the store's own data
+      text: A voice and text shopping assistant for a US e-commerce store, answering from live product, variant, warranty and shipping data. With two teammates I rebuilt it to open page sections and switch pages by voice, answer with rich cards and react to ad and browsing context. I added an LLM judge that grades each answer.
+      metric: Live on the store · rebuild in UAT · judge on staging
+      basis: "rebuild: team of 3, not yet in production · judge run end to end on staging, Oct 2026"
+    - kind: At work
+      art: almond-alt
+      artefact: Pipeline diagram
+      title: "YEAPP: a voice-first messenger for KRAFTON India"
+      text: "One of four engineers. I built the AI companion's vendor failover with circuit breakers, the voice-onboarding pipeline, and pre-join messages: write to a contact who isn't on the app yet, delivered when they sign up."
+      metric: Failover on the first error · 58 clips word-aligned · 0 lost writes across 3 replicas
+      basis: live failure and replica tests, Aug – Sep 2026
+    - kind: At work
+      art: sky
+      artefact: Latency chart
+      title: "Echo: voice replies 41–59% faster"
+      text: Found why a voice agent was slow for US users, moved the service next to them, and added a shared tool cache.
+      metric: Reply start −41% to −59% by turn type · cache hits ~10 ms vs 69–130 ms
+      basis: server medians, 1,081 vs 228 turns, 16 Sep – 14 Oct 2026
+    - kind: At work
+      art: eye
+      artefact: Eval table
+      title: "Echo: a 28 ms tool-call model"
+      text: Fine-tuned GLiNER 2.5 (194M parameters) to predict a voice agent's next tool call, served on a GPU.
+      metric: Exact tool picks 0/50 → 18/50 · 3 LLM tool calls instead of 9 in a replay
+      basis: fixed 50-case benchmark · prototype
     - kind: Open source
       art: sky-alt
       artefact: Diff and review thread
@@ -35,20 +65,6 @@ shipped:
         text: Read the pull request
         href: https://github.com/soketlabs/loop/pull/64
     - kind: At work
-      art: sky
-      artefact: Latency chart
-      title: "Echo: voice replies 41–59% faster"
-      text: Found why a voice agent was slow for US users, moved the service next to them, and added a shared tool cache.
-      metric: Reply start −41% to −59% by turn type · cache hits ~10 ms vs 69–130 ms
-      basis: server medians, 1,081 vs 228 turns, 16 Sep – 14 Oct 2026
-    - kind: At work
-      art: eye
-      artefact: Eval table
-      title: "Echo: a 28 ms tool-call model"
-      text: Fine-tuned GLiNER 2.5 (194M parameters) to predict a voice agent's next tool call, served on a GPU.
-      metric: Exact tool picks 0/50 → 18/50 · 3 LLM tool calls instead of 9 in a replay
-      basis: fixed 50-case benchmark · prototype
-    - kind: At work
       art: market
       artefact: Audit table
       title: Checkout bugs fixed in two days
@@ -69,13 +85,6 @@ shipped:
       text: An MCP server that lets a business owner query sales, ads, catalogue and site health from Claude, safely.
       metric: 10+ sources behind one contract · 57/57 scenarios pass
       basis: staging, Nov 2026 · in QA
-    - kind: At work
-      art: sky-alt
-      artefact: Pipeline diagram
-      title: "YEAPP: AI that holds up"
-      text: "One of four engineers on KRAFTON India's voice-first messenger: the AI companion's vendor failover and the voice-onboarding pipeline."
-      metric: Failover on the first error · 58 clips word-aligned · 0 lost writes across 3 replicas
-      basis: live failure and replica tests, Aug – Sep 2026
     - kind: At work
       art: field-alt
       artefact: Architecture sketch
