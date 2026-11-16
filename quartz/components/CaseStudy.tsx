@@ -56,7 +56,7 @@ export const CaseStudyHead = (() => {
           <h1>{c.outcome ?? c.title}</h1>
           {c.lead && <p class="lead">{c.lead}</p>}
         </div>
-        {c.cover && (
+        {typeof c.cover?.src === "string" && c.cover.src.trim().length > 0 && (
           <figure class="hero-media">
             <img
               src={shippedMedia(fileData, c.cover.src)}
@@ -86,15 +86,21 @@ export const CaseStudyHead = (() => {
 export const CaseStudyRest = (() => {
   const CaseStudyRest: QuartzComponent = ({ fileData, allFiles }: QuartzComponentProps) => {
     const c = (fileData.frontmatter ?? {}) as CaseStudyData
+    const videos = (c.video ?? []).filter(
+      (v) => typeof v?.src === "string" && v.src.trim().length > 0,
+    )
+    const gallery = (c.gallery ?? []).filter(
+      (g) => typeof g?.src === "string" && g.src.trim().length > 0,
+    )
     // the diagram: a URL, or a path from the site root (static/portfolio/...)
     const src = (s: string) => (/^https?:/.test(s) ? s : `${pathToRoot(fileData.slug!)}/${s}`)
     return (
       <div class="pf pf-case">
         <div class="article">
-          {!!c.video?.length && (
+          {videos.length > 0 && (
             <section aria-labelledby="demo-h">
               <h2 id="demo-h">Demo</h2>
-              {c.video.map((v) => (
+              {videos.map((v) => (
                 // never autoplays or loops; turning motion off pauses it (gallery.inline.ts)
                 <figure class="video">
                   <video
@@ -124,11 +130,11 @@ export const CaseStudyRest = (() => {
               ))}
             </section>
           )}
-          {!!c.gallery?.length && (
+          {gallery.length > 0 && (
             <section aria-labelledby="gallery-h">
               <h2 id="gallery-h">Gallery</h2>
               <ul class="gallery">
-                {c.gallery.map((g, i) => (
+                {gallery.map((g, i) => (
                   <li>
                     <figure>
                       <button type="button" class="shot" data-i={i} aria-haspopup="dialog">

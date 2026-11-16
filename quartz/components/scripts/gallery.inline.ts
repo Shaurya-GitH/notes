@@ -5,11 +5,15 @@
 
 document.addEventListener("nav", () => {
   const videos = [...document.querySelectorAll<HTMLVideoElement>(".pf-case video")]
+  videos.forEach((v) => v.load())
   const still = (e: Event) => {
     if ((e as CustomEvent<{ reduce: boolean }>).detail.reduce) videos.forEach((v) => v.pause())
   }
   document.addEventListener("motionchange", still)
-  window.addCleanup(() => document.removeEventListener("motionchange", still))
+  window.addCleanup(() => {
+    document.removeEventListener("motionchange", still)
+    videos.forEach((v) => v.pause())
+  })
 
   const dialog = document.querySelector<HTMLDialogElement>(".pf-case dialog.lightbox")
   const shots = [...document.querySelectorAll<HTMLButtonElement>(".pf-case .gallery .shot")]

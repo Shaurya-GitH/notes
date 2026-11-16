@@ -58,7 +58,9 @@ export default (() => {
           <ul class="grid g3 projects">
             {(d.projects ?? []).map((p) => {
               const study = page(p.caseStudy)
-              const cover = p.cover ?? (study?.frontmatter?.cover as Picture | undefined)
+              const cover = [p.cover, study?.frontmatter?.cover as Picture | undefined].find(
+                (cover) => typeof cover?.src === "string" && cover.src.trim().length > 0,
+              )
               return (
                 <li data-kind={filterId(p.kind)}>
                   <article class="card proj">
