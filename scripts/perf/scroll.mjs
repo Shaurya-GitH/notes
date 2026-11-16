@@ -33,6 +33,9 @@ const chrome = spawn(CHROME, [
   `--remote-debugging-port=${PORT}`,
   `--user-data-dir=${dir}`,
   "--window-size=1440,1000",
+  // headless by default so it never opens a window on the owner's screen; `--headed` to watch
+  // (or to measure a high-refresh display, which headless Chrome does not emulate)
+  ...(process.argv.includes("--headed") ? [] : ["--headless=new"]),
   "--no-first-run",
   "--no-default-browser-check",
   "--disable-extensions",
