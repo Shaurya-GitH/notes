@@ -23,6 +23,10 @@ shipped:
       text: A voice and text shopping assistant for a US e-commerce store, answering from live product, variant, warranty and shipping data. With two teammates I rebuilt it to open page sections and switch pages by voice, answer with rich cards and react to ad and browsing context. I added an LLM judge that grades each answer.
       metric: Live on the store · rebuild in UAT · judge on staging
       basis: "rebuild: team of 3, not yet in production · judge run end to end on staging, Oct 2026"
+      caseStudy: shipped/shopping-assistant
+      cover:
+        src: shopping-assistant/rail-welcome.webp
+        alt: The assistant open in a side rail beside a product page, offering three starter questions
     - kind: At work
       art: almond-alt
       artefact: Pipeline diagram
@@ -30,6 +34,7 @@ shipped:
       text: "One of four engineers. I built the AI companion's vendor failover with circuit breakers, the voice-onboarding pipeline, and pre-join messages: write to a contact who isn't on the app yet, delivered when they sign up."
       metric: Failover on the first error · 58 clips word-aligned · 0 lost writes across 3 replicas
       basis: live failure and replica tests, Aug – Sep 2026
+      caseStudy: shipped/yeapp
     - kind: At work
       art: sky
       artefact: Latency chart
@@ -37,6 +42,7 @@ shipped:
       text: Found why a voice agent was slow for US users, moved the service next to them, and added a shared tool cache.
       metric: Reply start −41% to −59% by turn type · cache hits ~10 ms vs 69–130 ms
       basis: server medians, 1,081 vs 228 turns, 16 Sep – 14 Oct 2026
+      caseStudy: shipped/echo-latency
     - kind: At work
       art: eye
       artefact: Eval table
@@ -44,6 +50,7 @@ shipped:
       text: Fine-tuned GLiNER 2.5 (194M parameters) to predict a voice agent's next tool call, served on a GPU.
       metric: Exact tool picks 0/50 → 18/50 · 3 LLM tool calls instead of 9 in a replay
       basis: fixed 50-case benchmark · prototype
+      caseStudy: shipped/tool-call-model
     - kind: Open source
       art: sky-alt
       artefact: Diff and review thread
