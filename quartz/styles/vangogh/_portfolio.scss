@@ -596,24 +596,31 @@ body:has(.pf-nav) {
     .tag.lede {
       color: var(--cream);
     }
+    // phones: the painting is its own block, cropped round the eye, and the copy sits under it. Laid
+    // over the 9:16 plate, the copy covered the iris and left only the brow in view.
     @media (max-width: $phone) {
-      height: 800px;
+      --art-h: min(118vw, 560px);
+      height: auto;
+      padding-bottom: 36px;
+      .hero-art {
+        position: relative;
+        height: var(--art-h);
+      }
       .hero-art img {
-        height: auto;
+        object-position: 50% 45%;
       }
       .scrim {
-        background: linear-gradient(
-          0deg,
-          rgba(4, 24, 51, 1) 0%,
-          rgba(4, 24, 51, 0.95) 40%,
-          rgba(4, 24, 51, 0) 54%
-        );
+        bottom: auto;
+        height: var(--art-h);
+        background: linear-gradient(0deg, rgba(4, 24, 51, 1) 0%, rgba(4, 24, 51, 0) 34%);
       }
       .copy {
-        left: var(--gutter);
-        right: var(--gutter);
-        bottom: 36px;
+        position: relative;
+        left: auto;
+        bottom: auto;
         width: auto;
+        margin-top: -64px;
+        padding: 0 var(--gutter);
         gap: 16px;
       }
       // the two buttons stack, as they wrap at 390 px: left to wrap, they fit side by side in the
