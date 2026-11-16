@@ -107,6 +107,7 @@ export const CaseStudyRest = (() => {
                     controls
                     preload="none"
                     playsinline
+                    aria-label={v.title}
                     poster={v.poster && shippedMedia(fileData, v.poster)}
                     width={1920}
                     height={1080}
