@@ -146,3 +146,40 @@ Notes for the owner:
   browser's own toolbar (as every native modal does); the page behind is never reachable.
 - A demo `<video>` has no accessible name of its own (its title is the figure's caption beside
   it). Lighthouse does not flag it; `aria-label={v.title}` would add one if wanted.
+
+## Published project pages and Shipped (2026-11-16, third run)
+
+HEAD `8565f22` (six published case studies: alfred-os, shopping-assistant, echo-latency,
+tool-call-model, yeapp, apex-memory). Built into a private folder and served with `npx quartz build
+--serve --port 8105`; Lighthouse ran against a gzip static server on the same build. Headless only:
+Playwright scripts on installed Chrome (`channel: "chrome"`, for H.264) and the Lighthouse CLI with
+`--headless=new`. HEAD passes `npx tsc --noEmit` and `npm test` (71/71). Every case passed on the
+first run, so no code changed. Scripts and screenshots are in the session scratchpad
+(`e2e-scripts/`, `e2e-cases/`).
+
+| Case               | Checks | Result | Evidence                                                                                                                                                                                                                                                                                                                                                                                                  |
+| ------------------ | ------ | ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1 Render           | 21     | Pass   | Shipped and the six pages at 1440, 834, 390: no console errors (only GoatCounter's localhost note), no 4xx or failed request; every poster, mp4 and VTT 200; no overflow; one h1, no skipped heading level; every `img` has alt and loads; no "[", "TODO", "placeholder". CLS with lazy images scrolled in: 0–0.013 (worst tool-call-model at 834).                                                    |
+| 2 Media            | 70     | Pass   | Both videos: no autoplay, paused at 0 s after load, `aria-label` and poster; a click plays them (currentTime 1.1–2.1 s), pause works. YEAPP captions: mode showing, 11 cues, active cue at 5 s. alfred-os and yeapp: Demo › gallery › (yeapp cover) › TL;DR. galleryTitle on all six. alfred-os's single picture spans the column (760/760, 350/350). Lightbox: Enter opens, ArrowRight steps, Escape closes, focus back on the tile, at 1440 and 390. |
+| 2 SPA              | 5      | Pass   | yeapp (playing) › crumb › alfred-os card (playing, lightbox open) › Back › Back, twice: nothing plays at any step, the detached YEAPP video is paused, one dialog and one video on return, no open dialog, ArrowRight steps once.                                                                                                                                                                         |
+| 3 Shipped          | 54     | Pass   | 14 cards in the requested order at all three widths; the six case-study cards say "Case study →" and link to their page (200); the other eight have no case-study link; every cover loads with alt; at-work 8, All 14 (parameter removed), `?filter=open-source` 2, `?filter=side-projects` 4; Alfred-OS keeps "Watch the demo on LinkedIn".                                                                     |
+| 4 Consistency      | 26     | Pass   | Card and page agree: −41% to −59%, ~10 ms vs 69–130 ms, 1,081 vs 228 turns; 28 ms, 0/50 → 18/50, 3 tool calls instead of 9; 49 vs 141 tool calls, 14/14 vs 13/14; 58 clips, 0 lost writes across 3 replicas; Alfred-OS page 3.2 s / 5.0 s / 0.8 s. No "−42%", "1.75 s" or "45%" anywhere in the build.                                                                                                       |
+| 5 Confidentiality  | 3      | Pass   | `grep -ri "porter\|grayporter"` over the build: no hits, no such file names. No email address, `mailto:` or `tel:` anywhere; the only digit runs shaped like phone numbers are SVG path data.                                                                                                                                                                                                            |
+| 6 Lighthouse       | 3      | Pass   | Mobile, gzip server; table below.                                                                                                                                                                                                                                                                                                                                                                        |
+| 7 Regression       | 13     | Pass   | Home, Journey, How I work, `System-Design/Rate-limiting` at 3 widths: no errors, 4xx or overflow, one h1 (home CLS 0.014–0.079). `node scripts/perf/scroll.mjs`: Chrome ran `--headless=new`, no window; 0–1 frames over 20 ms per page (home 1 of 405), exit 0.                                                                                                                                       |
+
+| Page               | Perf  | A11y | Best practices | LCP (lab) | CLS | TBT  | LCP element                      |
+| ------------------ | ----- | ---- | -------------- | --------- | --- | ---- | -------------------------------- |
+| Shipped            | 74    | 100  | 100            | 12.8 s    | 0   | 0 ms | harbour band (CSS background)    |
+| YEAPP              | 92    | 100  | 100            | 3.3 s     | 0   | 0 ms | the lead paragraph               |
+| Shopping assistant | 97    | 100  | 100            | 2.5 s     | 0   | 0 ms | the cover image                  |
+
+YEAPP scored 70 (LCP 5.4 s) on one cold run and 92 on two later ones: lab noise, not a change.
+
+Notes for the owner (not defects against the cases, so not changed):
+
+- The note page `System-Design/Rate-limiting` jumps from h2 to h4 ("Token bucket algorithm") and
+  its text has `counts[]`; both are the note's own content.
+- Gallery tiles keep a 3:2 frame (`width=1200 height=800`, `object-fit: contain`), so 16:9 pictures
+  such as the Alfred-OS architecture show thin bands above and below (`alfred-os-1440-gallery-inview.png`).
+- The shopping-assistant card says "rebuild in UAT"; its page says "the QA site". Same thing, two names.
