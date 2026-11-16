@@ -923,14 +923,32 @@ body:has(.pf-nav) {
       border: 0;
       color-scheme: light;
       opacity: 0;
+      pointer-events: none;
       transition: opacity 0.3s ease-out;
     }
-    .embedded {
+    .embedded,
+    .loaded {
       iframe {
         opacity: 1;
+        pointer-events: auto;
       }
+    }
+    .embedded {
       .fallback {
         visibility: hidden;
+      }
+    }
+    // LinkedIn can load an error document: leave the original link below the frame.
+    .loaded {
+      iframe {
+        height: calc(100% - 80px);
+      }
+      .fallback {
+        justify-content: flex-end;
+      }
+      .fallback .k,
+      .fallback .about {
+        display: none;
       }
     }
     // the controls work only with the script, so they hold their space until it runs

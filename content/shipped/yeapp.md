@@ -55,7 +55,7 @@ YEAPP was KRAFTON India's voice-first messenger: you talked instead of typing, a
 
 ## A voice tour that changed without an app release
 
-Ziggy taught a new user the app in a chat, by voice, with captions that lit up word by word. I moved the tour's script and voice clips from the app to the backend. Queued jobs synthesize each of the 58 clips, transcode it, align every word with Whisper and publish the audio to a CDN under a content hash. An admin can edit a line or upload a recording by a person instead, which runs the same pipeline without the speech synthesis. The tour shipped to production behind a rollout flag, with a kill switch.
+Ziggy taught a new user the app in a chat, by voice, with captions that lit up word by word. I moved the tour's script and voice clips from the app to the backend. Queued jobs synthesized each of the 58 clips, transcoded it, aligned every word with Whisper and published the audio to a CDN under a content hash. An admin could edit a line or upload a recording by a person instead, which ran the same pipeline without the speech synthesis. The tour shipped to production behind a rollout flag, with a kill switch.
 
 ## Messages that wait for a friend to join
 
