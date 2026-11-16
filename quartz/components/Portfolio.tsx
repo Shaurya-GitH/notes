@@ -38,6 +38,11 @@ const WEBP = new Set([
 export const asset = (fd: QuartzPluginData, name: string, ext = "jpg") =>
   `${root(fd)}/static/${WEBP.has(name) || name.startsWith("logo-") ? "portfolio" : "vg"}/${name}.${ext}`
 
+// a project's photo, video or poster: a path under quartz/static/shipped/ (e.g.
+// "keycloak-pr/cover.webp"), or a URL. See docs/adding-project-media.md.
+export const shippedMedia = (fd: QuartzPluginData, src: string) =>
+  /^https?:/.test(src) ? src : `${root(fd)}/static/shipped/${src}`
+
 // a painting as a CSS background (the paintings frame content, so they carry no alt text of their own)
 export const paint = (fd: QuartzPluginData, name: string, pos = "50% 50%") => {
   const jpg = `url("${asset(fd, name)}")`

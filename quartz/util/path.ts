@@ -121,6 +121,10 @@ export function normalizeRelativeURLs(el: Element | Document, destination: strin
   el.querySelectorAll('[src=""], [src^="./"], [src^="../"]').forEach((item) =>
     _rebaseHtmlElement(item, "src", destination),
   )
+  // a project video's poster frame (CaseStudy.tsx)
+  el.querySelectorAll('[poster^="./"], [poster^="../"]').forEach((item) =>
+    _rebaseHtmlElement(item, "poster", destination),
+  )
   // inline styles' url()s too: the browser parses them on insertion, before the address changes
   el.querySelectorAll('[style*="url("]').forEach((item) =>
     item.setAttribute("style", rebaseCssUrls(item.getAttribute("style")!, destination)),

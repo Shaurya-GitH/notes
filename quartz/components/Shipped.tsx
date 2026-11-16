@@ -1,5 +1,6 @@
 import { QuartzComponent, QuartzComponentConstructor, QuartzComponentProps } from "./types"
-import { ContactBand, Ext, Sun, href, paint } from "./Portfolio"
+import { ContactBand, Ext, Sun, href, paint, shippedMedia } from "./Portfolio"
+import type { Picture } from "./CaseStudy"
 // @ts-ignore
 import shippedScript from "./scripts/shipped.inline"
 // @ts-ignore
@@ -7,7 +8,9 @@ import stageScript from "./scripts/stage.inline"
 
 // The Shipped page (design: build_final10.py, shipped()): the harbour band, filter chips and one card
 // per project, each a painted frame around the artefact it will show. Copy is content/shipped.md's
-// front matter. Styles: styles/vangogh/_portfolio.scss; filters: scripts/shipped.inline.ts.
+// front matter. A card shows a real photo inside its painted frame when it has a `cover`, or when
+// its project page (`caseStudy`) is built and has one; without either it keeps the painting.
+// Styles: styles/vangogh/_portfolio.scss; filters: scripts/shipped.inline.ts.
 
 type Project = {
   kind: string
@@ -18,6 +21,7 @@ type Project = {
   basis: string
   link?: { text: string; href?: string }
   caseStudy?: string
+  cover?: Picture
 }
 type ShippedData = { headline?: string; text?: string; filters?: string[]; projects?: Project[] }
 
@@ -31,7 +35,8 @@ export default (() => {
   const Shipped: QuartzComponent = ({ fileData, allFiles }: QuartzComponentProps) => {
     const fd = fileData
     const d = (fd.frontmatter?.shipped ?? {}) as ShippedData
-    const exists = (slug: string) => allFiles.some((f) => f.slug === slug)
+    // drafts never build, so a draft project page is not found here and its card stays as it was
+    const page = (slug?: string) => (slug ? allFiles.find((f) => f.slug === slug) : undefined)
     return (
       <div class="pf pf-shipped">
         <section class="band" style={paint(fd, "harbour")} aria-labelledby="shipped-h">
@@ -51,31 +56,46 @@ export default (() => {
             ))}
           </div>
           <ul class="grid g3 projects">
-            {(d.projects ?? []).map((p) => (
-              <li data-kind={filterId(p.kind)}>
-                <article class="card proj">
-                  <div
-                    class="art"
-                    style={paint(fd, p.art)}
-                    data-twin={TWINS.has(p.art) ? p.art : undefined}
-                  ></div>
-                  <div class="body">
-                    <p class="k">{p.kind}</p>
-                    <h2>{p.title}</h2>
-                    <p>{p.text}</p>
-                    <p class="metric">{p.metric}</p>
-                    <p class="basis">{p.basis}</p>
-                    {p.caseStudy && exists(p.caseStudy) ? (
-                      <a class="link" href={href(fd, p.caseStudy)}>
-                        Case study <span aria-hidden="true">→</span>
-                      </a>
-                    ) : (
-                      <Ext to={p.link?.href}>{p.link?.text}</Ext>
-                    )}
-                  </div>
-                </article>
-              </li>
-            ))}
+            {(d.projects ?? []).map((p) => {
+              const study = page(p.caseStudy)
+              const cover = p.cover ?? (study?.frontmatter?.cover as Picture | undefined)
+              return (
+                <li data-kind={filterId(p.kind)}>
+                  <article class="card proj">
+                    <div
+                      class={cover ? "art framed" : "art"}
+                      style={paint(fd, p.art)}
+                      data-twin={TWINS.has(p.art) ? p.art : undefined}
+                    >
+                      {cover && (
+                        <img
+                          src={shippedMedia(fd, cover.src)}
+                          alt={cover.alt}
+                          width={800}
+                          height={500}
+                          loading="lazy"
+                          decoding="async"
+                        />
+                      )}
+                    </div>
+                    <div class="body">
+                      <p class="k">{p.kind}</p>
+                      <h2>{p.title}</h2>
+                      <p>{p.text}</p>
+                      <p class="metric">{p.metric}</p>
+                      <p class="basis">{p.basis}</p>
+                      {study ? (
+                        <a class="link" href={href(fd, study.slug!)}>
+                          Case study <span aria-hidden="true">→</span>
+                        </a>
+                      ) : (
+                        <Ext to={p.link?.href}>{p.link?.text}</Ext>
+                      )}
+                    </div>
+                  </article>
+                </li>
+              )
+            })}
           </ul>
         </div>
         <ContactBand fd={fd} allFiles={allFiles} />

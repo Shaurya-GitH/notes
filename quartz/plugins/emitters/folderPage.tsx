@@ -131,12 +131,15 @@ export const FolderPage: QuartzEmitterPlugin<Partial<FolderPageOptions>> = (user
     async *emit(ctx, content, resources) {
       const allFiles = content.map((c) => c[1].data)
       const cfg = ctx.cfg.configuration
+      // a page with the folder's name (shipped.md beside shipped/) owns that URL: no listing page
+      const pages = new Set<string>(allFiles.map((f) => f.slug!))
 
       const folders: Set<SimpleSlug> = new Set(
         allFiles.flatMap((data) => {
           return data.slug
             ? _getFolders(data.slug).filter(
-                (folderName) => folderName !== "." && folderName !== "tags",
+                (folderName) =>
+                  folderName !== "." && folderName !== "tags" && !pages.has(folderName),
               )
             : []
         }),
@@ -148,6 +151,7 @@ export const FolderPage: QuartzEmitterPlugin<Partial<FolderPageOptions>> = (user
     async *partialEmit(ctx, content, resources, changeEvents) {
       const allFiles = content.map((c) => c[1].data)
       const cfg = ctx.cfg.configuration
+      const pages = new Set<string>(allFiles.map((f) => f.slug!))
 
       // Find all folders that need to be updated based on changed files
       const affectedFolders: Set<SimpleSlug> = new Set()
@@ -155,7 +159,7 @@ export const FolderPage: QuartzEmitterPlugin<Partial<FolderPageOptions>> = (user
         if (!changeEvent.file) continue
         const slug = changeEvent.file.data.slug!
         const folders = _getFolders(slug).filter(
-          (folderName) => folderName !== "." && folderName !== "tags",
+          (folderName) => folderName !== "." && folderName !== "tags" && !pages.has(folderName),
         )
         folders.forEach((folder) => affectedFolders.add(folder))
       }

@@ -1,15 +1,25 @@
 import { QuartzComponent, QuartzComponentConstructor, QuartzComponentProps } from "./types"
-import { ContactBand, Ext, Sun, href } from "./Portfolio"
+import { ContactBand, Ext, Sun, href, shippedMedia } from "./Portfolio"
 import { pathToRoot } from "../util/path"
+// @ts-ignore
+import galleryScript from "./scripts/gallery.inline"
 
 // The case-study layout (design: build_final10.py, detail()), for any page with front matter
 // `layout: case-study`; the template is content/shipped/case-study-template.md. The head (crumb,
 // outcome title, lead, TL;DR) renders before the page's markdown, which is the problem section; the
-// decisions, diagram, results, regrets, links and closing band render after it.
-// Styles: styles/vangogh/_portfolio.scss.
+// demo videos, gallery, decisions, diagram, results, regrets, links and closing band render after
+// it. Every field is optional: only what the front matter has renders. Media paths are under
+// quartz/static/shipped/ (docs/adding-project-media.md). Styles: styles/vangogh/_portfolio.scss;
+// lightbox: scripts/gallery.inline.ts.
+
+export type Picture = { src: string; alt: string; caption?: string }
+type Video = { src: string; poster?: string; captions?: string; title: string; duration?: string }
 
 type CaseStudyData = {
   title?: string
+  cover?: Picture
+  gallery?: Picture[]
+  video?: Video[]
   kind?: string
   period?: string
   outcome?: string
@@ -34,6 +44,7 @@ const TLDR: [keyof NonNullable<CaseStudyData["tldr"]>, string][] = [
 export const CaseStudyHead = (() => {
   const CaseStudyHead: QuartzComponent = ({ fileData }: QuartzComponentProps) => {
     const c = (fileData.frontmatter ?? {}) as CaseStudyData
+    const tldr = TLDR.filter(([key]) => c.tldr?.[key])
     return (
       <div class="pf pf-case sunlit">
         <Sun />
@@ -41,15 +52,23 @@ export const CaseStudyHead = (() => {
           <a href={href(fileData, "shipped")}>Shipped</a> / {c.title}
         </p>
         <div class="head">
-          <p class="k">
-            Case study · {c.kind} · {c.period}
-          </p>
-          <h1>{c.outcome}</h1>
-          <p class="lead">{c.lead}</p>
+          <p class="k">{["Case study", c.kind, c.period].filter(Boolean).join(" · ")}</p>
+          <h1>{c.outcome ?? c.title}</h1>
+          {c.lead && <p class="lead">{c.lead}</p>}
         </div>
-        {c.tldr && (
+        {c.cover && (
+          <figure class="hero-media">
+            <img
+              src={shippedMedia(fileData, c.cover.src)}
+              alt={c.cover.alt}
+              width={1600}
+              height={900}
+            />
+          </figure>
+        )}
+        {tldr.length > 0 && (
           <dl class="tldr">
-            {TLDR.map(([key, label]) => (
+            {tldr.map(([key, label]) => (
               <div>
                 <dt class="k">{label}</dt>
                 <dd>{c.tldr?.[key]}</dd>
@@ -72,6 +91,79 @@ export const CaseStudyRest = (() => {
     return (
       <div class="pf pf-case">
         <div class="article">
+          {!!c.video?.length && (
+            <section aria-labelledby="demo-h">
+              <h2 id="demo-h">Demo</h2>
+              {c.video.map((v) => (
+                // never autoplays or loops; turning motion off pauses it (gallery.inline.ts)
+                <figure class="video">
+                  <video
+                    controls
+                    preload="none"
+                    playsinline
+                    poster={v.poster && shippedMedia(fileData, v.poster)}
+                    width={1920}
+                    height={1080}
+                  >
+                    <source src={shippedMedia(fileData, v.src)} type="video/mp4" />
+                    {v.captions && (
+                      <track
+                        kind="captions"
+                        src={shippedMedia(fileData, v.captions)}
+                        srclang="en"
+                        label="English"
+                        default
+                      />
+                    )}
+                  </video>
+                  <figcaption>
+                    {v.title}
+                    {v.duration && <span class="mono"> · {v.duration}</span>}
+                  </figcaption>
+                </figure>
+              ))}
+            </section>
+          )}
+          {!!c.gallery?.length && (
+            <section aria-labelledby="gallery-h">
+              <h2 id="gallery-h">Gallery</h2>
+              <ul class="gallery">
+                {c.gallery.map((g, i) => (
+                  <li>
+                    <figure>
+                      <button type="button" class="shot" data-i={i} aria-haspopup="dialog">
+                        <img
+                          src={shippedMedia(fileData, g.src)}
+                          alt={g.alt}
+                          width={1200}
+                          height={800}
+                          loading="lazy"
+                          decoding="async"
+                        />
+                      </button>
+                      {g.caption && <figcaption>{g.caption}</figcaption>}
+                    </figure>
+                  </li>
+                ))}
+              </ul>
+              <dialog class="lightbox" aria-label="Gallery">
+                <button type="button" class="close" aria-label="Close">
+                  ✕
+                </button>
+                <figure>
+                  <img alt="" />
+                  <figcaption></figcaption>
+                </figure>
+                <p class="count mono" aria-live="polite"></p>
+                <button type="button" class="prev" aria-label="Previous image">
+                  ←
+                </button>
+                <button type="button" class="next" aria-label="Next image">
+                  →
+                </button>
+              </dialog>
+            </section>
+          )}
           {c.decisions && c.decisions.length > 0 && (
             <section aria-labelledby="decisions-h">
               <h2 id="decisions-h">Decisions</h2>
@@ -131,5 +223,6 @@ export const CaseStudyRest = (() => {
       </div>
     )
   }
+  CaseStudyRest.afterDOMLoaded = galleryScript
   return CaseStudyRest
 }) satisfies QuartzComponentConstructor

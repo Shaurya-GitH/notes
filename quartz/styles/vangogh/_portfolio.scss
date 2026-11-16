@@ -1059,7 +1059,8 @@ body:has(.pf-nav) {
   }
   .tldr {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
     margin: 0 var(--gutter);
     border: 1px solid var(--line);
     border-radius: 16px;
@@ -1079,6 +1080,7 @@ body:has(.pf-nav) {
       color: var(--ink);
     }
     @media (max-width: $phone) {
+      grid-auto-flow: row;
       grid-template-columns: 1fr 1fr;
       div {
         border-right: none;
@@ -1216,6 +1218,187 @@ body:has(.pf-nav) {
       .side,
       .stats {
         grid-template-columns: 1fr;
+      }
+    }
+  }
+
+  /* ---------- project media (CaseStudy.tsx, Shipped.tsx; docs/adding-project-media.md) ---------- */
+  // a real photo inside a card's painted frame
+  .proj .art.framed {
+    padding: 12px;
+    img {
+      position: relative;
+      z-index: 1;
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top;
+      border-radius: 8px;
+      background: var(--bg2);
+    }
+  }
+  // every media box has a fixed shape, so nothing shifts as it loads; pictures are letterboxed, never
+  // cropped, except a card's cover, which keeps its top
+  .pf-case .hero-media {
+    margin: 0 var(--gutter) 40px;
+    max-width: 1000px;
+    aspect-ratio: 16 / 9;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: var(--bg2);
+    overflow: hidden;
+    img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    @media (max-width: $phone) {
+      margin-bottom: 28px;
+    }
+  }
+  .pf-case {
+    figcaption {
+      font-size: 16px;
+      color: var(--muted);
+    }
+    .video {
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      video {
+        display: block;
+        width: 100%;
+        height: auto;
+        aspect-ratio: 16 / 9;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: #000;
+      }
+    }
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px 20px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      li {
+        margin: 0;
+        max-width: none;
+      }
+      figure {
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      @media (max-width: $phone) {
+        grid-template-columns: 1fr;
+      }
+    }
+    .shot {
+      display: block;
+      width: 100%;
+      padding: 0;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--bg2);
+      cursor: zoom-in;
+      img {
+        display: block;
+        width: 100%;
+        height: auto;
+        aspect-ratio: 3 / 2;
+        object-fit: contain;
+      }
+      &:hover {
+        border-color: var(--gold);
+      }
+    }
+  }
+  .lightbox {
+    box-sizing: border-box;
+    width: min(1200px, 100vw - 32px);
+    max-width: none;
+    max-height: calc(100vh - 32px);
+    padding: 64px 72px 24px;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: var(--bg);
+    color: var(--ink);
+    &::backdrop {
+      background: rgba(2, 12, 27, 0.88);
+    }
+    figure {
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+    img {
+      display: block;
+      max-width: 100%;
+      max-height: calc(100vh - 220px);
+      object-fit: contain;
+    }
+    .count {
+      max-width: none;
+      margin: 8px 0 0;
+      text-align: center;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    button {
+      position: absolute;
+      width: 44px;
+      height: 44px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--bg2);
+      color: var(--cream);
+      font-size: 20px;
+      line-height: 1;
+      cursor: pointer;
+      &:hover {
+        border-color: var(--gold);
+        color: var(--gold);
+      }
+    }
+    .close {
+      top: 12px;
+      right: 12px;
+    }
+    .prev,
+    .next {
+      top: calc(50% - 22px);
+    }
+    .prev {
+      left: 14px;
+    }
+    .next {
+      right: 14px;
+    }
+    &.single .prev,
+    &.single .next {
+      display: none;
+    }
+    @media (max-width: $phone) {
+      padding: 60px 12px 72px;
+      .prev,
+      .next {
+        top: auto;
+        bottom: 12px;
+      }
+      .prev {
+        left: calc(50% - 52px);
+      }
+      .next {
+        right: calc(50% - 52px);
       }
     }
   }
