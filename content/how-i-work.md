@@ -67,7 +67,7 @@ work:
           href: shipped/business-mcp
       - k: S3 Code
         title: My own build of T3 Code
-        text: The desktop app every session runs in, forked and extended. A task board sits above the sessions, tasks get folders and colours, and a session reopens its task when you talk to it again. A release pipeline builds and signs the macOS app with an installer.
+        text: The desktop app every session runs in, forked and extended. I built a task list into it, one level above sessions. Agents link their session to a task, keep its status true and suggest new tasks, so work survives a closed terminal. Tasks get folders and colours, a session reopens its task when you talk to it again, and a release pipeline builds and signs the macOS app with an installer.
         metric: 28 commits on my fork
         basis: tasks, sidebar, release pipeline
         link:
@@ -81,12 +81,6 @@ work:
         link:
           text: Case study
           href: shipped/apex-memory
-      - k: Tasks
-        title: t3-tasks
-        text: A to-do list one level above sessions. Agents link their session to a task, keep its status true and suggest new ones, so work survives a closed terminal.
-        link:
-          text: Read the code
-          href: https://github.com/Shaurya-GitH/t3-tasks
       - k: Verification
         title: A verify skill for every repo
         text: Each repo has a skill that starts it from any worktree on its own ports, with its own databases and seeded sign-ins, drives it like a user would and saves before-and-after evidence. An agent proves a fix on the same path the bug took.
