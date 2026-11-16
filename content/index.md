@@ -113,11 +113,11 @@ home:
       - network: linkedin
         url: https://www.linkedin.com/feed/update/urn:li:activity:7511099366246535168/
         date: Sep 2026
-        about: Alfred OS, built in half a day at the Claude Community Opus Build Day
+        about: Alfred OS, built at the Claude Community Opus Build Day
       - network: linkedin
         url: https://www.linkedin.com/feed/update/urn:li:activity:7510358238475956224/
         date: Sep 2026
-        about: My final year of college, spent on Open Banking at SBS
+        about: A year on Open Banking at SBS
   contact:
     heading: Building something with AI agents?
     text: I work full time at The Product Highway, and I'm always happy to talk about agents, voice AI and the infrastructure that keeps them fast and secure.
