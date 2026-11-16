@@ -7,11 +7,11 @@ front matter in one Markdown file plus media files in one folder; no code change
 
 ## Where things go
 
-| What | Where |
-|---|---|
-| The project page | `content/shipped/<slug>.md` (copy `content/shipped/case-study-template.md`) |
-| Its photos, videos, posters, captions | `quartz/static/shipped/<slug>/` |
-| The card on the Shipped page | `content/shipped.md`, under `shipped.projects` |
+| What                                  | Where                                                                       |
+| ------------------------------------- | --------------------------------------------------------------------------- |
+| The project page                      | `content/shipped/<slug>.md` (copy `content/shipped/case-study-template.md`) |
+| Its photos, videos, posters, captions | `quartz/static/shipped/<slug>/`                                             |
+| The card on the Shipped page          | `content/shipped.md`, under `shipped.projects`                              |
 
 `<slug>` is a short lowercase name with hyphens, e.g. `shopping-assistant`. It is in the page's URL
 (`/shipped/shopping-assistant`) and in every media path, so use generic names: never a client's
