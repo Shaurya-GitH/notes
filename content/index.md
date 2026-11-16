@@ -78,12 +78,12 @@ home:
         to: journey
         art: field
       - title: Shipped
-        text: Two fixes merged into open-source projects, agents running on real traffic, and things I built to learn.
+        text: AI agents running on real traffic, Open Banking APIs live at European banks, and two fixes merged into open source.
         go: See what I've shipped
         to: shipped
         art: harbour
       - title: How I work
-        text: How I work with coding agents, including the memory store and task list I built for them.
+        text: A team of AI agents that reviews, pushes back on and tests its own work, and the tools I built for it.
         go: See how I work
         to: how-i-work
         art: studio

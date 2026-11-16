@@ -25,6 +25,30 @@ shipped:
       basis: counted from the code and an end-to-end run across all four roles, Nov 2026
       caseStudy: shipped/business-mcp
     - kind: At work
+      art: sky
+      artefact: Latency chart
+      title: "Echo: voice replies 41–59% faster"
+      text: Found why a voice agent was slow for US users, moved the service next to them, and added a shared tool cache.
+      metric: Reply start −41% to −59% by turn type · cache hits ~10 ms vs 69–130 ms
+      basis: server medians, 1,081 vs 228 turns, 16 Sep – 14 Oct 2026
+      caseStudy: shipped/echo-latency
+    - kind: At work
+      art: almond
+      artefact: Architecture diagram
+      title: "Wero: the bank side of Europe's wallet, live at client banks"
+      text: The APIs a bank's app calls for Wero's peer-to-peer payments, wallet and activity, with every call to EPI's central service signed and every reply checked. Over my year at SBS I took it from a private cloud to a European bank, mTLS included.
+      metric: Live at several client banks · hundreds of thousands of customers
+      basis: "Wero at SBS's client banks, 2026 · Spot Award, Sep 2025, for its peer-to-peer payments delivery"
+      caseStudy: shipped/wero
+    - kind: At work
+      art: eye
+      artefact: Eval table
+      title: "Echo: a 28 ms tool-call model"
+      text: Fine-tuned GLiNER 2.5 (194M parameters) to predict a voice agent's next tool call, served on a GPU.
+      metric: Exact tool picks 0/50 → 18/50 · 3 LLM tool calls instead of 9 in a replay
+      basis: fixed 50-case benchmark · one replayed conversation
+      caseStudy: shipped/tool-call-model
+    - kind: At work
       art: field
       artefact: Answer card and page actions
       title: A shopping assistant that answers from the store's own data
@@ -36,13 +60,13 @@ shipped:
         src: shopping-assistant/rail-welcome.webp
         alt: The assistant open in a side rail beside a product page, offering three starter questions
     - kind: At work
-      art: almond
-      artefact: Architecture diagram
-      title: "Wero: the bank side of Europe's wallet, live at client banks"
-      text: The APIs a bank's app calls for Wero's peer-to-peer payments, wallet and activity, with every call to EPI's central service signed and every reply checked. Over my year at SBS I took it from a private cloud to a European bank, mTLS included.
-      metric: Live at several client banks · hundreds of thousands of customers
-      basis: "Wero at SBS's client banks, 2026 · Spot Award, Sep 2025, for its peer-to-peer payments delivery"
-      caseStudy: shipped/wero
+      art: city
+      artefact: Request flow
+      title: PSD2 open-banking APIs, with SCA each bank configures
+      text: "Berlin Group v2 account and payment APIs for European banks at SBS. I built the three shared services every endpoint reuses (certificate and header checks, token claims, consent) and the whole strong customer authentication epic: single or multi-step, per bank."
+      metric: 4 endpoints on 3 shared services · 6 certificate + 7 consent checks per call
+      basis: Berlin Group v2 at SBS, Jan – Jun 2026
+      caseStudy: shipped/psd2-berlin-group
     - kind: At work
       art: market
       artefact: Funnel and LLM judge
@@ -52,14 +76,6 @@ shipped:
       basis: tested end to end with the real model, Oct 2026
       caseStudy: shipped/insights-dashboard
     - kind: At work
-      art: city
-      artefact: Request flow
-      title: PSD2 open-banking APIs, with SCA each bank configures
-      text: "Berlin Group v2 account and payment APIs for European banks at SBS. I built the three shared services every endpoint reuses (certificate and header checks, token claims, consent) and the whole strong customer authentication epic: single or multi-step, per bank."
-      metric: 4 endpoints on 3 shared services · 6 certificate + 7 consent checks per call
-      basis: Berlin Group v2 at SBS, Jan – Jun 2026
-      caseStudy: shipped/psd2-berlin-group
-    - kind: At work
       art: sky-alt
       artefact: Identity layer diagram
       title: FDX for a US bank, and the Keycloak layer under all three
@@ -67,14 +83,6 @@ shipped:
       metric: 3 of 3 products on one Keycloak build · a bug reported upstream, fixed in 26.6.0
       basis: "SBS, Aug 2025 – May 2026 · Keycloak issue #44284"
       caseStudy: shipped/fdx-keycloak
-    - kind: At work
-      art: eye-alt
-      artefact: Mock diagram
-      title: An EPI mock that behaves like EPI
-      text: A stand-in for Wero's central service, so a bank's services can be load-tested without the live network. It checks request signatures, keeps state between calls and sends EPI's callbacks, from a repository and CI pipeline I set up.
-      metric: "9 endpoints: 7 calls + 2 callbacks · 0 calls to the live network"
-      basis: peer-to-peer performance run, Mar 2026
-      caseStudy: shipped/epi-mock
     - kind: At work
       art: almond-alt
       artefact: Pipeline diagram
@@ -86,22 +94,49 @@ shipped:
       cover:
         src: yeapp/architecture.webp
         alt: "YEAPP's three pipelines: the voice tour clips, held messages and the companion's vendor failover"
+    - kind: Side projects
+      art: studio
+      artefact: Architecture diagram
+      title: "apex-memory: one checked memory for every coding agent"
+      text: An open-source MCP memory store that Claude Code and Codex share. Every write is version-checked and rolls back if it breaks a link or the index.
+      metric: 49 vs 141 tool calls · 14/14 vs 13/14 correct
+      basis: same 7 tasks, store vs Obsidian, 12 Oct 2026
+      caseStudy: shipped/apex-memory
+      link:
+        text: Read the code
+        href: https://github.com/Shaurya-GitH/apex-memory
     - kind: At work
-      art: sky
-      artefact: Latency chart
-      title: "Echo: voice replies 41–59% faster"
-      text: Found why a voice agent was slow for US users, moved the service next to them, and added a shared tool cache.
-      metric: Reply start −41% to −59% by turn type · cache hits ~10 ms vs 69–130 ms
-      basis: server medians, 1,081 vs 228 turns, 16 Sep – 14 Oct 2026
-      caseStudy: shipped/echo-latency
+      art: eye-alt
+      artefact: Mock diagram
+      title: An EPI mock that behaves like EPI
+      text: A stand-in for Wero's central service, so a bank's services can be load-tested without the live network. It checks request signatures, keeps state between calls and sends EPI's callbacks, from a repository and CI pipeline I set up.
+      metric: "9 endpoints: 7 calls + 2 callbacks · 0 calls to the live network"
+      basis: peer-to-peer performance run, Mar 2026
+      caseStudy: shipped/epi-mock
+    - kind: Side projects
+      art: eye-alt
+      artefact: Terminal capture
+      title: "Alfred-OS: a voice-driven macOS agent, built in a day"
+      text: Built with two teammates at the Claude Community Opus Build Day, Bangalore. I built the hold-to-talk voice input, background tasks with live progress and spoken confirmations.
+      metric: Simple commands done in 3–5 s
+      basis: "on the demo Mac · 2 merged PRs, Sep 2026"
+      caseStudy: shipped/alfred-os
+      cover:
+        src: alfred-os/architecture.webp
+        alt: "Alfred-OS architecture: the app, the orchestrator, the agents, and the Mac and the web"
+      link:
+        text: Read the pull requests
+        href: https://github.com/sainitishmitta04/Alfred-OS/pulls?q=is%3Apr+author%3AShaurya-GitH
+      demo:
+        text: Watch the demo on LinkedIn
+        href: https://www.linkedin.com/feed/update/urn:li:activity:7511099366246535168/
     - kind: At work
-      art: eye
-      artefact: Eval table
-      title: "Echo: a 28 ms tool-call model"
-      text: Fine-tuned GLiNER 2.5 (194M parameters) to predict a voice agent's next tool call, served on a GPU.
-      metric: Exact tool picks 0/50 → 18/50 · 3 LLM tool calls instead of 9 in a replay
-      basis: fixed 50-case benchmark · one replayed conversation
-      caseStudy: shipped/tool-call-model
+      art: city
+      artefact: Heap snapshot
+      title: A storefront memory leak, found and fixed
+      text: Traced slow product pages to a server memory leak that crashed the site four times in a week.
+      metric: Product-page first-byte p95 1.8 s → ~1.3 s
+      basis: real visitors, 1 week before vs 3 days after
     - kind: Open source
       art: sky-alt
       artefact: Diff and review thread
@@ -128,58 +163,6 @@ shipped:
       cover:
         src: loop/pr-64.webp
         alt: "Loop pull request 64, merged: its description of why OpenRouter batch-only models failed and how the preset now hides them"
-    - kind: At work
-      art: city
-      artefact: Heap snapshot
-      title: A storefront memory leak, found and fixed
-      text: Traced slow product pages to a server memory leak that crashed the site four times in a week.
-      metric: Product-page first-byte p95 1.8 s → ~1.3 s
-      basis: real visitors, 1 week before vs 3 days after
-    - kind: At work
-      art: field-alt
-      artefact: Architecture sketch
-      title: An order engine built from sagas
-      text: Exchanges, partial cancellations, inventory sync and fulfilment as MedusaJS workflows with compensating steps, idempotency and retries, at a pre-seed marketplace where I owned the platform end to end.
-      metric: Saga-based order lifecycle · event-driven
-      basis: For Real · Jun – Jul 2026
-    - kind: Side projects
-      art: eye-alt
-      artefact: Terminal capture
-      title: "Alfred-OS: a voice-driven macOS agent, built in a day"
-      text: Built with two teammates at the Claude Community Opus Build Day, Bangalore. I built the hold-to-talk voice input, background tasks with live progress and spoken confirmations.
-      metric: Simple commands done in 3–5 s
-      basis: "on the demo Mac · 2 merged PRs, Sep 2026"
-      caseStudy: shipped/alfred-os
-      cover:
-        src: alfred-os/architecture.webp
-        alt: "Alfred-OS architecture: the app, the orchestrator, the agents, and the Mac and the web"
-      link:
-        text: Read the pull requests
-        href: https://github.com/sainitishmitta04/Alfred-OS/pulls?q=is%3Apr+author%3AShaurya-GitH
-      demo:
-        text: Watch the demo on LinkedIn
-        href: https://www.linkedin.com/feed/update/urn:li:activity:7511099366246535168/
-    - kind: Side projects
-      art: studio
-      artefact: Architecture diagram
-      title: "apex-memory: one checked memory for every coding agent"
-      text: An open-source MCP memory store that Claude Code and Codex share. Every write is version-checked and rolls back if it breaks a link or the index.
-      metric: 49 vs 141 tool calls · 14/14 vs 13/14 correct
-      basis: same 7 tasks, store vs Obsidian, 12 Oct 2026
-      caseStudy: shipped/apex-memory
-      link:
-        text: Read the code
-        href: https://github.com/Shaurya-GitH/apex-memory
-    - kind: Side projects
-      art: city
-      artefact: UI frame
-      title: "WeSplit: settle a group with 70% fewer payments"
-      text: A Splitwise-style expense app in Spring Boot and React. Fixing N+1 queries and adding Redis cut API response times 60% and database reads 90%.
-      metric: 70% fewer settlement transactions
-      basis: debt-settlement algorithm · Keycloak auth
-      link:
-        text: Read the code
-        href: https://github.com/Shaurya-GitH/WeSplit
     - kind: Side projects
       art: studio
       artefact: Model diagram
@@ -190,4 +173,21 @@ shipped:
       link:
         text: Read the code
         href: https://github.com/Shaurya-GitH/DRS-Dynamic-Reconciliation-System
+    - kind: At work
+      art: field-alt
+      artefact: Architecture sketch
+      title: An order engine built from sagas
+      text: Exchanges, partial cancellations, inventory sync and fulfilment as MedusaJS workflows with compensating steps, idempotency and retries, at a pre-seed marketplace where I owned the platform end to end.
+      metric: Saga-based order lifecycle · event-driven
+      basis: For Real · Jun – Jul 2026
+    - kind: Side projects
+      art: city
+      artefact: UI frame
+      title: "WeSplit: settle a group with 70% fewer payments"
+      text: A Splitwise-style expense app in Spring Boot and React. Fixing N+1 queries and adding Redis cut API response times 60% and database reads 90%.
+      metric: 70% fewer settlement transactions
+      basis: debt-settlement algorithm · Keycloak auth
+      link:
+        text: Read the code
+        href: https://github.com/Shaurya-GitH/WeSplit
 ---
