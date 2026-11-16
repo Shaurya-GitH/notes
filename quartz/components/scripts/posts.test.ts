@@ -71,6 +71,7 @@ async function slideshow(sources = [x, li, li], width = 400, readyState = "inter
       ({ ".slides": track, ".prev": prev, ".next": next, ".count": count })[s] ?? null,
   })
   const timers = new Map<number, () => void>()
+  const observers = new Map<El, (entries: { isIntersecting: boolean }[]) => void>()
   let timerId = 0
   let rafs: (() => void)[] = []
   let probes = 0
@@ -90,6 +91,17 @@ async function slideshow(sources = [x, li, li], width = 400, readyState = "inter
     addEventListener: win.addEventListener.bind(win),
     removeEventListener: win.removeEventListener.bind(win),
     clearTimeout: (id: number) => timers.delete(id),
+    IntersectionObserver: class {
+      private target?: El
+      constructor(private callback: (entries: { isIntersecting: boolean }[]) => void) {}
+      observe(target: El) {
+        this.target = target
+        observers.set(target, this.callback)
+      }
+      disconnect() {
+        if (this.target) observers.delete(this.target)
+      }
+    },
     requestAnimationFrame: (fn: () => void) => (rafs.push(fn), rafs.length),
     cancelAnimationFrame: () => (rafs = []),
     getComputedStyle: () => ({ paddingLeft: "0px" }),
@@ -119,6 +131,9 @@ async function slideshow(sources = [x, li, li], width = 400, readyState = "inter
     count,
     win,
     timers,
+    observers,
+    visibility: (frame: Frame, isIntersecting: boolean) =>
+      observers.get(frame)?.([{ isIntersecting }]),
     cleanups,
     // the page's load event: every embed starts then
     pageLoad: () => win.dispatchEvent(new Event("load")),
@@ -186,6 +201,43 @@ test("posts slideshow: every post loads with the page, behind a skeleton; failur
   track.scrolledTo = -1
   next.dispatchEvent(new Event("click"))
   assert.equal(track.scrolledTo, -1)
+})
+
+test("X data waits off-screen, but a visible tweet must render or fall back", async () => {
+  const { slides, pageLoad, xSays, timers, observers, visibility, cleanups } = await slideshow([
+    x,
+    x,
+    x,
+  ])
+  pageLoad()
+  const frames = slides.map((slide) => slide.querySelector("iframe")!)
+  frames.forEach((frame) => xSays(frame, "twttr.private.results"))
+  frames.forEach((frame) => visibility(frame, false))
+  assert.equal(timers.size, 0, "off-screen data must survive the initial deadline")
+  assert.ok(slides.every((slide) => slide.classList.contains("loading")))
+
+  visibility(frames[0], true)
+  assert.equal(timers.size, 1, "entering view starts a render deadline")
+  xSays(frames[0], "twttr.private.results")
+  assert.equal(timers.size, 1, "repeated results cannot cancel the render deadline")
+  ;[...timers.values()].forEach((fn) => fn())
+  assert.equal(slides[0].querySelector("iframe"), null)
+  assert.ok(slides[0].classList.contains("failed"))
+  assert.equal(slides[0].classList.contains("loading"), false)
+  xSays(frames[0], "twttr.private.rendered")
+  assert.equal(slides[0].classList.contains("embedded"), false)
+
+  visibility(frames[1], true)
+  assert.equal(timers.size, 1)
+  xSays(frames[1], "twttr.private.rendered")
+  assert.equal(timers.size, 0, "rendering cancels the deadline")
+  assert.ok(slides[1].classList.contains("embedded"))
+  assert.ok(slides[2].classList.contains("loading"), "off-screen tweet still waits")
+  assert.equal(observers.size, 1)
+  cleanups.forEach((fn) => fn())
+  assert.equal(observers.size, 0, "navigation disconnects pending visibility observers")
+  visibility(frames[2], true)
+  assert.equal(timers.size, 0, "navigation cannot start a new render deadline")
 })
 
 test("arriving on an already loaded page (in-site navigation) starts the posts at once", async () => {

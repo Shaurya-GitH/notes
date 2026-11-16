@@ -1,10 +1,9 @@
 // The home page's posts slideshow: a native scroll-snap row (swipe, trackpad) that the buttons and
 // the arrow keys step through; nothing moves on its own. Every post's official LinkedIn or X embed
 // starts loading once the page itself has loaded, so the posts are ready before anyone scrolls to
-// them. Until a post is drawn its card shows a skeleton of one; it keeps that card's link card for
-// good if the embed has not drawn within 12 s (that card is also the page without JavaScript). Every
-// loaded post keeps its link below the frame, and LinkedIn needs it: its load event cannot tell a
-// post from an error page.
+// them. Until a post is drawn its card shows a skeleton of one; a 12 s load or visible-render timeout
+// restores the link card (also the page without JavaScript). Every loaded post keeps its link below
+// the frame, and LinkedIn needs it: its load event cannot tell a post from an error page.
 
 const TIMEOUT = 12000
 
@@ -43,10 +42,12 @@ document.addEventListener("nav", () => {
     frame.referrerPolicy = "strict-origin-when-cross-origin"
     frame.allow = "fullscreen"
     let done = false
+    let renderObserver: IntersectionObserver | undefined
     const end = (ok: boolean) => {
       if (done) return
       done = true
       clearTimeout(timer)
+      renderObserver?.disconnect()
       if (!frame.isConnected) return
       slide.classList.remove("loading")
       if (ok) {
@@ -57,16 +58,24 @@ document.addEventListener("nav", () => {
         slide.classList.add("failed")
       }
     }
-    const timer = window.setTimeout(() => end(false), TIMEOUT)
+    let timer = window.setTimeout(() => end(false), TIMEOUT)
     // X: "results" means the tweet's data arrived (X draws it only once its frame is in view, so
-    // this stops the failure timer); "rendered" means it is drawn; "resize" gives its height, so
-    // its frame can be sized to it and centred in the panel
+    // wait off-screen, then give it a render deadline); "rendered" means it is drawn; "resize"
+    // gives its height, so its frame can be sized to it and centred in the panel
     const onMessage = (e: MessageEvent) => {
       const msg = e.source === frame.contentWindow && e.data?.["twttr.embed"]
       if (!msg) return
       const h = msg.params?.[0]?.height
       if (msg.method === "twttr.private.resize" && h > 0) slide.style.setProperty("--fit", `${h}px`)
-      if (msg.method === "twttr.private.results") clearTimeout(timer)
+      if (msg.method === "twttr.private.results" && !done && !renderObserver) {
+        clearTimeout(timer)
+        renderObserver = new IntersectionObserver((entries) => {
+          if (done || !entries.some((entry) => entry.isIntersecting)) return
+          renderObserver?.disconnect()
+          timer = window.setTimeout(() => end(false), TIMEOUT)
+        })
+        renderObserver.observe(frame)
+      }
       if (msg.method === "twttr.private.rendered") end(true)
     }
     stops.push(() => {
