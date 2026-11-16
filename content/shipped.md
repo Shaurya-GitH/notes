@@ -36,6 +36,14 @@ shipped:
         src: shopping-assistant/rail-welcome.webp
         alt: The assistant open in a side rail beside a product page, offering three starter questions
     - kind: At work
+      art: almond
+      artefact: Architecture diagram
+      title: "Wero: the bank side of Europe's wallet, live at client banks"
+      text: The APIs a bank's app calls for Wero's peer-to-peer payments, wallet and activity, with every call to EPI's central service signed and every reply checked. Over my year at SBS I took it from a private cloud to a European bank, mTLS included.
+      metric: Live at several client banks · hundreds of thousands of customers
+      basis: "Wero at SBS's client banks, 2026 · Spot Award, Sep 2025, for its peer-to-peer payments delivery"
+      caseStudy: shipped/wero
+    - kind: At work
       art: market
       artefact: Funnel and LLM judge
       title: Business insights for a shopping assistant, driven by an AI pipeline
@@ -43,6 +51,30 @@ shipped:
       metric: 6-step funnel · one of 7 verdicts per question · events synced every 4 h
       basis: tested end to end with the real model, Oct 2026
       caseStudy: shipped/insights-dashboard
+    - kind: At work
+      art: city
+      artefact: Request flow
+      title: PSD2 open-banking APIs, with SCA each bank configures
+      text: "Berlin Group v2 account and payment APIs for European banks at SBS. I built the three shared services every endpoint reuses (certificate and header checks, token claims, consent) and the whole strong customer authentication epic: single or multi-step, per bank."
+      metric: 4 endpoints on 3 shared services · 6 certificate + 7 consent checks per call
+      basis: Berlin Group v2 at SBS, Jan – Jun 2026
+      caseStudy: shipped/psd2-berlin-group
+    - kind: At work
+      art: sky-alt
+      artefact: Identity layer diagram
+      title: FDX for a US bank, and the Keycloak layer under all three
+      text: "Wero, the PSD2 APIs and FDX all sign customers in and record consent through Keycloak. I built its extensions at SBS: decrypting a bank's JWE tokens, consent claims each bank chooses, offline access for registered apps and SCA, plus the pipelines that ship them."
+      metric: 3 of 3 products on one Keycloak build · a bug reported upstream, fixed in 26.6.0
+      basis: "SBS, Aug 2025 – May 2026 · Keycloak issue #44284"
+      caseStudy: shipped/fdx-keycloak
+    - kind: At work
+      art: eye-alt
+      artefact: Mock diagram
+      title: An EPI mock that behaves like EPI
+      text: A stand-in for Wero's central service, so a bank's services can be load-tested without the live network. It checks request signatures, keeps state between calls and sends EPI's callbacks, from a repository and CI pipeline I set up.
+      metric: "9 endpoints: 7 calls + 2 callbacks · 0 calls to the live network"
+      basis: peer-to-peer performance run, Mar 2026
+      caseStudy: shipped/epi-mock
     - kind: At work
       art: almond-alt
       artefact: Pipeline diagram
