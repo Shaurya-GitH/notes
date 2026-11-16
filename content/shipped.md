@@ -21,7 +21,7 @@ shipped:
       artefact: Answer card and page actions
       title: A shopping assistant that answers from the store's own data
       text: A voice and text shopping assistant for a US e-commerce store, answering from live product, variant, warranty and shipping data. With two teammates I rebuilt it to open page sections and switch pages by voice, answer with rich cards and react to ad and browsing context. I added an LLM judge that grades each answer.
-      metric: Live on the store · rebuild in UAT · judge on staging
+      metric: Live on the store · rebuild on the QA site · judge on staging
       basis: "rebuild: team of 3, not yet in production · judge run end to end on staging, Oct 2026"
       caseStudy: shipped/shopping-assistant
       cover:

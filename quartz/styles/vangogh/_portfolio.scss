@@ -1296,6 +1296,10 @@ body:has(.pf-nav) {
       // one picture (a diagram) gets the full width
       li:only-child {
         grid-column: 1 / -1;
+        // a lone diagram keeps its own 16:9 shape instead of the grid's 3:2 frame
+        .shot img {
+          aspect-ratio: 16 / 9;
+        }
       }
       figure {
         margin: 0;
