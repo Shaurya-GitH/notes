@@ -211,7 +211,11 @@ export const ContactBand = ({
             </a>
             {full && (
               <span class="email">
-                <span>{c.email}</span>
+                {/* a narrow screen breaks the address before the @, never mid-name */}
+                <span>
+                  {c.email.split("@")[0]}
+                  <wbr />@{c.email.split("@").slice(1).join("@")}
+                </span>
                 <button type="button" class="cp" data-copy={c.email}>
                   Copy email
                 </button>
