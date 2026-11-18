@@ -34,7 +34,7 @@ export const sharedPageComponents: SharedLayout = {
   ],
   footer: Component.SiteFooter(
     Component.Footer({
-      text: "Designed and Developed by Shaurya Mehta. Built with Quartz.",
+      text: "Designed and Developed by Shaurya Mehta.",
       links: {
         GitHub: "https://github.com/Shaurya-GitH",
         Home: "https://shauryamehta.me/",

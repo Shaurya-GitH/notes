@@ -1,0 +1,242 @@
+// The 404 page: one drawing of an easel in a starry night, plain black outlines on white paper
+// everywhere except the canvas (components/pages/404.tsx). Scoped to body[data-slug="404"], so no other page
+// can see these rules. The drawing is ink on paper, so the page is light whichever theme the reader
+// saved for the notes.
+//
+// Every animation is written as a `from`-only keyframe over the finished state, so the reduced-motion
+// stops at the bottom of this file leave the picture finished rather than blank.
+
+body[data-slug="404"] {
+  --nf-paper: #ffffff;
+  --nf-ink: #000000;
+  --nf-ink-soft: #3d3d3d;
+  // a hard paper edge round the handwriting, in case a stroke of the sky runs under it: no blur,
+  // so the page stays two tones
+  --nf-edge:
+    2px 0 0 var(--nf-paper), -2px 0 0 var(--nf-paper), 0 2px 0 var(--nf-paper),
+    0 -2px 0 var(--nf-paper), 2px 2px 0 var(--nf-paper), -2px -2px 0 var(--nf-paper),
+    2px -2px 0 var(--nf-paper), -2px 2px 0 var(--nf-paper);
+  --nf-hand: "Caveat", "Bradley Hand", "Comic Sans MS", cursive;
+  color-scheme: light;
+  background: var(--nf-paper);
+  color: var(--nf-ink);
+
+  // no window light here: this world has not been coloured in
+  &::before,
+  &::after,
+  #quartz-root::before {
+    display: none;
+  }
+
+  // Quartz's three columns become one full-bleed one, and the painting takes the viewport
+  .page {
+    max-width: none;
+  }
+  .page > #quartz-body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100svh;
+    padding: 0;
+    .sidebar,
+    .page-header,
+    .page-footer,
+    .center > hr {
+      display: none;
+    }
+    .center {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      max-width: none;
+      min-width: 0;
+      margin: 0;
+      overflow-x: clip;
+    }
+  }
+
+  // the footer stays, as the other way out, ruled off with the same pen
+  .page > #quartz-body footer {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 1.2rem clamp(1.25rem, 5vw, 5rem) 1.5rem;
+    border-top: 3px solid var(--nf-ink);
+    font-size: 0.82rem;
+    p,
+    li,
+    a {
+      color: var(--nf-ink-soft);
+    }
+  }
+}
+
+body[data-slug="404"] .nf {
+  position: relative;
+  flex: 1;
+  min-height: 560px;
+  margin: 0;
+  overflow: hidden;
+  background: var(--nf-paper);
+  box-sizing: border-box;
+  * {
+    box-sizing: border-box;
+  }
+
+  /* ---------- the painting ---------- */
+  .nf-scene {
+    position: absolute;
+    inset: 0;
+    svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+  }
+  // the colour arrives after the page has opened on a world without any
+  .nf-colour {
+    animation: nf-bloom 2.4s ease-out 0.7s backwards;
+  }
+  // and keeps creeping a little further across the canvas, and back
+  .nf-seep {
+    opacity: 0.7;
+    animation: nf-seep 7s ease-in-out 3.4s infinite alternate;
+  }
+
+  /* ---------- the words, lettered into the sky ---------- */
+  .nf-copy {
+    position: absolute;
+    top: 3%;
+    left: 64%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.2rem;
+    max-width: 34%;
+  }
+  .nf-code {
+    margin: 0;
+    line-height: 0;
+    svg {
+      display: block;
+      width: clamp(190px, 19.5vw, 330px);
+      height: auto;
+      overflow: visible;
+      fill: none;
+      stroke: var(--nf-ink);
+      stroke-width: 15;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 0;
+      animation: nf-draw 0.9s cubic-bezier(0.3, 0, 0.3, 1) var(--d, 0s) backwards;
+    }
+  }
+  .nf-sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .nf-lede {
+    margin: 0.4rem 0 0;
+    font-family: var(--nf-hand);
+    font-size: clamp(1.5rem, 2.1vw, 2.1rem);
+    line-height: 1.15;
+    color: var(--nf-ink);
+    text-shadow: var(--nf-edge);
+  }
+  .nf-back {
+    font-family: var(--nf-hand);
+    font-size: clamp(1.4rem, 1.9vw, 1.9rem);
+    color: var(--nf-ink);
+    text-decoration: none;
+    text-shadow: var(--nf-edge);
+    border-bottom: 3px solid var(--nf-ink);
+    span {
+      display: inline-block;
+      transition: transform var(--duration, 150ms) var(--ease-expo, ease);
+    }
+    &:hover span,
+    &:focus-visible span {
+      transform: translateX(5px);
+    }
+  }
+
+  // portrait screens: the words centred on the paper above, and the drawing filling the rest of
+  // the screen under them, framed on the easel
+  @media (max-aspect-ratio: 5/4) {
+    display: flex;
+    flex-direction: column;
+    min-height: max(560px, calc(100svh - 8rem));
+    .nf-copy {
+      position: static;
+      order: -1;
+      align-items: center;
+      max-width: none;
+      padding: clamp(1.5rem, 7vw, 3rem) 1.25rem 0;
+      text-align: center;
+    }
+    .nf-code svg {
+      width: min(46vw, 260px);
+    }
+    .nf-lede {
+      font-size: clamp(1.35rem, 5.6vw, 2rem);
+    }
+    .nf-scene {
+      position: relative;
+      inset: auto;
+      flex: 1;
+      min-height: 54svh;
+      overflow: hidden;
+      svg {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: auto;
+        height: 100%;
+        aspect-ratio: 1376 / 768;
+        // the easel in the middle of the screen, but never past the drawing's left edge
+        transform: translateX(min(0px, calc(50vw - 24.3%)));
+      }
+    }
+  }
+}
+
+@keyframes nf-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+}
+@keyframes nf-bloom {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes nf-seep {
+  from {
+    opacity: 0.08;
+  }
+}
+
+// Reduced motion: these selectors outrank every animated rule above (a global stop loses to a scoped
+// one), and every keyframe runs *from* the unfinished state, so stopping them leaves the painting
+// whole: the world in ink, the canvas coloured.
+@media (prefers-reduced-motion: reduce) {
+  body[data-slug="404"] .nf :is(.nf-scene, .nf-code) :is(g, path, circle, image),
+  body[data-slug="404"] .nf :is(.nf-back, .nf-back span) {
+    animation: none;
+    transition: none;
+  }
+}
+html[data-motion="reduce"]
+  body[data-slug="404"]
+  .nf
+  :is(.nf-scene, .nf-code)
+  :is(g, path, circle, image),
+html[data-motion="reduce"] body[data-slug="404"] .nf :is(.nf-back, .nf-back span) {
+  animation: none;
+  transition: none;
+}

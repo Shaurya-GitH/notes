@@ -247,7 +247,7 @@ const PortfolioFooterView = ({ allFiles }: QuartzComponentProps) => {
   })
   return (
     <footer class="pf-foot">
-      <p>Designed and built by Shaurya Mehta with Quartz</p>
+      <p>Designed and built by Shaurya Mehta</p>
       <ul>
         {links.map(([name, url]) => (
           <li>
