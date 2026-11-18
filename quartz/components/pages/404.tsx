@@ -1,21 +1,21 @@
 import { i18n } from "../../i18n"
 import { QuartzComponent, QuartzComponentConstructor, QuartzComponentProps } from "../types"
+import drawing from "./404-plate.json"
 
 // The 404 page is one drawing: a starry night in plain black outlines on white paper — sky, moon,
 // stars, hills, village, an easel — as if drawn with one black brush in a paint app. The only colour
 // is on the easel's canvas, where the same night is painted the way Van Gogh saw it; it thins out
 // to bare canvas toward the corner he has not reached. Styles: styles/vangogh/_notfound.scss.
-// Plates: scripts/notfound-plates.mjs (PATCH below repeats its numbers; FACE is its canvas face
-// taken out to the middle of the black edge).
+// Plates: scripts/notfound-plates.mjs. FACE takes its canvas face out to the middle of the black edge.
 //
 // Every animation runs *from* the unfinished state (keyframes with a `from` only), so turning them
 // off (html[data-motion="reduce"], prefers-reduced-motion) leaves the finished picture.
 //
 // 404.html is served for any missing path, so every URL here must be absolute, as Head.tsx does.
 
-// the drawing is 1376 × 768; the canvas face on its easel, and the patch of colour laid over it
+// the canvas face on its easel
 const FACE = "138,286 502,296 535,552 165,573"
-const PATCH = { x: 130, y: 278, width: 412, height: 302 }
+const { width, height, patch: PATCH } = drawing
 
 const NotFound: QuartzComponent = ({ cfg }: QuartzComponentProps) => {
   // If baseUrl contains a pathname after the domain, use this as the home link
@@ -25,10 +25,18 @@ const NotFound: QuartzComponent = ({ cfg }: QuartzComponentProps) => {
 
   return (
     <article class="nf popover-hint">
-      <div class="nf-scene">
+      <div
+        class="nf-scene"
+        style={{
+          "--nf-drawing-width": width,
+          "--nf-drawing-height": height,
+          "--nf-patch-left": PATCH.x,
+          "--nf-patch-top": PATCH.y,
+          "--nf-patch-width": PATCH.width,
+        }}
+      >
         <svg
-          viewBox="0 0 1376 768"
-          preserveAspectRatio="xMidYMax slice"
+          viewBox={`0 0 ${width} ${height}`}
           role="presentation"
           aria-hidden="true"
           focusable="false"
@@ -59,16 +67,23 @@ const NotFound: QuartzComponent = ({ cfg }: QuartzComponentProps) => {
               <stop offset="0.82" stop-color="#fff" />
               <stop offset="1.12" stop-color="#000" />
             </linearGradient>
-            <mask id="nf-colour" maskUnits="userSpaceOnUse" x="0" y="0" width="1376" height="768">
+            <mask
+              id="nf-colour"
+              maskUnits="userSpaceOnUse"
+              x="0"
+              y="0"
+              width={width}
+              height={height}
+            >
               <polygon points={FACE} fill="url(#nf-laid)" />
             </mask>
-            <mask id="nf-seep" maskUnits="userSpaceOnUse" x="0" y="0" width="1376" height="768">
+            <mask id="nf-seep" maskUnits="userSpaceOnUse" x="0" y="0" width={width} height={height}>
               <polygon points={FACE} fill="url(#nf-wash)" />
             </mask>
           </defs>
 
           {/* the world: black outlines on white paper */}
-          <image href={`${vg}/easel-lines-ink.webp`} x="0" y="0" width="1376" height="768" />
+          <image href={`${vg}/easel-lines-ink.webp`} x="0" y="0" width={width} height={height} />
 
           {/* the canvas: the same night in his colours, as far as he has got */}
           <g class="nf-colour">

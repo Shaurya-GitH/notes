@@ -6,18 +6,19 @@
 //                            the ink at PATCH (x, y in the drawing's pixels) through a mask of the face
 // Run: node scripts/notfound-plates.mjs
 import sharp from "sharp"
+import drawing from "../quartz/components/pages/404-plate.json" with { type: "json" }
 
 const src = "design/404/easel-lines.png"
 const out = "quartz/static/vg"
-// the canvas face just inside its black edge (corners clockwise from top left) and the box round
-// it; 404.tsx masks the colour a little wider, out to the middle of that edge
+// the canvas face just inside its black edge (corners clockwise from top left); 404.tsx masks the
+// colour a little wider, out to the middle of that edge
 const FACE = [
   [141, 289],
   [499, 299],
   [532, 549],
   [168, 570],
 ]
-const PATCH = { left: 130, top: 278, width: 412, height: 302 }
+const { x: left, y: top, width, height } = drawing.patch
 // one star sat where the lettering goes
 const ERASE = { x0: 856, y0: 120, x1: 940, y1: 200 }
 
@@ -27,11 +28,20 @@ const inFace = (x, y) =>
     return (bx - ax) * (y - ay) - (by - ay) * (x - ax) >= 0
   })
 
+const source = sharp(src)
+const { width: sourceWidth, height: sourceHeight } = await source.metadata()
+if (sourceWidth !== drawing.width || sourceHeight !== drawing.height) {
+  throw new Error(
+    `Expected a ${drawing.width} × ${drawing.height} drawing, got ${sourceWidth} × ${sourceHeight}`,
+  )
+}
+
 // drawn at one and a half times the size, so the pen's edges stay clean when every pixel is cut to
 // black or white
 const S = 1.5
-const [W, H] = [2064, 1152]
-const { data } = await sharp(src)
+const [W, H] = [sourceWidth * S, sourceHeight * S]
+const { data } = await source
+  .clone()
   .resize(W, H, { kernel: "lanczos3" })
   .removeAlpha()
   .raw()
@@ -52,4 +62,7 @@ await sharp(ink, { raw: { width: W, height: H, channels: 1 } })
   .webp({ lossless: true })
   .toFile(`${out}/easel-lines-ink.webp`)
 
-await sharp(src).extract(PATCH).webp({ quality: 88 }).toFile(`${out}/easel-lines-canvas.webp`)
+await source
+  .extract({ left, top, width, height })
+  .webp({ quality: 88 })
+  .toFile(`${out}/easel-lines-canvas.webp`)
